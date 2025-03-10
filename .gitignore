@@ -1,0 +1,5 @@
+
+#just ignore all files in Given files
+GivenFiles/
+
+*.class
