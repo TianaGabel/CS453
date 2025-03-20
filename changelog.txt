@@ -1,5 +1,27 @@
+3/20/2025
+TODO
+- implement pretty printer
+- add 3 simple testing examples
+- run with pretty printer
+
 3/10/2025 added javac and original jar
-List of provided commands
+List of provided commands (to set up project)
 $> unzip javacc-6.0.zip
 $> java -jar jtb132.jar minijava.jj
 $> java -cp javacc-6.0/bin/lib/javacc.jar javacc jtb.out.jj
+
+Testing files are located at https://www.cs.colostate.edu/~pouchet/classes/CS453/hw25-minijava/cs453/mj/
+
+- Added empty files for each of those provided in the typechecker.java
+
+todo:
+- Get clarity on wether or not my structure for a symbol table would work and which classes it would need to inherit
+- look back on examples of the pretty printer from class
+- ensure that you are able to build the program
+- what is pico
+- is there a way to directly import the testing files above 
+- should stuff be typed sooner to the start or is it?
+- debugger is gonna be needed methinks
+
+notes:
+- worth rewatching the lecture
