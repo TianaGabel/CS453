@@ -12,7 +12,7 @@ public class SymbolTableNode {
     boolean hasValue;  //all var start uninitialized
     int rank;
 
-    String ParentClass;
+    ArrayList<String> ParentClass = new ArrayList<>();
 
     //Think Classes + Methods + Parameters
     HashMap<String, SymbolTableNode> unorderedChildren = new HashMap<>();
@@ -36,33 +36,39 @@ public class SymbolTableNode {
     }
 
     public void addExtendsAttribute(String id){
-        ParentClass = id;
+        ParentClass.add(id);
+        //TODO will need future handling for inheritance beyond a single class
     }
 
-    public boolean findExisitingSymbol(String id){
+    public SymbolTableNode findExisitingSymbol(String id){
         //Looks through list of ordered nodes
         boolean found = false;
         SymbolTableNode n = this;
         while (!found && n != null){
             if(n.unorderedChildren.containsKey(id)){
-                return true;
+                return n.unorderedChildren.get(id);
             }
             n = n.Parent;
         }
 
-        if (ParentClass != null){
-            findExisitingSymbolTopDown(ParentClass);
+        for (String classId: ParentClass){
+            //TODO this will also need to account for order of inheritance
+            n = findExisitingSymbolTopDown(classId, id);
+            if (n != null) return n;
         }
 
-        return false;
+        return null;
     }
 
-    public boolean findExisitingSymbolTopDown(String id){
+    public SymbolTableNode findExisitingSymbolTopDown(String className, String id){
         //Traverse to root node
         SymbolTableNode n;
-        for(n = this; n.Parent != null; n = n.Parent)
+        for(n = this; n.Parent != null; n = n.Parent){}
+        if (!n.unorderedChildren.containsKey(id)) return null;
 
-        return false;
+        SymbolTableNode target = n.unorderedChildren.get(className);
+
+        return target.unorderedChildren.get(id);
     }
     
     

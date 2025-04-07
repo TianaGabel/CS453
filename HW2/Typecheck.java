@@ -11,11 +11,11 @@ public class Typecheck {
     public static void main(String[] args) {
 	Node root = null;
 	try {
-		//System.out.println("BOO starting parse");
 	    root = new MiniJavaParser(System.in).Goal();
-		//System.out.println("BOO ending parse");
 
-	    // Pretty-print the tree. PPrinter inherits from
+		/*MY STUFF
+		 * 
+		 * // Pretty-print the tree. PPrinter inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=String.
 	    PPrinter<Void,String> pp = new PPrinter<Void,String>();
 	    root.accept(pp);
@@ -26,6 +26,9 @@ public class Typecheck {
 		//pv.createRoot();
 	    //root.accept(pv);
 	    // HashMap<String, String> symt = pv.symt;
+		 * 
+		 */
+
 
 	    // Do type checking. Bottom-up visitor, also inherits from
 	    // GJDepthFirst. Visit functions return MyTpe (=R), and
