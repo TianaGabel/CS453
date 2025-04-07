@@ -1,9 +1,20 @@
 package myImplementation;
+
 import visitor.*;
 import java.util.*;
 import syntaxtree.*;
 
-public class SymTableVis<R,A> extends DepthFirstVisitor{
+public class SymTableVisitor<R,A> extends DepthFirstVisitor{
+    
+   SymbolTableNode currentNode;
+   SymbolTableNode root;
+   String currentID;
+
+   public void createRoot(){
+      root = new SymbolTableNode("Goal", "Program");
+      currentNode = root;
+   }
+
    //
    // Auto class visitors--probably don't need to be overridden.
    //
@@ -68,6 +79,7 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
    public void visit(MainClass n) {
       n.f0.accept(this);
       n.f1.accept(this);
+      currentNode = currentNode.addNode(currentID, "Main");
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
@@ -78,12 +90,14 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
       n.f9.accept(this);
       n.f10.accept(this);
       n.f11.accept(this);
+      currentNode.addNode(currentID, "Array");
       n.f12.accept(this);
       n.f13.accept(this);
       n.f14.accept(this);
       n.f15.accept(this);
       n.f16.accept(this);
       n.f17.accept(this);
+      currentNode = root;
    }
 
    /**
@@ -91,6 +105,7 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     *       | ClassExtendsDeclaration()
     */
    public void visit(TypeDeclaration n) {
+      System.out.println();
       n.f0.accept(this);
    }
 
@@ -105,10 +120,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
    public void visit(ClassDeclaration n) {
       n.f0.accept(this);
       n.f1.accept(this);
+      currentNode = currentNode.addNode(currentID, "Class");
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
+      currentNode = root;
    }
 
    /**
@@ -124,12 +141,16 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
    public void visit(ClassExtendsDeclaration n) {
       n.f0.accept(this);
       n.f1.accept(this);
+      currentNode = currentNode.addNode(currentID, "Class");
       n.f2.accept(this);
       n.f3.accept(this);
+      currentNode = currentNode.addExtendsAttribute(currentID);
+      //TODO add extending attribute
       n.f4.accept(this);
       n.f5.accept(this);
       n.f6.accept(this);
       n.f7.accept(this);
+      currentNode = root;
    }
 
    /**
@@ -138,9 +159,13 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> ";"
     */
    public void visit(VarDeclaration n) {
+      System.out.println();
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -159,19 +184,29 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f12 -> "}"
     */
    public void visit(MethodDeclaration n) {
+      System.out.println();
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       n.f6.accept(this);
+      pPrintSymbol(n.f6);
       n.f7.accept(this);
       n.f8.accept(this);
       n.f9.accept(this);
+      pPrintSymbol(n.f9);
       n.f10.accept(this);
       n.f11.accept(this);
+      pPrintSymbol(n.f11);
       n.f12.accept(this);
+      pPrintSymbol(n.f12);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -179,8 +214,10 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f1 -> ( FormalParameterRest() )*
     */
    public void visit(FormalParameterList n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -188,6 +225,7 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f1 -> Identifier()
     */
    public void visit(FormalParameter n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -197,6 +235,8 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f1 -> FormalParameter()
     */
    public void visit(FormalParameterRest n) {
+    pPrintNodeType(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -208,7 +248,9 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     *       | Identifier()
     */
    public void visit(Type n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -217,15 +259,20 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> "]"
     */
    public void visit(ArrayType n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
    }
 
    /**
     * f0 -> "boolean"
     */
    public void visit(BooleanType n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
    }
 
@@ -233,7 +280,9 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f0 -> "int"
     */
    public void visit(IntegerType n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
    }
 
    /**
@@ -245,7 +294,9 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     *       | PrintStatement()
     */
    public void visit(Statement n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -254,9 +305,13 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> "}"
     */
    public void visit(Block n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -266,10 +321,14 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f3 -> ";"
     */
    public void visit(AssignmentStatement n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -282,13 +341,19 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f6 -> ";"
     */
    public void visit(ArrayAssignmentStatement n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
       n.f5.accept(this);
       n.f6.accept(this);
+      pPrintSymbol(n.f6);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -301,13 +366,19 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f6 -> Statement()
     */
    public void visit(IfStatement n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       n.f6.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -318,11 +389,16 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f4 -> Statement()
     */
    public void visit(WhileStatement n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -333,11 +409,16 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f4 -> ";"
     */
    public void visit(PrintStatement n) {
-      n.f0.accept(this);
+      pPrintNodeType(n);n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -352,7 +433,9 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     *       | PrimaryExpression()
     */
    public void visit(Expression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -361,9 +444,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(AndExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -372,9 +458,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(CompareExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -383,9 +472,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(PlusExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -394,9 +486,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(MinusExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -405,9 +500,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(TimesExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -417,10 +515,14 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f3 -> "]"
     */
    public void visit(ArrayLookup n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -429,9 +531,12 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> "length"
     */
    public void visit(ArrayLength n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -443,12 +548,17 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f5 -> ")"
     */
    public void visit(MessageSend n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -456,8 +566,10 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f1 -> ( ExpressionRest() )*
     */
    public void visit(ExpressionList n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -465,8 +577,10 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f1 -> Expression()
     */
    public void visit(ExpressionRest n) {
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -481,13 +595,16 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     *       | BracketExpression()
     */
    public void visit(PrimaryExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
     * f0 -> <INTEGER_LITERAL>
     */
    public void visit(IntegerLiteral n) {
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -495,6 +612,7 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f0 -> "true"
     */
    public void visit(TrueLiteral n) {
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -502,6 +620,7 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f0 -> "false"
     */
    public void visit(FalseLiteral n) {
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -510,12 +629,14 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     */
    public void visit(Identifier n) {
       n.f0.accept(this);
+      currentID = n.f0;
    }
 
    /**
     * f0 -> "this"
     */
    public void visit(ThisExpression n) {
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -527,11 +648,17 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f4 -> "]"
     */
    public void visit(ArrayAllocationExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -541,10 +668,15 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     */
    public void visit(AllocationExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -552,8 +684,11 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f1 -> Expression()
     */
    public void visit(NotExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintNodeClose(n);
    }
 
    /**
@@ -562,10 +697,13 @@ public class SymTableVis<R,A> extends DepthFirstVisitor{
     * f2 -> ")"
     */
    public void visit(BracketExpression n) {
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
+      pPrintNodeClose(n);
    }
-
+    
 }
-

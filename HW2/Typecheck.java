@@ -22,11 +22,9 @@ public class Typecheck {
 
 	    // Build the symbol table. Top-down visitor, inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=Integer.
-		
-
-	    // SymTableVis<Void, Integer> pv =
-	    // 	new SymTableVis<Void,Integer>();
-	    // root.accept(pv, 0);
+		SymTableVisitor<Void, String> pv = new SymTableVisitor<Void,String>();
+		//pv.createRoot();
+	    //root.accept(pv);
 	    // HashMap<String, String> symt = pv.symt;
 
 	    // Do type checking. Bottom-up visitor, also inherits from
@@ -47,6 +45,7 @@ public class Typecheck {
 	    // 	System.out.println("Code typechecks");
 	    // else
 	    // 	System.out.println("Type error");
+		System.out.println("Type error");
 	}
 	catch (ParseException e) {
 	    System.out.println(e.toString());
