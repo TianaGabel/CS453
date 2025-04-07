@@ -7,32 +7,53 @@ import syntaxtree.*;
 public class PPrinter<R,A> extends DepthFirstVisitor{
 
     
-    String  INDENT_TOKEN = " +";
-    int indentDepth = 0;
+   String  INDENT_TOKEN = " ";
+   String  ALT_TOKEN = ".";
 
-    //Prints just a node type
-    public void pPrintNodeType(Node node){
-        for(int i = 0; i < indentDepth; i++) {
-            System.out.print(INDENT_TOKEN);
+   int indentDepth = 48;
+   int cutSpace = 0;
+
+
+   //Prints just a node type
+   public void pPrintNodeType(Node node){
+        for(int i = 0; i < indentDepth - cutSpace; i++) {
+            System.out.print(ALT_TOKEN);
         }
         System.out.println(node.getClass().getSimpleName());
         indentDepth++;
+        cutSpace = 0;
     }
 
     //prints node type and name/tostring
-    public void pPrintNodeTypeAndName(Node node){
-        for(int i = 0; i < indentDepth; i++) {
-            System.out.print(INDENT_TOKEN);
+    public void pPrintNodeTypeAndName(Node node, NodeToken symbol){
+      pPrintSymbol(symbol);
+         for(int i = 0; i < indentDepth - cutSpace; i++) {
+            System.out.print(ALT_TOKEN);
         }
-        System.out.println(node.getClass().getSimpleName() + " " + node);
+         System.out.println(node.getClass().getSimpleName());
+      // pPrintSymbol(symbol);
+      cutSpace = 0;
     }
+
+   public void pPrintSymbol(NodeToken symbol){
+      // for(int i = 0; i < indentDepth; i++) {
+      //     System.out.print(INDENT_TOKEN);
+      //  }
+      //System.out.print("\"" + symbol + " \"");
+      System.out.print(symbol + " ");
+      int temp = cutSpace + symbol.toString().length() + 1;
+      cutSpace = (temp < 50) ? temp : 50;
+
+      //TODO this is missing
+   }
 
     public void pPrintNodeClose(Node node){
         indentDepth--;
-        for(int i = 0; i < indentDepth; i++) {
-            System.out.print(INDENT_TOKEN);
+        for(int i = 0; i < indentDepth- cutSpace; i++) {
+            System.out.print(ALT_TOKEN);
         }
         System.out.println("Close " + node.getClass().getSimpleName());
+        cutSpace = 0;
     }
 
    //
@@ -104,23 +125,37 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(MainClass n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       n.f6.accept(this);
+      pPrintSymbol(n.f6);
       n.f7.accept(this);
+      pPrintSymbol(n.f7);
       n.f8.accept(this);
+      pPrintSymbol(n.f8);
       n.f9.accept(this);
+      pPrintSymbol(n.f9);
       n.f10.accept(this);
+      pPrintSymbol(n.f10);
       n.f11.accept(this);
       n.f12.accept(this);
+      pPrintSymbol(n.f12);
       n.f13.accept(this);
+      pPrintSymbol(n.f13);
       n.f14.accept(this);
       n.f15.accept(this);
       n.f16.accept(this);
+      pPrintSymbol(n.f16);
       n.f17.accept(this);
+      pPrintSymbol(n.f17);
       pPrintNodeClose(n);
    }
 
@@ -129,6 +164,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     *       | ClassExtendsDeclaration()
     */
    public void visit(TypeDeclaration n) {
+      System.out.println();
       pPrintNodeType(n);
       n.f0.accept(this);
    }
@@ -144,11 +180,14 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(ClassDeclaration n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       pPrintNodeClose(n);
    }
 
@@ -165,13 +204,17 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(ClassExtendsDeclaration n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
       n.f5.accept(this);
       n.f6.accept(this);
       n.f7.accept(this);
+      pPrintSymbol(n.f7);
       pPrintNodeClose(n);
    }
 
@@ -181,10 +224,12 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f2 -> ";"
     */
    public void visit(VarDeclaration n) {
+      System.out.println();
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       pPrintNodeClose(n);
    }
 
@@ -204,20 +249,28 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f12 -> "}"
     */
    public void visit(MethodDeclaration n) {
+      System.out.println();
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       n.f6.accept(this);
+      pPrintSymbol(n.f6);
       n.f7.accept(this);
       n.f8.accept(this);
       n.f9.accept(this);
+      pPrintSymbol(n.f9);
       n.f10.accept(this);
       n.f11.accept(this);
+      pPrintSymbol(n.f11);
       n.f12.accept(this);
+      pPrintSymbol(n.f12);
       pPrintNodeClose(n);
    }
 
@@ -248,7 +301,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     */
    public void visit(FormalParameterRest n) {
     pPrintNodeType(n);
-      pPrintNodeTypeAndName(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -271,17 +324,20 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f2 -> "]"
     */
    public void visit(ArrayType n) {
-      pPrintNodeTypeAndName(n);
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
    }
 
    /**
     * f0 -> "boolean"
     */
    public void visit(BooleanType n) {
-      pPrintNodeTypeAndName(n);
+      pPrintNodeType(n);
       n.f0.accept(this);
    }
 
@@ -289,8 +345,9 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f0 -> "int"
     */
    public void visit(IntegerType n) {
-      pPrintNodeTypeAndName(n);
+      pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
    }
 
    /**
@@ -315,8 +372,10 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(Block n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       pPrintNodeClose(n);
    }
 
@@ -330,8 +389,10 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       pPrintNodeClose(n);
    }
 
@@ -348,11 +409,15 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
       n.f5.accept(this);
       n.f6.accept(this);
+      pPrintSymbol(n.f6);
       pPrintNodeClose(n);
    }
 
@@ -368,11 +433,15 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(IfStatement n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       n.f6.accept(this);
       pPrintNodeClose(n);
    }
@@ -387,9 +456,12 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(WhileStatement n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       pPrintNodeClose(n);
    }
@@ -402,12 +474,15 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f4 -> ";"
     */
    public void visit(PrintStatement n) {
-      pPrintNodeType(n);
-      n.f0.accept(this);
+      pPrintNodeType(n);n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
       pPrintNodeClose(n);
    }
 
@@ -437,6 +512,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       pPrintNodeClose(n);
    }
@@ -450,6 +526,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       pPrintNodeClose(n);
    }
@@ -463,6 +540,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       pPrintNodeClose(n);
    }
@@ -476,6 +554,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       pPrintNodeClose(n);
    }
@@ -489,6 +568,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       pPrintNodeClose(n);
    }
@@ -503,8 +583,10 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       pPrintNodeClose(n);
    }
 
@@ -517,6 +599,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       pPrintNodeClose(n);
    }
@@ -533,10 +616,13 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
       pPrintNodeType(n);
       n.f0.accept(this);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       n.f4.accept(this);
       n.f5.accept(this);
+      pPrintSymbol(n.f5);
       pPrintNodeClose(n);
    }
 
@@ -556,7 +642,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f1 -> Expression()
     */
    public void visit(ExpressionRest n) {
-      pPrintNodeType(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
       n.f1.accept(this);
       pPrintNodeClose(n);
@@ -583,7 +669,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f0 -> <INTEGER_LITERAL>
     */
    public void visit(IntegerLiteral n) {
-      pPrintNodeTypeAndName(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -591,7 +677,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f0 -> "true"
     */
    public void visit(TrueLiteral n) {
-      pPrintNodeTypeAndName(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -599,7 +685,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f0 -> "false"
     */
    public void visit(FalseLiteral n) {
-    pPrintNodeTypeAndName(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -607,7 +693,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f0 -> <IDENTIFIER>
     */
    public void visit(Identifier n) {
-    pPrintNodeTypeAndName(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -615,7 +701,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
     * f0 -> "this"
     */
    public void visit(ThisExpression n) {
-    pPrintNodeTypeAndName(n);
+      pPrintNodeTypeAndName(n, n.f0);
       n.f0.accept(this);
    }
 
@@ -629,10 +715,14 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(ArrayAllocationExpression n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
+      pPrintSymbol(n.f1);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
       n.f4.accept(this);
+      pPrintSymbol(n.f4);
       pPrintNodeClose(n);
    }
 
@@ -645,9 +735,12 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(AllocationExpression n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       n.f3.accept(this);
+      pPrintSymbol(n.f3);
       pPrintNodeClose(n);
    }
 
@@ -658,6 +751,7 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(NotExpression n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       pPrintNodeClose(n);
    }
@@ -670,8 +764,10 @@ public class PPrinter<R,A> extends DepthFirstVisitor{
    public void visit(BracketExpression n) {
       pPrintNodeType(n);
       n.f0.accept(this);
+      pPrintSymbol(n.f0);
       n.f1.accept(this);
       n.f2.accept(this);
+      pPrintSymbol(n.f2);
       pPrintNodeClose(n);
    }
     

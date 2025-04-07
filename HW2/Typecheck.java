@@ -11,19 +11,18 @@ public class Typecheck {
     public static void main(String[] args) {
 	Node root = null;
 	try {
-		System.out.println("BOO starting parse");
+		//System.out.println("BOO starting parse");
 	    root = new MiniJavaParser(System.in).Goal();
-		System.out.println("BOO ending parse");
+		//System.out.println("BOO ending parse");
 
 	    // Pretty-print the tree. PPrinter inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=String.
 	    PPrinter<Void,String> pp = new PPrinter<Void,String>();
-		System.out.println("BOO starting pprint");
 	    root.accept(pp);
-		System.out.println("BOO ending parse");
 
 	    // Build the symbol table. Top-down visitor, inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=Integer.
+		
 
 	    // SymTableVis<Void, Integer> pv =
 	    // 	new SymTableVis<Void,Integer>();
