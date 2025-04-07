@@ -1,3 +1,12 @@
+4/06/2025
+updated pretty printer to output identifiers, seperate class, var and method declarations and cleaned up formatting issues
+Started basic implementation of a symbol table, and basic implementation of the symtablevisitor
+
+- There are some obvious problems, please do a pass to fix TODOs
+- Add some additional node types
+- For Hw2 I am currently thinking that it would be easier to just make a bunch of visitors that manages each rule
+- We can maybe use the symbol table, but I almost want to seperate class related stuff and main method stuff
+
 3/24/2025
 Start work on assignment 3 while fresh on your mind
 - do we need to account for failures to parse by MiniJava Parser?
