@@ -7,6 +7,12 @@ Started basic implementation of a symbol table, and basic implementation of the 
 - For Hw2 I am currently thinking that it would be easier to just make a bunch of visitors that manages each rule
 - We can maybe use the symbol table, but I almost want to seperate class related stuff and main method stuff
 
+TODO
+- Start testing of symbol table
+- Add specialized versions of the Symbol tables
+- Finish looking through spec document and start drafting methods for testing rules etc...
+
+
 3/24/2025
 Start work on assignment 3 while fresh on your mind
 - do we need to account for failures to parse by MiniJava Parser?
