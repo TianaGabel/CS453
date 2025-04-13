@@ -56,11 +56,9 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> <EOF>
     */
    public void visit(Goal n) {
+      n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
-
-      //TODO when to visit the main class
-      n.f0.accept(this);
    }
 
    /**

@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 // Arg will likely not be used, and these may need to be updated
 enum SymbolType {
-    GOAL, MAIN, CLASS, METHOD, VARIABLE, PARAM
+    GOAL, MAIN, CLASS, METHOD, VARIABLE
 }
 
 enum VarType {
-    ARRAY, INT, BOOL
+    ARRAY, INT, BOOL, INSTANCE
 }
 
 public class SymbolTableNode {
