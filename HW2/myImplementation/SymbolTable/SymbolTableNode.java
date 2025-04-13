@@ -1,43 +1,54 @@
-package myImplementation;
+package myImplementation.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// Arg will likely not be used, and these may need to be updated
+enum SymbolType {
+    GOAL, MAIN, CLASS, METHOD, VARIABLE, PARAM
+}
+
+enum VarType {
+    ARRAY, INT, BOOL
+}
+
 public class SymbolTableNode {
 
     static int order_of_execuetion = 0;
-    SymbolTableNode Parent;
+    public SymbolTableNode Parent;
     String identifier;
-    String type;
-    boolean hasValue;  //all var start uninitialized
+    SymbolType type;
     int rank;
 
-    ArrayList<String> ParentClass = new ArrayList<>();
-
-    //Think Classes + Methods + Parameters
     HashMap<String, SymbolTableNode> unorderedChildren = new HashMap<>();
 
-    public SymbolTableNode(String id, String type){
+    public SymbolTableNode(String id, SymbolType type){
         this.identifier = id;
         this.type = type;
-        this.hasValue = false;
         rank = order_of_execuetion;
         order_of_execuetion += 1;
     }
 
     //unordered
     public SymbolTableNode addNode(String id, String type){
-        //TODO whose responsability is it to manage parameters
-        //TODO prevent nodes that are not main class, class, or method from adding tables
-        SymbolTableNode n = new SymbolTableNode(id, type);
+        SymbolTableNode n;
+        switch(type) {
+            case "Class":
+              // code block
+                n = new STClassNode(id, SymbolType.CLASS);
+                break;
+            case "Method":
+              // code block
+                n = new STMethodNode(id, SymbolType.METHOD);
+                break;
+            default:
+                //TODO there should be a variable creation point
+                n = new SymbolTableNode(id, null);
+              // TODO should throw an error in the future
+          }
         n.Parent = this;
         unorderedChildren.put(n.identifier, n);
         return n;
-    }
-
-    public void addExtendsAttribute(String id){
-        ParentClass.add(id);
-        //TODO will need future handling for inheritance beyond a single class
     }
 
     public SymbolTableNode findExisitingSymbol(String id){
@@ -51,11 +62,11 @@ public class SymbolTableNode {
             n = n.Parent;
         }
 
-        for (String classId: ParentClass){
-            //TODO this will also need to account for order of inheritance
-            n = findExisitingSymbolTopDown(classId, id);
-            if (n != null) return n;
-        }
+        // for (String classId: ParentClass){
+        //     //TODO this will also need to account for order of inheritance
+        //     n = findExisitingSymbolTopDown(classId, id);
+        //     if (n != null) return n;
+        // }
 
         return null;
     }

@@ -2,6 +2,10 @@ package myImplementation;
 
 import visitor.*;
 import java.util.*;
+
+import myImplementation.SymbolTable.STClassNode;
+import myImplementation.SymbolTable.STMethodNode;
+import myImplementation.SymbolTable.SymbolTableNode;
 import syntaxtree.*;
 
 public class SymTableVisitor<R,A> extends DepthFirstVisitor{
@@ -12,7 +16,7 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
    String currentType;
 
    public void createRoot(){
-      root = new SymbolTableNode("Goal", "Program");
+      root = new SymbolTableNode("Goal",null);
       currentNode = root;
    }
 
@@ -52,9 +56,11 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> <EOF>
     */
    public void visit(Goal n) {
-      n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
+
+      //TODO when to visit the main class
+      n.f0.accept(this);
    }
 
    /**
@@ -106,7 +112,6 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     *       | ClassExtendsDeclaration()
     */
    public void visit(TypeDeclaration n) {
-      System.out.println();
       n.f0.accept(this);
    }
 
@@ -126,6 +131,7 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
+      //TODO I would like to call a typeChecks() method at the end of a declaration
       currentNode = root;
    }
 
@@ -145,11 +151,12 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       currentNode = currentNode.addNode(currentID, "Class");
       n.f2.accept(this);
       n.f3.accept(this);
-      currentNode.addExtendsAttribute(currentID);
+      ((STClassNode) currentNode).addExtendsAttribute(currentID);
       n.f4.accept(this);
       n.f5.accept(this);
       n.f6.accept(this);
       n.f7.accept(this);
+      //TODO I would like to call a typeChecks() method at the end of a declaration
       currentNode = root;
    }
 
@@ -181,11 +188,11 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f12 -> "}"
     */
    public void visit(MethodDeclaration n) {
-      System.out.println();
       n.f0.accept(this);
-      n.f1.accept(this);
       n.f2.accept(this);
       currentNode = currentNode.addNode(currentID, currentType);
+      n.f1.accept(this);
+      ((STMethodNode) currentNode).addReturnType(currentID);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
@@ -204,7 +211,6 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> ( FormalParameterRest() )*
     */
    public void visit(FormalParameterList n) {
-      //TODO needs updated symboltable node for class methods
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -216,8 +222,7 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
    public void visit(FormalParameter n) {
       n.f0.accept(this);
       n.f1.accept(this);
-      //TODO should be updated when new node is made (also this is where order/rank is important)
-      currentNode.addNode(currentID, currentType);
+      ((STMethodNode) currentNode).addParam(currentID, currentType);
    }
 
    /**
@@ -249,7 +254,6 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       n.f1.accept(this);
       n.f2.accept(this);
       currentType = "Array";
-      //TODO this was silly, just fetch the name from an early node
    }
 
    /**
@@ -474,7 +478,6 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> "length"
     */
    public void visit(ArrayLength n) {
-      //TODO yeah definately an array node
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -580,12 +583,12 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f4 -> "]"
     */
    public void visit(ArrayAllocationExpression n) {
-      //TODO perfect place to create that array Node!
+      currentNode.addNode(currentID, "Array");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
-      //TODO length attribute
+      //TODO length
       n.f4.accept(this);
    }
 
@@ -596,9 +599,10 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     */
    public void visit(AllocationExpression n) {
-      //TODO
       n.f0.accept(this);
       n.f1.accept(this);
+      currentID = n.f1.toString();
+      currentNode.addNode(currentID, "Instance");
       n.f2.accept(this);
       n.f3.accept(this);
    }
