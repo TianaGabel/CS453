@@ -17,6 +17,7 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
 
    public void createRoot(){
       root = new SymbolTableNode("Goal",null);
+      System.out.println("BOO program node");
       currentNode = root;
    }
 
@@ -129,7 +130,6 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
-      //TODO I would like to call a typeChecks() method at the end of a declaration
       currentNode = root;
    }
 
@@ -154,7 +154,6 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       n.f5.accept(this);
       n.f6.accept(this);
       n.f7.accept(this);
-      //TODO I would like to call a typeChecks() method at the end of a declaration
       currentNode = root;
    }
 
@@ -188,7 +187,7 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
    public void visit(MethodDeclaration n) {
       n.f0.accept(this);
       n.f2.accept(this);
-      currentNode = currentNode.addNode(currentID, currentType);
+      currentNode = currentNode.addNode(currentID, "Method");
       n.f1.accept(this);
       ((STMethodNode) currentNode).addReturnType(currentID);
       n.f3.accept(this);
@@ -561,8 +560,8 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> <IDENTIFIER>
     */
    public void visit(Identifier n) {
-      n.f0.accept(this);
       currentID = n.f0.toString();
+      n.f0.accept(this);
    }
 
    /**

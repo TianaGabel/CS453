@@ -13,21 +13,20 @@ public class Typecheck {
 	try {
 	    root = new MiniJavaParser(System.in).Goal();
 
-		/*MY STUFF
-		 * 
-		 * // Pretty-print the tree. PPrinter inherits from
+		// Pretty-print the tree. PPrinter inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=String.
 	    PPrinter<Void,String> pp = new PPrinter<Void,String>();
 	    root.accept(pp);
 
 	    // Build the symbol table. Top-down visitor, inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=Integer.
+		System.out.println("BOO symbol table");
 		SymTableVisitor<Void, String> pv = new SymTableVisitor<Void,String>();
-		//pv.createRoot();
+		pv.createRoot();
+		root.accept(pv);
 	    //root.accept(pv);
 	    // HashMap<String, String> symt = pv.symt;
-		 * 
-		 */
+		
 
 
 	    // Do type checking. Bottom-up visitor, also inherits from

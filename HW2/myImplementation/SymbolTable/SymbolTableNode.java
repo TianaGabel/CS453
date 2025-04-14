@@ -23,6 +23,9 @@ public class SymbolTableNode {
     HashMap<String, SymbolTableNode> unorderedChildren = new HashMap<>();
 
     public SymbolTableNode(String id, SymbolType type){
+        System.out.println("Node " + id +  " of " + type);
+        if (Parent != null)
+            System.out.println("      " + rank + Parent.identifier);
         this.identifier = id;
         this.type = type;
         rank = order_of_execuetion;
@@ -34,15 +37,21 @@ public class SymbolTableNode {
         SymbolTableNode n;
         switch(type) {
             case "Class":
-              // code block
                 n = new STClassNode(id, SymbolType.CLASS);
                 break;
             case "Method":
-              // code block
                 n = new STMethodNode(id, SymbolType.METHOD);
                 break;
+            case "Boolean":
+            case "Integer":
+            case "Array":
+            case "Instance":
+            case "Variable":
+                n = new STVariableNode(id, type);
+                break;
+            case "Goal":
+            case "Main":
             default:
-                //TODO there should be a variable creation point
                 n = new SymbolTableNode(id, null);
               // TODO should throw an error in the future
           }
