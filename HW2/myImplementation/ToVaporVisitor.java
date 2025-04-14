@@ -5,10 +5,18 @@ import syntaxtree.*;
 
 public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    String INDENT = "    ";
-   String CLASSNAME = "";
-   String VARIABLE = "";
+   String name = "";
    int indentCount = 0;
    int tempName = 0;
+   Stack<String> inverseStack = new Stack<String>();
+   Stack<String> currentStack = new Stack<String>();
+
+   private void printStack() {
+      while (!currentStack.isEmpty()) {
+         String s = currentStack.pop();
+         System.out.println(s);
+      }
+   }
 
    private String indents() {
       StringBuilder sb = new StringBuilder();
@@ -134,7 +142,6 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(ClassDeclaration n) {
       n.f0.accept(this);
-      CLASSNAME = n.f1.toString();
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
@@ -155,7 +162,6 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    public void visit(ClassExtendsDeclaration n) {
       n.f0.accept(this);
       n.f1.accept(this);
-      CLASSNAME = n.f1.toString();
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
@@ -194,7 +200,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
-      System.out.print("func " + CLASSNAME +"." + n.f2.toString() + " (this ");
+      inverseStack.push("");
+      String s = "func " + name +"." name + " (this ";
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
@@ -204,11 +211,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f7.accept(this);
       n.f8.accept(this);
       n.f9.accept(this);
-      System.out.println(indents() + "ret" + VARIABLE);
+      System.out.println(indents() + "ret" + tempVar());
       indentCount--;
       n.f10.accept(this);
       n.f11.accept(this);
       n.f12.accept(this);
+      tempName = 0;
       System.out.println("");
    }
 
@@ -309,10 +317,11 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(AssignmentStatement n) {
       n.f0.accept(this);
+      currentStack.push(indents() + n.f0.toString() + " = " + newTempVar());
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
-      //TODO shall we do this from the bottom up?
+      printStack();
    }
 
    /**
@@ -325,6 +334,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f6 -> ";"
     */
    public void visit(ArrayAssignmentStatement n) {
+      // TODO
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -378,10 +388,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    public void visit(PrintStatement n) {
       n.f0.accept(this);
       n.f1.accept(this);
+      String s = indents() + "PrintInts(" + newTempVar() + ")";
+      currentStack.push(s);
       n.f2.accept(this);
       n.f3.accept(this);
+      printStack();
       n.f4.accept(this);
-      System.out.println(Indents() + " " + n.f2.toString());
    }
 
    /**
@@ -427,6 +439,9 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(PlusExpression n) {
+      currentStack.push(indents() + tempVar() + " = AddS( " + n.f0.toString() + " )");
+
+
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -438,6 +453,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(MinusExpression n) {
+      currentStack.push(indents() + tempVar() + " = SubS( " + n.f0.toString() + " )");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -493,16 +509,18 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       System.out.println(indents() + t + " = [" + n.f0.toString() + "]");
       //Address of the function this may need to be updated via where it is at according to the symbol table
       System.out.println(indents() + newTempVar() + " = [" + t + "]");
-      //This currently only calls something without params
-      //TODO what about something with the left and right side?
-      System.out.print(indents() + "call " + tempVar() + "(" + n.f0.toString() + " ");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
-      System.out.println(")");
+      printStack();
+      inverseStack.push("");
+      String s = indents() + "call " + tempVar() + "(" + n.f0.toString() + " ";
+      s += inverseStack.pop();
+      s += ")";
+      System.out.println(s);
    }
 
    /**
@@ -510,8 +528,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> ( ExpressionRest() )*
     */
    public void visit(ExpressionList n) {
-      //TODO Should push any thing above it
-      System.out.print(newTempVar() + " ");
+      currentStack.push(indents() + tempVar() + " = " + newTempVar());
+      String s =  inverseStack.pop();
+      s += tempVar() + " ";
+      inverseStack.push(s);
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -544,6 +564,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> <INTEGER_LITERAL>
     */
    public void visit(IntegerLiteral n) {
+      currentStack.push(indents() + tempVar() + " = " + n.f0.toString());
       n.f0.accept(this);
    }
 
@@ -551,6 +572,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> "true"
     */
    public void visit(TrueLiteral n) {
+      currentStack.push(indents() + tempVar() + " = 1");
       n.f0.accept(this);
    }
 
@@ -558,6 +580,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> "false"
     */
    public void visit(FalseLiteral n) {
+      currentStack.push(indents() + tempVar() + " = 0");
       n.f0.accept(this);
    }
 
@@ -565,6 +588,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> <IDENTIFIER>
     */
    public void visit(Identifier n) {
+      name = n.f0.toString();
       n.f0.accept(this);
    }
 
