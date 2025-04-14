@@ -24,8 +24,6 @@ public class SymbolTableNode {
 
     public SymbolTableNode(String id, SymbolType type){
         System.out.println("Node " + id +  " of " + type);
-        if (Parent != null)
-            System.out.println("      " + rank + Parent.identifier);
         this.identifier = id;
         this.type = type;
         rank = order_of_execuetion;
@@ -55,7 +53,10 @@ public class SymbolTableNode {
                 n = new SymbolTableNode(id, null);
               // TODO should throw an error in the future
           }
+        System.out.println("here");
         n.Parent = this;
+        if (n.Parent != null)
+            System.out.println("      " + n.rank + n.Parent.identifier);
         unorderedChildren.put(n.identifier, n);
         return n;
     }
