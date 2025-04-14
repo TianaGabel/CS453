@@ -57,47 +57,40 @@ public class SymbolTableNode {
                 n = new SymbolTableNode(id, null);
               // TODO should throw an error in the future
           }
-        //System.out.println("here");
         n.Parent = this;
-        // if (n.Parent != null)
-        //     System.out.println("      " + n.rank + n.Parent.identifier);
         unorderedChildren.put(n.identifier, n);
         return n;
     }
 
+    public SymbolTableNode findExistingSymbolFromRoot(String id){
+        SymbolTableNode n;
+        for(n = this; n.Parent != null; n = n.Parent){} //Traverse to root node
+
+        return n.findExisitingSymbol(id);
+    }
+    
     public SymbolTableNode findExisitingSymbol(String id){
-        //Looks through list of ordered nodes
-        boolean found = false;
-        SymbolTableNode n = this;
-        while (!found && n != null){
-            if(n.unorderedChildren.containsKey(id)){
-                return n.unorderedChildren.get(id);
-            }
-            n = n.Parent;
+        //This will be for nodes beneath current node
+        if (this.identifier.equals(id)){
+            return this;
         }
 
-        // for (String classId: ParentClass){
-        //     //TODO this will also need to account for order of inheritance
-        //     n = findExisitingSymbolTopDown(classId, id);
-        //     if (n != null) return n;
-        // }
+        if(this.unorderedChildren.containsKey(id)){
+            return unorderedChildren.get(id);
+        }
 
+        SymbolTableNode result;
+        for (SymbolTableNode n : getChildren()){
+            result = n.findExisitingSymbol(id);
+            if (result != null){
+                return result;
+            }
+        }
         return null;
     }
 
     public String getType(){
         return type.toString();
-    }
-
-    public SymbolTableNode findExisitingSymbolTopDown(String className, String id){
-        //Traverse to root node
-        SymbolTableNode n;
-        for(n = this; n.Parent != null; n = n.Parent){}
-        if (!n.unorderedChildren.containsKey(id)) return null;
-
-        SymbolTableNode target = n.unorderedChildren.get(className);
-
-        return target.unorderedChildren.get(id);
     }
     
     public ArrayList<SymbolTableNode> getChildren(){

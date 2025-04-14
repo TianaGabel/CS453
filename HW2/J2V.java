@@ -39,10 +39,11 @@ public class J2V {
         }
 
         ToVaporVisitor<Void, String> vaporV = new ToVaporVisitor<Void,String>();
+        vaporV.setRoot(STroot);
 		root.accept(vaporV);
+        vaporV.programClose();
 
         //TODO tack on method for creating arrays
-        
 
     }
     catch (ParseException e) {

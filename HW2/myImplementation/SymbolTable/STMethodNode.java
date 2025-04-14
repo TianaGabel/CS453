@@ -28,9 +28,20 @@ public class STMethodNode extends SymbolTableNode {
         params.add(new STVariableNode(id, type));
     }
 
-    public void mapParams(){
+    public void verifyParams(){
         //When arguments are given
         //Check that arguments match the types given by params
+    }
+
+    //STUFF for VAPOR
+
+    public String vaporFunctionDef(){
+        String s = "func " + Parent.identifier + "." + this.identifier + "(this";
+        for (SymbolTableNode n: params){
+            s += " " + n.identifier;
+        }
+        s += ")";
+        return s;
     }
     
 }

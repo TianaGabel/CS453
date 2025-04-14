@@ -1,30 +1,18 @@
-const vmt_Twenty
-    :Twenty.reset
-    :Twenty.increaseResult
-    :Twenty.generate
+const vmt_Operator
+    :Operator.compute
 
 func Main ()
-t.3 = [syntaxtree.PrimaryExpression@15db9742]
-t.4 = [t.3]
-syntaxtree.Identifier@2a139a55 = heapAllocZ(4)
-[syntaxtree.Identifier@2a139a55] = :vmt_syntaxtree.Identifier@2a139a55
-PrintInts(t.1)
-call t.4(syntaxtree.PrimaryExpression@15db9742 )
+    t.2 = [t.1]
+    t.3 = [t.2]
+    t.3 = heapAllocZ(4)
+    [t.3] = :vmt_syntaxtree.Identifier@2a139a55
+     = call t.3(TODO compute)
+    PrintInts(t.1)
     ret
-func generate.syntaxtree.Identifier@6d06d69c (this )
-    t.5 = 20
-    t.5 = 10
-    t.5 = AddS( syntaxtree.PrimaryExpression@4e25154f )
-    syntaxtree.Identifier@7852e922 = t.5
-    rett.5
 
-func increaseResult.syntaxtree.Identifier@70dea4e (this syntaxtree.FormalParameter@5c647e05 )
-    t.1 = AddS( syntaxtree.PrimaryExpression@55f96302 )
-    syntaxtree.Identifier@33909752 = t.1
-    rett.1
-
-func reset.syntaxtree.Identifier@3d4eac69 (this )
+func Operator.compute(this)
     t.1 = 0
-    syntaxtree.Identifier@42a57993 = t.1
-    rett.1
+    t.1 = 1
+    result = t.1
+    ret t.1
 

@@ -1,15 +1,36 @@
 package myImplementation;
 import visitor.*;
 import java.util.*;
+
+import myImplementation.SymbolTable.STMethodNode;
+import myImplementation.SymbolTable.SymbolTableNode;
 import syntaxtree.*;
 
 public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    String INDENT = "    ";
-   String name = "";
+   // String name = "";
    int indentCount = 0;
-   int tempName = 0;
-   Stack<String> inverseStack = new Stack<String>();
+   int tempCount = 0;
+   Stack<String> varStack = new Stack<String>();
    Stack<String> currentStack = new Stack<String>();
+   SymbolTableNode root;
+
+   boolean hasArrays = false;
+
+   public void programClose(){
+      if (hasArrays){
+         System.out.println("func AllocArray(size)\n" +
+            "    bytes = MulS(size 4)\n" +
+            "    bytes = Add(bytes 4)\n" +
+            "    v = HeapAllocZ(bytes)\n" +
+            "    [v] = size\n" +
+            "    ret v)");
+      }
+   }
+
+   public void setRoot(SymbolTableNode r){
+      root = r;
+   }
 
    private void printStack() {
       while (!currentStack.isEmpty()) {
@@ -29,15 +50,15 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    private String tempVar() {
       StringBuilder sb = new StringBuilder();
       sb.append("t.");
-      sb.append(tempName);
+      sb.append(tempCount);
       return sb.toString();
    }
 
    private String newTempVar() {
-      tempName++;
+      tempCount++;
       StringBuilder sb = new StringBuilder();
       sb.append("t.");
-      sb.append(tempName);
+      sb.append(tempCount);
       return sb.toString();
    }
    //
@@ -103,6 +124,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(MainClass n) {
       System.out.println("func Main ()");
+      indentCount++;
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -113,8 +135,9 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f7.accept(this);
       n.f8.accept(this);
       n.f9.accept(this);
-      n.f10.accept(this);
-      n.f11.accept(this);
+      //Todo prevent handling of args as an array
+      //n.f10.accept(this);
+      //n.f11.accept(this);
       n.f12.accept(this);
       n.f13.accept(this);
       n.f14.accept(this);
@@ -122,6 +145,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f16.accept(this);
       n.f17.accept(this);
       System.out.println(INDENT + "ret");
+      indentCount--;
+      System.out.println("");
    }
 
    /**
@@ -200,23 +225,24 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
-      inverseStack.push("");
-      String s = "func " + name +"." name + " (this ";
+      
+      String s = ((STMethodNode) root.findExisitingSymbol(varStack.pop())).vaporFunctionDef();
+      System.out.println(s);
+      tempCount = 0;
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
-      System.out.println(")");
       n.f6.accept(this);
       indentCount++;
       n.f7.accept(this);
       n.f8.accept(this);
       n.f9.accept(this);
-      System.out.println(indents() + "ret" + tempVar());
+      printStack();
+      System.out.println(indents() + "ret " + tempVar());
       indentCount--;
       n.f10.accept(this);
       n.f11.accept(this);
       n.f12.accept(this);
-      tempName = 0;
       System.out.println("");
    }
 
@@ -226,7 +252,6 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(FormalParameterList n) {
       n.f0.accept(this);
-      System.out.print(n.f0.toString() + " ");
       n.f1.accept(this);
    }
 
@@ -317,7 +342,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(AssignmentStatement n) {
       n.f0.accept(this);
-      currentStack.push(indents() + n.f0.toString() + " = " + newTempVar());
+      currentStack.push(indents() + varStack.peek() + " = " + newTempVar());
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
@@ -389,10 +414,11 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f0.accept(this);
       n.f1.accept(this);
       String s = indents() + "PrintInts(" + newTempVar() + ")";
-      currentStack.push(s);
+      varStack.push(tempVar());
       n.f2.accept(this);
       n.f3.accept(this);
       printStack();
+      System.out.println(s);
       n.f4.accept(this);
    }
 
@@ -439,12 +465,17 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(PlusExpression n) {
-      currentStack.push(indents() + tempVar() + " = AddS( " + n.f0.toString() + " )");
-
-
+      //TODO this change needs to be updated in below
+      newTempVar();
       n.f0.accept(this);
       n.f1.accept(this);
+      newTempVar();
       n.f2.accept(this);
+      String a = varStack.pop();
+      String b = varStack.pop();
+      String s = indents() + varStack.peek() + " = AddS( " + a + " " + b + " )";
+      printStack();
+      System.out.println(s);
    }
 
    /**
@@ -453,10 +484,13 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(MinusExpression n) {
-      currentStack.push(indents() + tempVar() + " = SubS( " + n.f0.toString() + " )");
+      newTempVar();
       n.f0.accept(this);
       n.f1.accept(this);
+      newTempVar();
       n.f2.accept(this);
+      printStack();
+      System.out.println(indents() + newTempVar() + " = SubS( " + varStack.pop() + " " + varStack.pop() + " )");
    }
 
    /**
@@ -465,9 +499,14 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     */
    public void visit(TimesExpression n) {
+      newTempVar();
       n.f0.accept(this);
       n.f1.accept(this);
+      newTempVar();
       n.f2.accept(this);
+      printStack();
+      //TODO update to a proper multiply
+      System.out.println(indents() + newTempVar() + " = AddS( " + varStack.pop() + " " + varStack.pop() + " )");
    }
 
    /**
@@ -503,24 +542,23 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f5 -> ")"
     */
    public void visit(MessageSend n) {
-      tempName++;
       //Address of the function table
       String t = newTempVar();
-      System.out.println(indents() + t + " = [" + n.f0.toString() + "]");
-      //Address of the function this may need to be updated via where it is at according to the symbol table
+      System.out.println(indents() + t + " = [" + varStack.pop() + "]");
+      //TODO Address of the function this may need to be updated via where it is at according to the symbol table
       System.out.println(indents() + newTempVar() + " = [" + t + "]");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
-      n.f5.accept(this);
       printStack();
-      inverseStack.push("");
-      String s = indents() + "call " + tempVar() + "(" + n.f0.toString() + " ";
-      s += inverseStack.pop();
+      varStack.push("");
+      String s = indents() + varStack.pop() + " = call " + tempVar() + "(" + "TODO" + " ";
+      s += varStack.pop();
       s += ")";
-      System.out.println(s);
+      currentStack.push(s);
+      n.f5.accept(this);
    }
 
    /**
@@ -529,9 +567,9 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(ExpressionList n) {
       currentStack.push(indents() + tempVar() + " = " + newTempVar());
-      String s =  inverseStack.pop();
+      String s =  varStack.pop();
       s += tempVar() + " ";
-      inverseStack.push(s);
+      varStack.push(s);
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -565,6 +603,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(IntegerLiteral n) {
       currentStack.push(indents() + tempVar() + " = " + n.f0.toString());
+      varStack.push(tempVar());
       n.f0.accept(this);
    }
 
@@ -573,6 +612,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(TrueLiteral n) {
       currentStack.push(indents() + tempVar() + " = 1");
+      varStack.push(tempVar());
       n.f0.accept(this);
    }
 
@@ -581,6 +621,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(FalseLiteral n) {
       currentStack.push(indents() + tempVar() + " = 0");
+      varStack.push(tempVar());
       n.f0.accept(this);
    }
 
@@ -588,7 +629,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> <IDENTIFIER>
     */
    public void visit(Identifier n) {
-      name = n.f0.toString();
+      String name = n.f0.toString();
+      varStack.push(name);
       n.f0.accept(this);
    }
 
@@ -607,10 +649,16 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f4 -> "]"
     */
    public void visit(ArrayAllocationExpression n) {
+      hasArrays = true;
+      String s = "call :AllocArray(";
+      varStack.push("");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
+      printStack();
+      s += varStack.pop() + ")";
+      System.out.println(s);
       n.f4.accept(this);
    }
 
@@ -622,8 +670,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(AllocationExpression n) {
       //TODO size needs to be retrieved from symbol table
-      System.out.println(indents() + n.f1.toString() + " = heapAllocZ(4)");
-      System.out.println(indents() + "[" + n.f1.toString() + "] = :vmt_" + n.f1.toString());
+      System.out.println(indents() + tempVar() + " = heapAllocZ(4)");
+      System.out.println(indents() + "[" + tempVar() + "] = :vmt_" + n.f1.toString());
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
