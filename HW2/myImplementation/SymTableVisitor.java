@@ -17,8 +17,11 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
 
    public void createRoot(){
       root = new SymbolTableNode("Goal",null);
-      System.out.println("BOO program node");
       currentNode = root;
+   }
+
+   public SymbolTableNode getRoot(){
+      return root;
    }
 
    //

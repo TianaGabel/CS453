@@ -4,6 +4,34 @@ import java.util.*;
 import syntaxtree.*;
 
 public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
+   String INDENT = "    ";
+   String CLASSNAME = "";
+   String VARIABLE = "";
+   int indentCount = 0;
+   int tempName = 0;
+
+   private String indents() {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < indentCount; i++) {
+         sb.append(INDENT);
+      }
+      return sb.toString();
+   }
+
+   private String tempVar() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("t.");
+      sb.append(tempName);
+      return sb.toString();
+   }
+
+   private String newTempVar() {
+      tempName++;
+      StringBuilder sb = new StringBuilder();
+      sb.append("t.");
+      sb.append(tempName);
+      return sb.toString();
+   }
    //
    // Auto class visitors--probably don't need to be overridden.
    //
@@ -41,10 +69,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(Goal n) {
       n.f0.accept(this);
-      //TODO func main
       n.f1.accept(this);
       n.f2.accept(this);
-      //TODO ret / exit
    }
 
    /**
@@ -68,6 +94,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f17 -> "}"
     */
    public void visit(MainClass n) {
+      System.out.println("func Main ()");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -86,6 +113,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f15.accept(this);
       n.f16.accept(this);
       n.f17.accept(this);
+      System.out.println(INDENT + "ret");
    }
 
    /**
@@ -106,14 +134,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(ClassDeclaration n) {
       n.f0.accept(this);
-      // TODO whatever the syntax was for a class declaration in class
+      CLASSNAME = n.f1.toString();
       n.f1.accept(this);
       n.f2.accept(this);
-      //TODO what the class contains
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
-      //TODO newline maybe
    }
 
    /**
@@ -127,9 +153,9 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f7 -> "}"
     */
    public void visit(ClassExtendsDeclaration n) {
-      //TODO same as above, but also needs to retrieve member methods and fields from parent classes
       n.f0.accept(this);
       n.f1.accept(this);
+      CLASSNAME = n.f1.toString();
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
@@ -144,7 +170,6 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> ";"
     */
    public void visit(VarDeclaration n) {
-      //SKIP
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -166,23 +191,25 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f12 -> "}"
     */
    public void visit(MethodDeclaration n) {
-      
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
-      // TODO function name, if nested inside of a class add this or skip
+      System.out.print("func " + CLASSNAME +"." + n.f2.toString() + " (this ");
       n.f3.accept(this);
       n.f4.accept(this);
-      // TODO params not args
       n.f5.accept(this);
+      System.out.println(")");
       n.f6.accept(this);
+      indentCount++;
       n.f7.accept(this);
       n.f8.accept(this);
       n.f9.accept(this);
-      // TODO ret
+      System.out.println(indents() + "ret" + VARIABLE);
+      indentCount--;
       n.f10.accept(this);
       n.f11.accept(this);
       n.f12.accept(this);
+      System.out.println("");
    }
 
    /**
@@ -191,9 +218,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(FormalParameterList n) {
       n.f0.accept(this);
-      //TODO first param??
+      System.out.print(n.f0.toString() + " ");
       n.f1.accept(this);
-      //TODO close
    }
 
    /**
@@ -201,7 +227,6 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> Identifier()
     */
    public void visit(FormalParameter n) {
-      //SKIP
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -213,7 +238,6 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    public void visit(FormalParameterRest n) {
       n.f0.accept(this);
       n.f1.accept(this);
-      //TODO additional params
    }
 
    /**
@@ -288,6 +312,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
+      //TODO shall we do this from the bottom up?
    }
 
    /**
@@ -356,6 +381,7 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
+      System.out.println(Indents() + " " + n.f2.toString());
    }
 
    /**
@@ -461,12 +487,22 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f5 -> ")"
     */
    public void visit(MessageSend n) {
+      tempName++;
+      //Address of the function table
+      String t = newTempVar();
+      System.out.println(indents() + t + " = [" + n.f0.toString() + "]");
+      //Address of the function this may need to be updated via where it is at according to the symbol table
+      System.out.println(indents() + newTempVar() + " = [" + t + "]");
+      //This currently only calls something without params
+      //TODO what about something with the left and right side?
+      System.out.print(indents() + "call " + tempVar() + "(" + n.f0.toString() + " ");
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
+      System.out.println(")");
    }
 
    /**
@@ -474,6 +510,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> ( ExpressionRest() )*
     */
    public void visit(ExpressionList n) {
+      //TODO Should push any thing above it
+      System.out.print(newTempVar() + " ");
       n.f0.accept(this);
       n.f1.accept(this);
    }
@@ -559,6 +597,9 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     */
    public void visit(AllocationExpression n) {
+      //TODO size needs to be retrieved from symbol table
+      System.out.println(indents() + n.f1.toString() + " = heapAllocZ(4)");
+      System.out.println(indents() + "[" + n.f1.toString() + "] = :vmt_" + n.f1.toString());
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);

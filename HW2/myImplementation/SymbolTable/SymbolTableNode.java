@@ -16,14 +16,14 @@ public class SymbolTableNode {
 
     static int order_of_execuetion = 0;
     public SymbolTableNode Parent;
-    String identifier;
-    SymbolType type;
+    public String identifier;
+    public SymbolType type;
     int rank;
 
     HashMap<String, SymbolTableNode> unorderedChildren = new HashMap<>();
 
     public SymbolTableNode(String id, SymbolType type){
-        System.out.println("Node " + id +  " of " + type);
+        //System.out.println("Node " + id +  " of " + type);
         this.identifier = id;
         this.type = type;
         rank = order_of_execuetion;
@@ -48,15 +48,19 @@ public class SymbolTableNode {
                 n = new STVariableNode(id, type);
                 break;
             case "Goal":
+                n = new SymbolTableNode(id, SymbolType.GOAL);
+                break;
             case "Main":
+                n = new SymbolTableNode(id, SymbolType.MAIN);
+                break;
             default:
                 n = new SymbolTableNode(id, null);
               // TODO should throw an error in the future
           }
-        System.out.println("here");
+        //System.out.println("here");
         n.Parent = this;
-        if (n.Parent != null)
-            System.out.println("      " + n.rank + n.Parent.identifier);
+        // if (n.Parent != null)
+        //     System.out.println("      " + n.rank + n.Parent.identifier);
         unorderedChildren.put(n.identifier, n);
         return n;
     }
@@ -81,6 +85,10 @@ public class SymbolTableNode {
         return null;
     }
 
+    public String getType(){
+        return type.toString();
+    }
+
     public SymbolTableNode findExisitingSymbolTopDown(String className, String id){
         //Traverse to root node
         SymbolTableNode n;
@@ -92,5 +100,12 @@ public class SymbolTableNode {
         return target.unorderedChildren.get(id);
     }
     
+    public ArrayList<SymbolTableNode> getChildren(){
+        ArrayList<SymbolTableNode> children = new ArrayList<>();
+        for (String id: unorderedChildren.keySet()){
+            children.add(unorderedChildren.get(id));
+        }
+        return children;
+    }
     
 }

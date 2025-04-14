@@ -1,0 +1,5 @@
+const vmt_Twenty
+    :Twenty.reset
+    :Twenty.increaseResult
+    :Twenty.generate
+
