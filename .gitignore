@@ -2,4 +2,5 @@
 #just ignore all files in Given files
 GivenFiles/
 
+vapor-parser.jar
 *.class

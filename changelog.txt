@@ -1,4 +1,23 @@
+4/21/2025
+- downloaded dependencies and ran main for HW4.
+
+
+
 4/13/2025
+- Minor updates to symbol as required
+- Added all Hw2 rules as comments
+- Started Vaporvisitor
+- Added code to generate struct declarations
+- Tried using a double stack setup to generate text
+
+TODO
+- The structure that you have for the vaporvisitor sucks
+- It really really needs to either make use of arguments or have a return value added
+- OR an incredibly robust symbol table which would basically be rebuilding the ast
+- Worth asking about this during recitation
+- Work needs to be done on "helper methods"
+- Final implementation of Hw2
+- Symbol table should have some responsibilty related to both
 
 4/12/2025
 Updated Symbol table with 3 new classes
