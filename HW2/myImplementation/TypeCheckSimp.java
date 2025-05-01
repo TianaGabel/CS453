@@ -4,7 +4,7 @@ import java.util.*;
 import syntaxtree.*;
 import myImplementation.SymbolTable.*;
 
-public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
+public class TypeCheckSimp<VarType,VarType> extends GJDepthFirst<VarType,VarType>{
     
 
    SymbolTableNode root;
@@ -28,7 +28,7 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
    }
 
    //TODO unnecessary
-   // public void checkDistinct(ArrayList<STVariableNode> params){
+   // public VarType checkDistinct(ArrayList<STVariableNode> params){
    //    for(SymbolTableNode child: params){
    //       for(SymbolTableNode other: params){
    //          if(child.identifier.equals(other.identifier)){
@@ -40,29 +40,37 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
    //
    // Auto class visitors--probably don't need to be overridden.
    //
-   public void visit(NodeList n) {
+   public VarType visit(NodeList n, VarType v) {
+      VarType r =null;
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
-         e.nextElement().accept(this);
+         e.nextElement().accept(this,v);
+      
+      return r;}
 
-   }
-
-   public void visit(NodeListOptional n) {
-      if ( n.present() )
+   public VarType visit(NodeListOptional n, VarType v) {
+      VarType r =null;
+      if ( n.present() ){
          for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
-            e.nextElement().accept(this);
+            e.nextElement().accept(this,v);
+      }
+      return r;
    }
 
-   public void visit(NodeOptional n) {
+   public VarType visit(NodeOptional n, VarType v) {
+      VarType r =null;
       if ( n.present() )
-         n.node.accept(this);
+         n.node.accept(this,v);
+      return r;
    }
 
-   public void visit(NodeSequence n) {
+   public VarType visit(NodeSequence n, VarType v) {
+      VarType r =null;
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
-         e.nextElement().accept(this);
+         e.nextElement().accept(this,v);
+      return r;
    }
 
-   public void visit(NodeToken n) { }
+   public VarType visit(NodeToken n, VarType v) {return null; }
 
    //
    // User-generated visitor methods below
@@ -73,7 +81,8 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> ( TypeDeclaration() )*
     * f2 -> <EOF>
     */
-   public void visit(Goal n) {
+   public VarType visit(Goal n, VarType v) {
+      VarType r =null;
       //7.2 TYPECHECK
       // are the class names unique? including main
       
@@ -89,9 +98,10 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
       }
 
 
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -114,40 +124,44 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f16 -> "}"
     * f17 -> "}"
     */
-   public void visit(MainClass n) {
+   public VarType visit(MainClass n, VarType v) {
+      VarType r =null;
       //7.3 TYPECHECK
       // are ids unique? (above)
       // do children typecheck?
       // idk maybe more
 
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
       currentNode = root.findExisitingSymbol(currentID);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
-      n.f7.accept(this);
-      n.f8.accept(this);
-      n.f9.accept(this);
-      n.f10.accept(this);
-      n.f11.accept(this);
-      n.f12.accept(this);
-      n.f13.accept(this);
-      n.f14.accept(this);
-      n.f15.accept(this);
-      n.f16.accept(this);
-      n.f17.accept(this);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      n.f6.accept(this,v);
+      n.f7.accept(this,v);
+      n.f8.accept(this,v);
+      n.f9.accept(this,v);
+      n.f10.accept(this,v);
+      n.f11.accept(this,v);
+      n.f12.accept(this,v);
+      n.f13.accept(this,v);
+      n.f14.accept(this,v);
+      n.f15.accept(this,v);
+      n.f16.accept(this,v);
+      n.f17.accept(this,v);
       currentNode = root;
+      return r;
    }
 
    /**
     * f0 -> ClassDeclaration()
     *       | ClassExtendsDeclaration()
     */
-   public void visit(TypeDeclaration n) {
-      n.f0.accept(this);
+   public VarType visit(TypeDeclaration n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
@@ -158,19 +172,21 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f4 -> ( MethodDeclaration() )*
     * f5 -> "}"
     */
-   public void visit(ClassDeclaration n) {
+   public VarType visit(ClassDeclaration n, VarType v) {
+      VarType r =null;
       //7.4 TYPECHECK
       // are ids unique? (above)
       //are method names unique? (also above)
       // do children typecheck?
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
       currentNode = root.findExisitingSymbol(currentID);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
       currentNode = root;
+      return r;
    }
 
    /**
@@ -183,22 +199,24 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f6 -> ( MethodDeclaration() )*
     * f7 -> "}"
     */
-   public void visit(ClassExtendsDeclaration n) {
+   public VarType visit(ClassExtendsDeclaration n, VarType v) {
+      VarType r =null;
       //7.4 TYPECHECK
       // are ids unique? (above)
       //are method names unique? (above)
       // do children typecheck?
       // reference the no overloading rule (handled in symbol table)
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
       currentNode = root.findExisitingSymbol(currentID);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
-      n.f7.accept(this);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      n.f6.accept(this,v);
+      n.f7.accept(this,v);
       currentNode = root;
+      return r;
    }
 
    /**
@@ -206,10 +224,12 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> Identifier()
     * f2 -> ";"
     */
-   public void visit(VarDeclaration n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public VarType visit(VarDeclaration n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -227,7 +247,8 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f11 -> ";"
     * f12 -> "}"
     */
-   public void visit(MethodDeclaration n) {
+   public VarType visit(MethodDeclaration n, VarType v) {
+      VarType r =null;
       //7.5 TYPECHECK
       // are params unique? (above)
       // are ids unique? (above)
@@ -236,48 +257,55 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
       // return matches type? TODO
       // worth looking at doc again
 
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
       currentNode = currentNode.findExisitingSymbol(currentID);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
-      n.f7.accept(this);
-      n.f8.accept(this);
-      n.f9.accept(this);
-      n.f10.accept(this);
-      n.f11.accept(this);
-      n.f12.accept(this);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      n.f6.accept(this,v);
+      n.f7.accept(this,v);
+      n.f8.accept(this,v);
+      n.f9.accept(this,v);
+      n.f10.accept(this,v);
+      n.f11.accept(this,v);
+      n.f12.accept(this,v);
       currentNode = currentNode.Parent;
+      return r;
    }
 
    /**
     * f0 -> FormalParameter()
     * f1 -> ( FormalParameterRest() )*
     */
-   public void visit(FormalParameterList n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public VarType visit(FormalParameterList n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> Type()
     * f1 -> Identifier()
     */
-   public void visit(FormalParameter n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public VarType visit(FormalParameter n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> ","
     * f1 -> FormalParameter()
     */
-   public void visit(FormalParameterRest n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public VarType visit(FormalParameterRest n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      return r;
    }
 
    /**
@@ -286,8 +314,10 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     *       | IntegerType()
     *       | Identifier()
     */
-   public void visit(Type n) {
-      n.f0.accept(this);
+   public VarType visit(Type n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
@@ -295,24 +325,30 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "["
     * f2 -> "]"
     */
-   public void visit(ArrayType n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public VarType visit(ArrayType n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> "boolean"
     */
-   public void visit(BooleanType n) {
-      n.f0.accept(this);
+   public VarType visit(BooleanType n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> "int"
     */
-   public void visit(IntegerType n) {
-      n.f0.accept(this);
+   public VarType visit(IntegerType n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
@@ -323,8 +359,10 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     *       | WhileStatement()
     *       | PrintStatement()
     */
-   public void visit(Statement n) {
-      n.f0.accept(this);
+   public VarType visit(Statement n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
@@ -332,12 +370,14 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> ( Statement() )*
     * f2 -> "}"
     */
-   public void visit(Block n) {
+   public VarType visit(Block n, VarType v) {
+      VarType r =null;
       // 7.6 22 TYPECHECK
       // do children typecheck?
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -346,17 +386,19 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f2 -> Expression()
     * f3 -> ";"
     */
-   public void visit(AssignmentStatement n) {
+   public VarType visit(AssignmentStatement n, VarType v) {
+      VarType r =null;
       // 7.6 23 TYPECHECK
       // is id a variable? (done)
       // is expression the same type as id?
       // TODO ?? unsure what the last line means
       
-      n.f0.accept(this);
+      n.f0.accept(this,v);
       currentNode.isVar(currentID);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      return r;
    }
 
    /**
@@ -368,20 +410,22 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f5 -> Expression()
     * f6 -> ";"
     */
-   public void visit(ArrayAssignmentStatement n) {
+   public VarType visit(ArrayAssignmentStatement n, VarType v) {
+      VarType r =null;
       // 7.6 TYPECHECK
       // is id an array? (done)
       // is expression in [] an int?
       // is assignment expression an int
 
-      n.f0.accept(this);
+      n.f0.accept(this,v);
       currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      n.f6.accept(this,v);
+      return r;
    }
 
    /**
@@ -393,18 +437,20 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f5 -> "else"
     * f6 -> Statement()
     */
-   public void visit(IfStatement n) {
+   public VarType visit(IfStatement n, VarType v) {
+      VarType r =null;
       // 7.6 TYPECHECK
       // is f2 a bool
       // do the children typecheck?
       // TODO accounting for uninitialized variables
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      n.f6.accept(this,v);
+      return r;
    }
 
    /**
@@ -414,16 +460,18 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     * f4 -> Statement()
     */
-   public void visit(WhileStatement n) {
+   public VarType visit(WhileStatement n, VarType v) {
+      VarType r =null;
       // 7.6 TYPECHECK
       // is f2 a bool
       // do the children typecheck?
       // TODO accounting for uninitialized variables if skipped
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      return r;
    }
 
    /**
@@ -433,13 +481,15 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     * f4 -> ";"
     */
-   public void visit(PrintStatement n) {
+   public VarType visit(PrintStatement n, VarType v) {
+      VarType r =null;
       // 7.6 TYPECHECK
       // is f2 an int?
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      return r;
    }
 
    /**
@@ -453,8 +503,10 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     *       | MessageSend()
     *       | PrimaryExpression()
     */
-   public void visit(Expression n) {
-      n.f0.accept(this);
+   public VarType visit(Expression n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
@@ -462,14 +514,16 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "&&"
     * f2 -> PrimaryExpression()
     */
-   public void visit(AndExpression n) {
+   public VarType visit(AndExpression n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // both type bool
       // propagate bool
 
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -477,13 +531,15 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "<"
     * f2 -> PrimaryExpression()
     */
-   public void visit(CompareExpression n) {
+   public VarType visit(CompareExpression n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // both type int
       // propagate bool
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -491,13 +547,15 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "+"
     * f2 -> PrimaryExpression()
     */
-   public void visit(PlusExpression n) {
+   public VarType visit(PlusExpression n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // both type int
       // propagate int
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -505,13 +563,15 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "-"
     * f2 -> PrimaryExpression()
     */
-   public void visit(MinusExpression n) {
+   public VarType visit(MinusExpression n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // both type int
       // propagate int
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -519,13 +579,15 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "*"
     * f2 -> PrimaryExpression()
     */
-   public void visit(TimesExpression n) {
+   public VarType visit(TimesExpression n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // both type int
       // propagate int
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -534,16 +596,18 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     * f3 -> "]"
     */
-   public void visit(ArrayLookup n) {
+   public VarType visit(ArrayLookup n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // f0 array (done)
       // f2 int
       // propagate int
-      n.f0.accept(this);
+      n.f0.accept(this,v);
       currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      return r;
    }
 
    /**
@@ -551,14 +615,16 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> "."
     * f2 -> "length"
     */
-   public void visit(ArrayLength n) {
+   public VarType visit(ArrayLength n, VarType v) {
+      VarType r =null;
       // 7.7 TYPECHECK
       // f0 array (done)
       // propagate int
-      n.f0.accept(this);
+      n.f0.accept(this,v);
       currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
 
    /**
@@ -569,7 +635,8 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f4 -> ( ExpressionList() )?
     * f5 -> ")"
     */
-   public void visit(MessageSend n) {
+   public VarType visit(MessageSend n, VarType v) {
+      VarType r =null;
       // 7.7 35 TYPECHECK
       // f0 is an instance (done)
       // f2 is a method (done)
@@ -579,35 +646,40 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
       // the return type matches
       // propagate return type
       // TODO Maybe take another look at this one
-      n.f0.accept(this);
+      n.f0.accept(this,v);
       STVariableNode i = currentNode.Parent.isVar(currentID);
       i.vtype.equals(VarType.INSTANCE);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
       if (!i.MapToInitialized.containsKey(currentID)){
          //TODO throw exception if false
       }
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> Expression()
     * f1 -> ( ExpressionRest() )*
     */
-   public void visit(ExpressionList n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public VarType visit(ExpressionList n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> ","
     * f1 -> Expression()
     */
-   public void visit(ExpressionRest n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public VarType visit(ExpressionRest n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      return r;
    }
 
    /**
@@ -621,50 +693,62 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     *       | NotExpression()
     *       | BracketExpression()
     */
-   public void visit(PrimaryExpression n) {
-      n.f0.accept(this);
+   public VarType visit(PrimaryExpression n, VarType v) {
+      VarType r =null;
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> <INTEGER_LITERAL>
     */
-   public void visit(IntegerLiteral n) {
+   public VarType visit(IntegerLiteral n, VarType v) {
+      VarType r =null;
       //TODO propagate
-      n.f0.accept(this);
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> "true"
     */
-   public void visit(TrueLiteral n) {
+   public VarType visit(TrueLiteral n, VarType v) {
+      VarType r =null;
       //TODO propagate
-      n.f0.accept(this);
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> "false"
     */
-   public void visit(FalseLiteral n) {
+   public VarType visit(FalseLiteral n, VarType v) {
+      VarType r =null;
       //TODO propagate
-      n.f0.accept(this);
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> <IDENTIFIER>
     */
-   public void visit(Identifier n) {
+   public VarType visit(Identifier n, VarType v) {
+      VarType r =null;
       //TODO propagate
       //TODO rule 39 unsure if this requires anything
       currentID = n.f0.toString();
-      n.f0.accept(this);
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> "this"
     */
-   public void visit(ThisExpression n) {
+   public VarType visit(ThisExpression n, VarType v) {
+      VarType r =null;
       //TODO rule 40 unsure if this requires anything
-      n.f0.accept(this);
+      n.f0.accept(this,v);
+      return r;
    }
 
    /**
@@ -674,15 +758,17 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f3 -> Expression()
     * f4 -> "]"
     */
-   public void visit(ArrayAllocationExpression n) {
+   public VarType visit(ArrayAllocationExpression n, VarType v) {
+      VarType r =null;
       //7.7 TYPECHECK
       // f3 is an int
       // TODO if not handled by class or method, check existing
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      return r;
    }
 
    /**
@@ -691,24 +777,28 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f2 -> "("
     * f3 -> ")"
     */
-   public void visit(AllocationExpression n) {
+   public VarType visit(AllocationExpression n, VarType v) {
+      VarType r =null;
       //TODO propagate
       //Class existence handled in symboltable
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      n.f3.accept(this,v);
+      return r;
    }
 
    /**
     * f0 -> "!"
     * f1 -> Expression()
     */
-   public void visit(NotExpression n) {
+   public VarType visit(NotExpression n, VarType v) {
+      VarType r =null;
       // bool
       // propagate bool
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      return r;
    }
 
    /**
@@ -716,11 +806,13 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     * f1 -> Expression()
     * f2 -> ")"
     */
-   public void visit(BracketExpression n) {
+   public VarType visit(BracketExpression n, VarType v) {
+      VarType r =null;
       //TODO propagate
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this,v);
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+      return r;
    }
     
 }
