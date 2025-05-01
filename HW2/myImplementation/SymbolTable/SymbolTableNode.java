@@ -3,15 +3,6 @@ package myImplementation.SymbolTable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// Arg will likely not be used, and these may need to be updated
-enum SymbolType {
-    GOAL, MAIN, CLASS, METHOD, VARIABLE
-}
-
-enum VarType {
-    ARRAY, INT, BOOL, INSTANCE
-}
-
 public class SymbolTableNode {
 
     static int order_of_execuetion = 0;
@@ -91,6 +82,29 @@ public class SymbolTableNode {
 
     public String getType(){
         return type.toString();
+    }
+
+    public STVariableNode isVar(String id){
+        //TODO THIS MAY NOT WORK FOR THIS IT WAS TAKEN FROM METHOD
+        for(SymbolTableNode n: getChildren()){
+            if ((n instanceof STVariableNode) && (n.identifier.equals(id))){
+                return (STVariableNode) n;
+            }
+        }
+        return null;
+        //this also doesn't consider class field if they exist
+        //TODO Throw and exception
+    }
+
+    public STClassNode isInstance(String id){
+        for(SymbolTableNode n: getChildren()){
+            if ((n instanceof STVariableNode) && (n.identifier.equals(id))){
+                return (STVariableNode) n;
+            }
+        }
+        return null;
+        //this also doesn't consider class field if they exist
+        //TODO Throw and exception
     }
     
     public ArrayList<SymbolTableNode> getChildren(){

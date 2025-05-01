@@ -3,7 +3,7 @@ package myImplementation.SymbolTable;
 import java.util.ArrayList;
 
 public class STMethodNode extends SymbolTableNode {
-    ArrayList<STVariableNode> params = new ArrayList<>();
+    public ArrayList<STVariableNode> params = new ArrayList<>();
     VarType returnType;
 
     public STMethodNode(String id, SymbolType type){
@@ -31,6 +31,27 @@ public class STMethodNode extends SymbolTableNode {
     public void verifyParams(){
         //When arguments are given
         //Check that arguments match the types given by params
+    }
+
+    // @Override
+    // public void isVar(String id){
+    //     for(SymbolTableNode n: getChildren()){
+    //         if (n.identifier.equals(id)){
+    //             return;
+    //         }
+    //     }
+    //     //this also doesn't consider class field if they exist
+    //     //TODO Throw and exception
+    // }
+
+    @Override
+    public ArrayList<SymbolTableNode> getChildren(){
+        ArrayList<SymbolTableNode> children = new ArrayList<>();
+        for (String id: unorderedChildren.keySet()){
+            children.add(unorderedChildren.get(id));
+        }
+        children.addAll(params);
+        return children;
     }
 
     //STUFF for VAPOR

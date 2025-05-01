@@ -3,8 +3,6 @@ import cs132.vapor.parser.VaporParser;
 import cs132.vapor.ast.VaporProgram;
 import cs132.vapor.ast.VBuiltIn.Op;
 
-import cs132.*;
-import cs132.util.*;
 
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -16,6 +14,18 @@ public class V2VM {
   public static void main(String[] args) {
     try{
       VaporProgram vp = parseVapor(System.in, System.out);
+      //System.out.println("boo");
+      //Available attributes in vapor program
+      //2 bools for stack and locals
+      //String[] registers
+      //VDataSegment[] dataSegments
+      //Vfunction[] functions
+
+      //vfunction has a body(list of instructions), index/rank for this function
+      //code labels, list of params, stack declaration, list of local variables
+
+      //index/rank, ismutable, values(data in segment)
+
     } catch(Exception e){}
 
   }

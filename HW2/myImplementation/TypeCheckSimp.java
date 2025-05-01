@@ -6,12 +6,44 @@ import myImplementation.SymbolTable.*;
 
 public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     
+
+   SymbolTableNode root;
+   SymbolTableNode currentNode;
+   String currentID;
+
+   public TypeCheckSimp(SymbolTableNode r){
+      root = r;
+   }
+
+   //HELPER FUNCTION
+   //are all childern's ids unique
+   public void checkDistinct(SymbolTableNode parent){
+      for(SymbolTableNode child: parent.getChildren()){
+         for(SymbolTableNode other: parent.getChildren()){
+            if(child.identifier.equals(other.identifier)){
+               //TODO throw error
+            }
+         }
+      }
+   }
+
+   //TODO unnecessary
+   // public void checkDistinct(ArrayList<STVariableNode> params){
+   //    for(SymbolTableNode child: params){
+   //       for(SymbolTableNode other: params){
+   //          if(child.identifier.equals(other.identifier)){
+   //             //TODO throw error
+   //          }
+   //       }
+   //    }
+   // }
    //
    // Auto class visitors--probably don't need to be overridden.
    //
    public void visit(NodeList n) {
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
          e.nextElement().accept(this);
+
    }
 
    public void visit(NodeListOptional n) {
@@ -44,6 +76,19 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
    public void visit(Goal n) {
       //7.2 TYPECHECK
       // are the class names unique? including main
+      
+      checkDistinct(root);
+      checkDistinct(root.findExisitingSymbol("Main"));
+      for (SymbolTableNode classNode: root.getChildren()){
+         checkDistinct(classNode);
+         for (SymbolTableNode methodNode: classNode.getChildren()){
+            if (methodNode instanceof STMethodNode){
+               checkDistinct(methodNode); //children includes params
+            }
+         }
+      }
+
+
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
@@ -71,11 +116,13 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(MainClass n) {
       //7.3 TYPECHECK
-      // are ids unique?
+      // are ids unique? (above)
       // do children typecheck?
       // idk maybe more
+
       n.f0.accept(this);
       n.f1.accept(this);
+      currentNode = root.findExisitingSymbol(currentID);
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
@@ -92,6 +139,7 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
       n.f15.accept(this);
       n.f16.accept(this);
       n.f17.accept(this);
+      currentNode = root;
    }
 
    /**
@@ -112,15 +160,17 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(ClassDeclaration n) {
       //7.4 TYPECHECK
-      // are ids unique?
-      //are method names unique?
+      // are ids unique? (above)
+      //are method names unique? (also above)
       // do children typecheck?
       n.f0.accept(this);
       n.f1.accept(this);
+      currentNode = root.findExisitingSymbol(currentID);
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
+      currentNode = root;
    }
 
    /**
@@ -135,18 +185,20 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(ClassExtendsDeclaration n) {
       //7.4 TYPECHECK
-      // are ids unique?
-      //are method names unique?
+      // are ids unique? (above)
+      //are method names unique? (above)
       // do children typecheck?
-      // reference the no overloading rule
+      // reference the no overloading rule (handled in symbol table)
       n.f0.accept(this);
       n.f1.accept(this);
+      currentNode = root.findExisitingSymbol(currentID);
       n.f2.accept(this);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
       n.f6.accept(this);
       n.f7.accept(this);
+      currentNode = root;
    }
 
    /**
@@ -177,16 +229,17 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(MethodDeclaration n) {
       //7.5 TYPECHECK
-      // are params unique?
-      // are ids unique?
+      // are params unique? (above)
+      // are ids unique? (above)
       // both of the above?
       // do children typecheck(This and above includes statements)?
-      // return matches type?
+      // return matches type? TODO
       // worth looking at doc again
 
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
+      currentNode = currentNode.findExisitingSymbol(currentID);
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
@@ -197,6 +250,7 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
       n.f10.accept(this);
       n.f11.accept(this);
       n.f12.accept(this);
+      currentNode = currentNode.Parent;
    }
 
    /**
@@ -294,10 +348,12 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(AssignmentStatement n) {
       // 7.6 23 TYPECHECK
-      // is id a variable?
+      // is id a variable? (done)
       // is expression the same type as id?
-      // TODO ?? unsure what the last line means 
+      // TODO ?? unsure what the last line means
+      
       n.f0.accept(this);
+      currentNode.isVar(currentID);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
@@ -314,11 +370,12 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(ArrayAssignmentStatement n) {
       // 7.6 TYPECHECK
-      // is id an array?
+      // is id an array? (done)
       // is expression in [] an int?
       // is assignment expression an int
 
       n.f0.accept(this);
+      currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
@@ -479,10 +536,11 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(ArrayLookup n) {
       // 7.7 TYPECHECK
-      // f0 array
+      // f0 array (done)
       // f2 int
       // propagate int
       n.f0.accept(this);
+      currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
@@ -495,9 +553,10 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(ArrayLength n) {
       // 7.7 TYPECHECK
-      // f0 array
+      // f0 array (done)
       // propagate int
       n.f0.accept(this);
+      currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
       n.f1.accept(this);
       n.f2.accept(this);
    }
@@ -512,16 +571,22 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(MessageSend n) {
       // 7.7 35 TYPECHECK
-      // f0 is a class
-      // f2 is a method
-      //they go together
-      // the arguements match params
+      // f0 is an instance (done)
+      // f2 is a method (done)
+      // they go together
+      // the arguements match params TODO
+      // MAYBE A COLLECT PARAMS BOOL OR JUST HAVE EXPRESSION LIST HANDLE IT
       // the return type matches
       // propagate return type
       // TODO Maybe take another look at this one
       n.f0.accept(this);
+      STVariableNode i = currentNode.Parent.isVar(currentID);
+      i.vtype.equals(VarType.INSTANCE);
       n.f1.accept(this);
       n.f2.accept(this);
+      if (!i.MapToInitialized.containsKey(currentID)){
+         //TODO throw exception if false
+      }
       n.f3.accept(this);
       n.f4.accept(this);
       n.f5.accept(this);
@@ -590,6 +655,7 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
    public void visit(Identifier n) {
       //TODO propagate
       //TODO rule 39 unsure if this requires anything
+      currentID = n.f0.toString();
       n.f0.accept(this);
    }
 
@@ -627,6 +693,7 @@ public class TypeCheckSimp<R,A> extends DepthFirstVisitor{
     */
    public void visit(AllocationExpression n) {
       //TODO propagate
+      //Class existence handled in symboltable
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);

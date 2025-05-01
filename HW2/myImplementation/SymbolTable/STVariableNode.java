@@ -1,9 +1,14 @@
 package myImplementation.SymbolTable;
 
+import java.util.HashMap;
+
 public class STVariableNode extends SymbolTableNode{
-    VarType type;
+    public VarType vtype;
+    public STClassNode classType; //only for instances
+    public HashMap<String, SymbolTableNode> MapToInitialized = new HashMap<>();
     boolean hasValue;
-    int length; //Only applicable to arrays
+    boolean[] childrenHasVals;
+    int length; // arrays and instances
     
     
     //I'm going to base this off of how mpi handles variables
@@ -13,16 +18,26 @@ public class STVariableNode extends SymbolTableNode{
         super(id, SymbolType.VARIABLE);
         switch(t) {
             case "Integer":
-                type = VarType.INT;
+                vtype = VarType.INT;
             case "Boolean":
-                type = VarType.BOOL ;
+                vtype = VarType.BOOL ;
                 break;
             case "Array":
-                type = VarType.ARRAY;
+                vtype = VarType.ARRAY;
             default:
               // TODO should throw an error in the future
         }
         this.hasValue = false;
+    }
+
+    public void startArray(){
+        //set length
+        //generate array of size length of all false
+    }
+
+    public void startInstance(){
+        //set length based on a method in class
+        //generate array of size length of all false (possibly methods can be considered true)
     }
 
 }
