@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class STMethodNode extends SymbolTableNode {
     public ArrayList<STVariableNode> params = new ArrayList<>();
-    VarType returnType;
+    public VarType returnType;
 
     public STMethodNode(String id, SymbolType type){
         super(id,type);

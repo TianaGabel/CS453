@@ -6,6 +6,8 @@ import java.util.*;
 import myImplementation.*;
 // Files are stored in the picojava directory/package.
 //import picojava.*;
+import myImplementation.SymbolTable.STWrapper;
+import myImplementation.TypeCheckSimp;
 
 public class Typecheck {
     public static void main(String[] args) {
@@ -15,8 +17,8 @@ public class Typecheck {
 
 		// Pretty-print the tree. PPrinter inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=String.
-	    PPrinter<Void,String> pp = new PPrinter<Void,String>();
-	    root.accept(pp);
+	    //PPrinter<Void,String> pp = new PPrinter<Void,String>();
+	    //root.accept(pp);
 
 	    // Build the symbol table. Top-down visitor, inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=Integer.
@@ -35,8 +37,8 @@ public class Typecheck {
 	    // argument (=A). You may implement things differently of
 	    // course!
 
-	    //TypeCheckSimp ts = new TypeCheckSimp();
-	    //MyType res = root.accept(ts, symt);
+	    TypeCheckSimp<STWrapper> ts = new TypeCheckSimp<STWrapper>(pv.getRoot());
+	    root.accept(ts, (new STWrapper()));
 
 	    // Ugly code not to be inspired from: "my" way of storing
 	    // type info / typecheck property: if some of my internal

@@ -84,9 +84,16 @@ public class SymbolTableNode {
         return type.toString();
     }
 
+    //WOULD BE A GOOD THING FOR LOCAL VARS
     public STVariableNode isVar(String id){
-        //TODO THIS MAY NOT WORK FOR THIS IT WAS TAKEN FROM METHOD
+        //Call to method vars
         for(SymbolTableNode n: getChildren()){
+            if ((n instanceof STVariableNode) && (n.identifier.equals(id))){
+                return (STVariableNode) n;
+            }
+        }
+        //Call to class vars
+        for(SymbolTableNode n: Parent.getChildren()){
             if ((n instanceof STVariableNode) && (n.identifier.equals(id))){
                 return (STVariableNode) n;
             }
@@ -99,7 +106,7 @@ public class SymbolTableNode {
     public STClassNode isInstance(String id){
         for(SymbolTableNode n: getChildren()){
             if ((n instanceof STVariableNode) && (n.identifier.equals(id))){
-                return (STVariableNode) n;
+                return (STClassNode) n;
             }
         }
         return null;
