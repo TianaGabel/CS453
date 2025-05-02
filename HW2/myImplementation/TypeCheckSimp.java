@@ -33,25 +33,12 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       for(SymbolTableNode child: parent.getChildren()){
          for(SymbolTableNode other: parent.getChildren()){
             if(child.identifier.equals(other.identifier)){
-               //TODO throw error
+               System.out.println("ouch! not disctint");
             }
          }
       }
    }
 
-   //TODO unnecessary
-   // public void checkDistinct(ArrayList<STVariableNode> params){
-   //    for(SymbolTableNode child: params){
-   //       for(SymbolTableNode other: params){
-   //          if(child.identifier.equals(other.identifier)){
-   //             //TODO throw error
-   //          }
-   //       }
-   //    }
-   // }
-   //
-   // Auto class visitors--probably don't need to be overridden.
-   //
    public void visit(NodeList n, W  v) {
       /**/
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
@@ -400,7 +387,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(typeOfID)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f3.accept(this,v);
 
@@ -428,13 +415,13 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f3.accept(this,v);
       n.f4.accept(this,v);
       n.f5.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f6.accept(this,v);
       /*r*/
@@ -459,7 +446,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.BOOL)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f3.accept(this,v);
       n.f4.accept(this,v);
@@ -485,7 +472,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.BOOL)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f3.accept(this,v);
       n.f4.accept(this,v);
@@ -506,7 +493,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f3.accept(this,v);
       n.f4.accept(this,v);
@@ -543,12 +530,12 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
 
       n.f0.accept(this,v);
       if (!v.is(VarType.BOOL)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.BOOL)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       /*r*/
    }
@@ -565,12 +552,12 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate bool
       n.f0.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       v.setPT(VarType.BOOL);
       /*r*/
@@ -588,12 +575,12 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate int
       n.f0.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       /*r*/
    }
@@ -610,12 +597,12 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate int
       n.f0.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       /*r*/
    }
@@ -632,12 +619,12 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate int
       n.f0.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       //Already int
       /*r*/
@@ -657,13 +644,13 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate int
       n.f0.accept(this,v);
       if (!v.is(VarType.ARRAY)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
       n.f1.accept(this,v);
       n.f2.accept(this,v);
       if (!v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f3.accept(this,v);
       /*r*/
@@ -681,7 +668,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate int
       n.f0.accept(this,v);
       if (!v.is(VarType.ARRAY)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       currentNode.isVar(currentID).vtype.equals(VarType.ARRAY);
       n.f1.accept(this,v);
@@ -710,34 +697,60 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       // propagate return type (done)
       // TODO Maybe take another look at this one
       n.f0.accept(this,v);
-      if (v.getPT() == VarType.INSTANCE){
+      if ((v.getPT() == VarType.INSTANCE) && (root.findExisitingClass(currentID) != null)){
          //Case instance was just created
-         STClassNode i = (STClassNode)root.findExisitingSymbol(currentID);
+         STClassNode i = root.findExisitingClass(currentID);
+
          n.f1.accept(this,v);
          n.f2.accept(this,v);
+
          String m = currentID;
          if (i.findExisitingSymbol(m) == null){
-            //TODO tne
+            System.out.println("ouch! messagesend1");
          }
          n.f3.accept(this,v);
          n.f4.accept(this,v);
          n.f5.accept(this,v);
          v.setPT(((STMethodNode)i.findExisitingSymbol(m)).returnType);
-      }else {
-         //Case instance was preexisitng
-         STVariableNode i = (STVariableNode)root.findExisitingSymbol(currentID);
-         i.vtype.equals(VarType.INSTANCE);
+         return;
+      }
+      
+      if (currentID.equals("this")){
+         //Case this.method()
          n.f1.accept(this,v);
          n.f2.accept(this,v);
+
          String m = currentID;
-         if (!i.MapToInitialized.containsKey(m)){
-            //TODO throw exception if false
+         if (!(currentNode.findExisitingSymbol(m) != null)){
+            System.out.println("ouch! messagesend 2");
          }
          n.f3.accept(this,v);
          n.f4.accept(this,v);
          n.f5.accept(this,v);
-         v.setPT(((STMethodNode)i.classType.findExisitingSymbol(m)).returnType);
+         v.setPT(((STMethodNode)currentNode.Parent.findExisitingSymbol(m)).returnType);
+         return;
       }
+
+      //Case instance was preexisitng
+      STVariableNode i = null;
+      for (SymbolTableNode p:currentNode.getChildren()){
+         if (p.identifier.equals(currentID)){
+            i = (STVariableNode)p;
+         }
+      }
+      n.f1.accept(this,v);
+      n.f2.accept(this,v);
+
+      //System.out.println(currentID);
+      String m = currentID;
+      if (i == null) {System.out.println("BOOOOO");}
+      else if (!i.MapToInitialized.containsKey(m)){
+         System.out.println("ouch! messagesend 3");
+      }
+      n.f3.accept(this,v);
+      n.f4.accept(this,v);
+      n.f5.accept(this,v);
+      v.setPT(((STMethodNode)i.classType().findExisitingSymbol(m)).returnType);
       /*r*/
    }
 
@@ -829,7 +842,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
     */
    public void visit(ThisExpression n, W  v) {
       /**/
-      //TODO rule 40 unsure if this requires anything
+      currentID = "this";
       n.f0.accept(this,v);
       /*r*/
    }
@@ -851,7 +864,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f2.accept(this,v);
       n.f3.accept(this,v);
       if (v.is(VarType.INT)){
-         //TODO tne
+         System.out.println("ouch!");
       }
       n.f4.accept(this,v);
       v.setPT(VarType.ARRAY);
@@ -887,7 +900,7 @@ public class TypeCheckSimp<W extends STWinterface> extends GJVoidDepthFirst<W>{
       n.f0.accept(this,v);
       n.f1.accept(this,v);
       if (!v.is(VarType.BOOL)){
-         //TODO throw exception
+         System.out.println("ouch!");
       }
       /*r*/
    }

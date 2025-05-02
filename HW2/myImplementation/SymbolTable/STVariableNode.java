@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class STVariableNode extends SymbolTableNode{
     public VarType vtype;
-    public STClassNode classType; //only for instances
+    public String classType; //only for instances
     public HashMap<String, SymbolTableNode> MapToInitialized = new HashMap<>();
     boolean hasValue;
     boolean[] childrenHasVals;
@@ -19,15 +19,24 @@ public class STVariableNode extends SymbolTableNode{
         switch(t) {
             case "Integer":
                 vtype = VarType.INT;
+                break;
             case "Boolean":
                 vtype = VarType.BOOL ;
                 break;
             case "Array":
                 vtype = VarType.ARRAY;
+                break;
+            case "Instance":
+                vtype = VarType.INSTANCE;
+                break;
             default:
               // TODO should throw an error in the future
         }
         this.hasValue = false;
+    }
+
+    public STClassNode classType(){
+        return (STClassNode)findExistingSymbolFromRoot(classType);
     }
 
     public void startArray(){
@@ -36,8 +45,17 @@ public class STVariableNode extends SymbolTableNode{
     }
 
     public void startInstance(){
+        
         //set length based on a method in class
         //generate array of size length of all false (possibly methods can be considered true)
+    }
+
+    @Override
+    public String toString() {
+        String s = "";
+        s += identifier + " ";
+        s += vtype + " ";
+        return s;
     }
 
 }

@@ -22,7 +22,6 @@ public class Typecheck {
 
 	    // Build the symbol table. Top-down visitor, inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=Integer.
-		System.out.println("BOO symbol table");
 		SymTableVisitor<Void, String> pv = new SymTableVisitor<Void,String>();
 		pv.createRoot();
 		root.accept(pv);
@@ -49,10 +48,11 @@ public class Typecheck {
 	    // 	System.out.println("Code typechecks");
 	    // else
 	    // 	System.out.println("Type error");
-		System.out.println("Type error");
+		System.out.println("-Code typechecks");
 	}
-	catch (ParseException e) {
-	    System.out.println(e.toString());
+	catch (Exception e) {
+		System.out.println("-Type error");
+	    //System.out.println(e.toString());
 	    System.exit(1);
 	}
     }

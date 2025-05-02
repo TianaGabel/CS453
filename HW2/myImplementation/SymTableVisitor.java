@@ -5,12 +5,15 @@ import java.util.*;
 
 import myImplementation.SymbolTable.STClassNode;
 import myImplementation.SymbolTable.STMethodNode;
+import myImplementation.SymbolTable.STVariableNode;
 import myImplementation.SymbolTable.SymbolTableNode;
+import myImplementation.SymbolTable.VarType;
 import syntaxtree.*;
 
 public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     
    SymbolTableNode currentNode;
+   SymbolTableNode lastAssignmentStatementNode;
    SymbolTableNode root;
    String currentID;
    String currentType;
@@ -169,7 +172,11 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
-      currentNode.addNode(currentID, currentType);
+      if ((currentType.equals("Array"))||(currentType.equals("Integer"))||(currentType.equals("Boolean"))){
+         currentNode.addNode(currentID, currentType);
+      } else {
+         currentNode.addNode(currentID, "Instance");
+      }
    }
 
    /**
@@ -221,8 +228,10 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(FormalParameter n) {
       n.f0.accept(this);
+      String paramClassType = currentID;
       n.f1.accept(this);
-      ((STMethodNode) currentNode).addParam(currentID, currentType);
+      if (currentType.equals("Instance")){((STMethodNode) currentNode).addParam(currentID, currentType, paramClassType);}
+      else {((STMethodNode) currentNode).addParam(currentID, currentType);}
    }
 
    /**
@@ -241,6 +250,8 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     *       | Identifier()
     */
    public void visit(Type n) {
+      //if not updated by the others will remain instance
+      currentType = "Instance";
       n.f0.accept(this);
    }
 
@@ -307,9 +318,12 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
    public void visit(AssignmentStatement n) {
       //TODO this should update the has value attribute
       n.f0.accept(this);
+      lastAssignmentStatementNode = currentNode.findExisitingSymbol(currentID);
+      //System.out.println("assign to " + currentID);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
+      lastAssignmentStatementNode = null;
    }
 
    /**
@@ -571,8 +585,12 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> "this"
     */
    public void visit(ThisExpression n) {
-      //TODO no idea how to handle labling an attribute
       n.f0.accept(this);
+      if (lastAssignmentStatementNode != null){
+         if ((((STVariableNode)lastAssignmentStatementNode).vtype == VarType.INSTANCE)){
+            ((STVariableNode)lastAssignmentStatementNode).classType = currentNode.Parent.identifier;
+         }
+      }
    }
 
    /**
@@ -599,10 +617,20 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     */
    public void visit(AllocationExpression n) {
+      //Fetch last declared node
+      SymbolTableNode k = lastAssignmentStatementNode;
       n.f0.accept(this);
       n.f1.accept(this);
-      currentID = n.f1.toString();
-      currentNode.addNode(currentID, "Instance");
+      if (k != null){
+         // System.out.println(((STVariableNode)k).vtype);
+         // System.out.println(((STVariableNode)k).Parent.getChildren());
+         // //currentID = n.f1.toString();
+         // System.out.println(currentID);
+         if ((((STVariableNode)k).vtype == VarType.INSTANCE)){
+            ((STVariableNode)k).classType = currentID;
+            //System.out.println("visited");
+         }
+      }
       n.f2.accept(this);
       n.f3.accept(this);
    }

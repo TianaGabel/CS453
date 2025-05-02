@@ -80,6 +80,18 @@ public class SymbolTableNode {
         return null;
     }
 
+    public STClassNode findExisitingClass(String id){
+        //Should only be called by root
+        SymbolTableNode result;
+        //classes
+        for (SymbolTableNode c : getChildren()){
+            if (c.identifier.equals(id)){
+                return (STClassNode)c;
+            }
+        }
+        return null;
+    }
+
     public String getType(){
         return type.toString();
     }
