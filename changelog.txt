@@ -1,5 +1,47 @@
+5/05/2025
+Aim to HW$4
+- get some better general specs of the vapor ast
+- figure out why it won't run and update .sh file
+
+- Mirror instruction visitor implementation?? (is that even what it is for)
+- maybe make a dictionary of registers (For spill everywhere I image only about 3-4 are needed)
+- figure out the limitations of those 3 arrays that were mentioned, can we not use the local one??
+
+HW3
+- change visitor to also pass arguments, remove stack and maybe throw those methods into the wrapper we made earlier
+- build in one direction or the other (double sided queue or just a string)
+- output at the end of certain operations (or don't unsure tbh, maybe the println since that is the correctness check)
+- Create a generic main method for the println statement
+
+
+5/02/2025
+- implemented support for instances as variables/params/return types (still missing proper comparison)
+- Implemented messy method checking, something is strange in symtablevisitor
+- WHEN refactoring is there a way to generically consider the 4 options, {this, local call, instance call, newly made instance call}
+- error seems to occur when a variable is set to this, maybe need to update in symbol table
+- TODO STOP WORKING ON HW2!!
+
+5/01/2025
+- Added support for instances as return types to symbol table is not super robust especially with determining if the type is the smaller
+- kind of regretting using 2 enums and casting is a pain, but I think it is risky updating now
+- changed main to catch all exceptions when type checking
+- created testing script
+- successfully compiles 5 of 8 of each name, but regardless of error
+TODO handling of method type checking
+TODO start debugging the incorrectly propagated type issues
+
+4/30/2025
+- updated visitor for TypeCheckSimp to have an argument passed
+- Ran into an issue with generics, trying to figure out if a wrapper class is necessary
+- Figured out generic issue, you have to attach an interface of the allowed methods or fields to the generic
+- fix bug in the way names were stored in the symbol table
+- decided to keep the strange way instance variables were stored
+?? are classes supported types
+
 4/28/2025
-- 
+- revamped the symbol table
+- started to implement hw2 rules
+- started planning for updating visitor type
 
 4/21/2025
 - downloaded dependencies and ran main for HW4.
