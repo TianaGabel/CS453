@@ -1,37 +1,36 @@
-const vmt_Twenty
-    :Twenty.reset
-    :Twenty.increaseResult
-    :Twenty.generate
+const vmt_MT4
+    :MT4.Start
+    :MT4.Change
 
 func Main ()
     t.0 = HeapAllocZ(4)
-    [t.0] = :vmt_Twenty
+    [t.0] = :vmt_MT4
     t.1 = [t.0]
     t.1 = [t.1+0]
-    t.2 = call t.1(t.0 2)
+    t.2 = call t.1(t.0 1)
     PrintIntS(t.2)
     ret
 
-func Twenty.generate(this)
-    t.3 = 20
-    t.2 = 10
-    result = AddS( t.3 t.2 )
-    ret result
+func MT4.Start(this p1 p2 p3 p4 p5 p6)
+    PrintInts(t.1)
+    PrintInts(t.2)
+    PrintInts(t.3)
+    PrintInts(t.4)
+    PrintInts(t.5)
+    PrintInts(t.6)
+    t.8 = [aux]
+    t.9 = [t.8]
+    t.9 = t.10
+    aux = t.7
+     = call t.10(TODO p1)
+    ret t.10
 
-func Twenty.generate(this)
-    t.3 = 20
-    t.2 = 10
-    result = t.1
-    result = AddS( t.3 t.2 )
-    ret t.3
-
-func Twenty.increaseResult(this x)
-    result = t.1
-    result = AddS( x result )
-    ret t.3
-
-func Twenty.reset(this)
-    t.1 = 0
-    result = t.1
-    ret t.1
+func MT4.Change(this p1 p2 p3 p4 p5 p6)
+    PrintInts(t.1)
+    PrintInts(t.2)
+    PrintInts(t.3)
+    PrintInts(t.4)
+    PrintInts(t.5)
+    PrintInts(t.6)
+    ret t.6
 

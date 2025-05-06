@@ -133,5 +133,9 @@ public class SymbolTableNode {
         }
         return children;
     }
+
+    public STMethodNode getMain(){
+        return (STMethodNode)this.getChildren().get(0).unorderedChildren.get("Main");
+    }
     
 }

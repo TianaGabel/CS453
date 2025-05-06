@@ -3,65 +3,15 @@ import visitor.*;
 import java.util.*;
 
 import myImplementation.SymbolTable.STMethodNode;
+import myImplementation.SymbolTable.STVaporArgInterface;
 import myImplementation.SymbolTable.STWinterface;
 import myImplementation.SymbolTable.SymbolTableNode;
 import syntaxtree.*;
 
-public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
+public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFirst<W>{
    String INDENT = "    ";
-   // String name = "";
-   int indentCount = 0;
-   int tempCount = 0;
-   Stack<String> varStack = new Stack<String>();
-   Stack<String> currentStack = new Stack<String>();
-   SymbolTableNode root;
-
    boolean hasArrays = false;
 
-   public void programClose(){
-      if (hasArrays){
-         System.out.println("func AllocArray(size)\n" +
-            "    bytes = MulS(size 4)\n" +
-            "    bytes = Add(bytes 4)\n" +
-            "    v = HeapAllocZ(bytes)\n" +
-            "    [v] = size\n" +
-            "    ret v)");
-      }
-   }
-
-   public void setRoot(SymbolTableNode r){
-      root = r;
-   }
-
-   private void printStack() {
-      while (!currentStack.isEmpty()) {
-         String s = currentStack.pop();
-         System.out.println(s);
-      }
-   }
-
-   private String indents() {
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < indentCount; i++) {
-         sb.append(INDENT);
-      }
-      return sb.toString();
-   }
-
-   private String tempVar() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("t.");
-      sb.append(tempCount);
-      return sb.toString();
-   }
-
-   private String newTempVar() {
-      tempCount++;
-      StringBuilder sb = new StringBuilder();
-      sb.append("t.");
-      sb.append(tempCount);
-      return sb.toString();
-   }
    //
    // Auto class visitors--probably don't need to be overridden.
    //
@@ -125,41 +75,25 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     */
    public void visit(MainClass n,W w) {
       System.out.println("func Main ()");
-      indentCount++;
-      // n.f0.accept(this, w);
-      // n.f1.accept(this, w);
-      // n.f2.accept(this, w);
-      // n.f3.accept(this, w);
-      // n.f4.accept(this, w);
-      // n.f5.accept(this, w);
-      // n.f6.accept(this, w);
-      // n.f7.accept(this, w);
-      // n.f8.accept(this, w);
-      // n.f9.accept(this, w);
-      //Todo prevent handling of args as an array
-      //n.f10.accept(this, w);
-      //n.f11.accept(this, w);
-      //end array
-      // n.f12.accept(this, w);
-      // n.f13.accept(this, w);
-      // n.f14.accept(this, w);
-      //n.f15.accept(this, w);
-      // n.f16.accept(this, w);
-      // n.f17.accept(this, w);
+      w.incrIndent();
 
-      ArrayList<String> s = ((STMethodNode)root.getChildren().get(0).unorderedChildren.get("Main")).mainFunctionCall;
-      //TODO replace the 4 will a call to the object size
+      ArrayList<String> s = (w.root.getMain()).mainFunctionCall;
+      //TODO replace the 4 with a call to the object size (or not if we do just assume its the first method)
       System.out.println(INDENT + "t.0 = HeapAllocZ(4)");
       System.out.println(INDENT + "[t.0] = :vmt_" + s.get(0));
       System.out.println(INDENT + "t.1 = [t.0]");
       //TODO if it is not the first method needs to be updated
       System.out.println(INDENT + "t.1 = [t.1+0]");
-      //TODO are there any instances with multiple args
-      if (s.size() > 2) {System.out.println(INDENT + "t.2 = call t.1(t.0 " +  s.get(2) + ")");}
-      else {System.out.println(INDENT + "t.2 = call t.1(t.0)");}
+
+      System.out.print(INDENT + "t.2 = call t.1(t.0");
+      for(int i=2; i < s.size(); i++){
+         System.out.print(" " + s.get(i));
+      }
+      System.out.println(")");
+      
       System.out.println(INDENT + "PrintIntS(t.2)");
       System.out.println(INDENT + "ret");
-      indentCount--;
+      w.decrIndent();
       System.out.println("");
    }
 
@@ -240,21 +174,21 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       
-      String s = ((STMethodNode) root.findExisitingSymbol(varStack.pop())).vaporFunctionDef();
+      STMethodNode m = (STMethodNode) w.root.findExisitingSymbol(w.currentID);
+      String s = m.vaporFunctionDef();
       System.out.println(s);
-      tempCount = 0;
+      w.resetTemp();
       n.f3.accept(this, w);
       n.f4.accept(this, w);
       n.f5.accept(this, w);
       n.f6.accept(this, w);
-      indentCount++;
+      w.incrIndent();
       n.f7.accept(this, w);
       n.f8.accept(this, w);
       n.f9.accept(this, w);
-      printStack();
-      System.out.println(indents() + "ret " + tempVar());
-      indentCount--;
+      w.printStatement();
       n.f10.accept(this, w);
+      System.out.println(INDENT + "ret " + w.getTempVar());
       n.f11.accept(this, w);
       n.f12.accept(this, w);
       System.out.println("");
@@ -334,7 +268,10 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     *       | PrintStatement()
     */
    public void visit(Statement n,W w) {
+      w.initStatement();
       n.f0.accept(this, w);
+      //TODO we will operate in blocks as statement should not vary in vars significantly
+      w.printStatement();
    }
 
    /**
@@ -356,11 +293,11 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     */
    public void visit(AssignmentStatement n,W w) {
       n.f0.accept(this, w);
-      currentStack.push(indents() + varStack.peek() + " = " + newTempVar());
+      String t = w.currentID;
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       n.f3.accept(this, w);
-      printStack();
+      System.out.println(w.indents() + t + " = " + w.expressionExitID);
    }
 
    /**
@@ -427,13 +364,10 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
    public void visit(PrintStatement n,W w) {
       n.f0.accept(this, w);
       n.f1.accept(this, w);
-      String s = indents() + "PrintInts(" + newTempVar() + ")";
-      varStack.push(tempVar());
       n.f2.accept(this, w);
       n.f3.accept(this, w);
-      printStack();
-      System.out.println(s);
       n.f4.accept(this, w);
+      System.out.println(w.indents() + "PrintInts(" + w.expressionExitID + ")");
    }
 
    /**
@@ -479,16 +413,13 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     * f2 -> PrimaryExpression()
     */
    public void visit(PlusExpression n,W w) {
-      //TODO this change needs to be updated in below
-      newTempVar();
       n.f0.accept(this, w);
       n.f1.accept(this, w);
-      newTempVar();
       n.f2.accept(this, w);
-      String a = varStack.pop();
-      String b = varStack.pop();
-      String s = indents() + varStack.peek() + " = AddS( " + a + " " + b + " )";
-      printStack();
+      String a = w.varStack.pop();
+      String b = w.varStack.pop();
+      w.varStack.add(w.newTempVar());
+      String s = w.indents() + w.varStack.peek() + " = AddS( " + a + " " + b + " )";
       System.out.println(s);
    }
 
@@ -498,13 +429,15 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     * f2 -> PrimaryExpression()
     */
    public void visit(MinusExpression n,W w) {
-      newTempVar();
+      //TODO check syntax
       n.f0.accept(this, w);
       n.f1.accept(this, w);
-      newTempVar();
       n.f2.accept(this, w);
-      printStack();
-      System.out.println(indents() + newTempVar() + " = SubS( " + varStack.pop() + " " + varStack.pop() + " )");
+      String a = w.varStack.pop();
+      String b = w.varStack.pop();
+      w.varStack.add(w.newTempVar());
+      String s = w.indents() + w.varStack.peek() + " = SubS( " + a + " " + b + " )";
+      System.out.println(s);
    }
 
    /**
@@ -513,14 +446,14 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     * f2 -> PrimaryExpression()
     */
    public void visit(TimesExpression n,W w) {
-      newTempVar();
       n.f0.accept(this, w);
       n.f1.accept(this, w);
-      newTempVar();
       n.f2.accept(this, w);
-      printStack();
-      //TODO update to a proper multiply
-      System.out.println(indents() + newTempVar() + " = AddS( " + varStack.pop() + " " + varStack.pop() + " )");
+      String a = w.varStack.pop();
+      String b = w.varStack.pop();
+      w.varStack.add(w.newTempVar());
+      String s = w.indents() + w.varStack.peek() + " = AddS( " + a + " " + b + " )";
+      System.out.println(s);
    }
 
    /**
@@ -557,22 +490,22 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     */
    public void visit(MessageSend n,W w) {
       //Address of the function table
-      String t = newTempVar();
-      System.out.println(indents() + t + " = [" + varStack.pop() + "]");
-      //TODO Address of the function this may need to be updated via where it is at according to the symbol table
-      System.out.println(indents() + newTempVar() + " = [" + t + "]");
-      n.f0.accept(this, w);
-      n.f1.accept(this, w);
-      n.f2.accept(this, w);
-      n.f3.accept(this, w);
-      n.f4.accept(this, w);
-      printStack();
-      varStack.push("");
-      String s = indents() + varStack.pop() + " = call " + tempVar() + "(" + "TODO" + " ";
-      s += varStack.pop();
-      s += ")";
-      currentStack.push(s);
-      n.f5.accept(this, w);
+      // String t = newTempVar();
+      // System.out.println(indents() + t + " = [" + varStack.pop() + "]");
+      // //TODO Address of the function this may need to be updated via where it is at according to the symbol table
+      // System.out.println(indents() + newTempVar() + " = [" + t + "]");
+      // n.f0.accept(this, w);
+      // n.f1.accept(this, w);
+      // n.f2.accept(this, w);
+      // n.f3.accept(this, w);
+      // n.f4.accept(this, w);
+      // printStack();
+      // varStack.push("");
+      // String s = indents() + varStack.pop() + " = call " + tempVar() + "(" + "TODO" + " ";
+      // s += varStack.pop();
+      // s += ")";
+      // currentStack.push(s);
+      // n.f5.accept(this, w);
    }
 
    /**
@@ -580,10 +513,10 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     * f1 -> ( ExpressionRest() )*
     */
    public void visit(ExpressionList n,W w) {
-      currentStack.push(indents() + tempVar() + " = " + newTempVar());
-      String s =  varStack.pop();
-      s += tempVar() + " ";
-      varStack.push(s);
+      // currentStack.push(indents() + tempVar() + " = " + newTempVar());
+      // String s =  varStack.pop();
+      // s += tempVar() + " ";
+      // varStack.push(s);
       n.f0.accept(this, w);
       n.f1.accept(this, w);
    }
@@ -616,18 +549,18 @@ public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
     * f0 -> <INTEGER_LITERAL>
     */
    public void visit(IntegerLiteral n,W w) {
-      currentStack.push(indents() + tempVar() + " = " + n.f0.toString());
-      varStack.push(tempVar());
       n.f0.accept(this, w);
+      w.varStack.add(n.f0.toString());
    }
 
    /**
     * f0 -> "true"
     */
    public void visit(TrueLiteral n,W w) {
-      currentStack.push(indents() + tempVar() + " = 1");
-      varStack.push(tempVar());
+      //Todo
       n.f0.accept(this, w);
+      n.f0.accept(this, w);
+      w.varStack.add(n.f0.toString());
    }
 
    /**

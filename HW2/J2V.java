@@ -5,6 +5,8 @@ import syntaxtree.Node;
 
 import java.util.*;
 import myImplementation.*;
+import myImplementation.SymbolTable.STVaporArg;
+import myImplementation.SymbolTable.STVaporArgInterface;
 import myImplementation.SymbolTable.SymbolTableNode;
 
 public class J2V {
@@ -38,13 +40,8 @@ public class J2V {
             }
         }
 
-        //TODO update type
-        ToVaporVisitor<String> vaporV = new ToVaporVisitor<String>();
-        vaporV.setRoot(STroot);
-		root.accept(vaporV, "");
-        vaporV.programClose();
-
-        //TODO tack on method for creating arrays
+        ToVaporVisitor<STVaporArg> vaporV = new ToVaporVisitor<>();
+		root.accept(vaporV, new STVaporArg(STroot));
 
     }
     catch (ParseException e) {

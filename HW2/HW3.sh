@@ -4,4 +4,6 @@
 javac J2V.java
 
 # can update later with vars $1 $2
-java J2V < simpleA.java > P.vapor
+#java J2V < simpleA.java > P.vapor
+
+java J2V < ../Tests/mj/MoreThan4.java > P.vapor

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class STMethodNode extends SymbolTableNode {
     public ArrayList<STVariableNode> params = new ArrayList<>();
     public VarType returnType;
+    public String returnId;
 
     public ArrayList<String> mainFunctionCall = new ArrayList<>();
 
