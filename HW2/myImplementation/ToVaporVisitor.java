@@ -333,13 +333,24 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f6 -> Statement()
     */
    public void visit(IfStatement n,W w) {
+      w.varStack.push(w.newControlVar("If"));
+      String name = w.varStack.peek();
+      //condition stuff should be outside the labels
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
+      System.out.println( w.indents() + "if0 " + w.varStack.pop() + " goto :"+ name +"_else");
+      w.incrIndent();
       n.f3.accept(this, w);
       n.f4.accept(this, w);
+      System.out.println( w.indents()+ "goto:" + name +"_end");
+      w.decrIndent();
+      System.out.println(w.indents() + name +"_else:");
+      w.incrIndent();
       n.f5.accept(this, w);
       n.f6.accept(this, w);
+      w.decrIndent();
+      System.out.println(w.indents() + name +"_end:");
    }
 
    /**

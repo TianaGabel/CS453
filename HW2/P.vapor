@@ -1,4 +1,5 @@
 const vmt_Twenty
+    :Twenty.bar
     :Twenty.foo
     :Twenty.increaseResult
     :Twenty.generate
@@ -22,7 +23,7 @@ func Twenty.increaseResult(this x)
     result = t.1
     ret result
 
-func Twenty.foo(this)
+func Twenty.bar(this)
     v = 0
     While1_test:
         if0 10 goto :While1_end
@@ -32,11 +33,20 @@ func Twenty.foo(this)
         While2_body:
             t.1 = AddS( 1 v )
             v = t.1
-             goto :While2_test
+            goto :While2_test
         While2_end:
         t.2 = AddS( 1 v )
         v = t.2
-         goto :While1_test
+        goto :While1_test
     While1_end:
     ret v
+
+func Twenty.foo(this)
+    if0 20 goto :If3_else
+        c = 9
+        goto:If3_end
+    If3_else:
+        c = 1
+    If3_end:
+    ret c
 
