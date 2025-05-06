@@ -4,22 +4,23 @@
 javac Typecheck.java
 
 # can update later with vars $1 $2
-java Typecheck < ../Tests/simpleA.java
+#java Typecheck < ../Tests/simpleA.java
+java Typecheck < ./simpleA.java
 
 
 # Testing Suite
 # print should be good
-#java Typecheck < ../Tests/mj/BinaryTree.java
-java Typecheck < ../Tests/mj/BubbleSort.java
-java Typecheck < ../Tests/mj/Factorial.java
-java Typecheck < ../Tests/mj/LinearSearch.java
- java Typecheck < ../Tests/mj/LinkedList.java
- java Typecheck < ../Tests/mj/MoreThan4.java
- java Typecheck < ../Tests/mj/QuickSort.java
-# java Typecheck < ../Tests/mj/TreeVisitor.java
+# #java Typecheck < ../Tests/mj/BinaryTree.java       #fails
+# java Typecheck < ../Tests/mj/BubbleSort.java
+# java Typecheck < ../Tests/mj/Factorial.java
+# java Typecheck < ../Tests/mj/LinearSearch.java
+#  java Typecheck < ../Tests/mj/LinkedList.java
+#  java Typecheck < ../Tests/mj/MoreThan4.java       #fails
+#  java Typecheck < ../Tests/mj/QuickSort.java
+# # java Typecheck < ../Tests/mj/TreeVisitor.java    # fails 
+
 
 # print should not type check
-
 # java Typecheck < ../Tests/mj-error/BinaryTree.java
 # java Typecheck < ../Tests/mj-error/BubbleSort.java
 # java Typecheck < ../Tests/mj-error/Factorial.java

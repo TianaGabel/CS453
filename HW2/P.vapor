@@ -4,13 +4,19 @@ const vmt_Twenty
     :Twenty.generate
 
 func Main ()
-    t.2 = [t.1]
-    t.3 = [t.2]
-    t.3 = heapAllocZ(4)
-    [t.3] = :vmt_syntaxtree.Identifier@2a139a55
-     = call t.3(TODO generate)
-    PrintInts(t.1)
+    t.0 = HeapAllocZ(4)
+    [t.0] = :vmt_Twenty
+    t.1 = [t.0]
+    t.1 = [t.1+0]
+    t.2 = call t.1(t.0 2)
+    PrintIntS(t.2)
     ret
+
+func Twenty.generate(this)
+    t.3 = 20
+    t.2 = 10
+    result = AddS( t.3 t.2 )
+    ret result
 
 func Twenty.generate(this)
     t.3 = 20

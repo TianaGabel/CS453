@@ -17,8 +17,8 @@ public class Typecheck {
 
 		// Pretty-print the tree. PPrinter inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=String.
-	    //PPrinter<Void,String> pp = new PPrinter<Void,String>();
-	    //root.accept(pp);
+	    PPrinter<Void,String> pp = new PPrinter<Void,String>();
+	    root.accept(pp);
 
 	    // Build the symbol table. Top-down visitor, inherits from
 	    // GJDepthFirst<R,A>. R=Void, A=Integer.

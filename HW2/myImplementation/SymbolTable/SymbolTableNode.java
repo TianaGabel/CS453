@@ -11,7 +11,7 @@ public class SymbolTableNode {
     public SymbolType type;
     int rank;
 
-    HashMap<String, SymbolTableNode> unorderedChildren = new HashMap<>();
+    public HashMap<String, SymbolTableNode> unorderedChildren = new HashMap<>();
 
     public SymbolTableNode(String id, SymbolType type){
         //System.out.println("Node " + id +  " of " + type);
@@ -42,7 +42,7 @@ public class SymbolTableNode {
                 n = new SymbolTableNode(id, SymbolType.GOAL);
                 break;
             case "Main":
-                n = new SymbolTableNode(id, SymbolType.MAIN);
+                n = new STMethodNode(id, SymbolType.MAIN);
                 break;
             default:
                 n = new SymbolTableNode(id, null);

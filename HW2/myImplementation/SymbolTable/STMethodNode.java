@@ -6,6 +6,8 @@ public class STMethodNode extends SymbolTableNode {
     public ArrayList<STVariableNode> params = new ArrayList<>();
     public VarType returnType;
 
+    public ArrayList<String> mainFunctionCall = new ArrayList<>();
+
     public STMethodNode(String id, SymbolType type){
         super(id,type);
     }

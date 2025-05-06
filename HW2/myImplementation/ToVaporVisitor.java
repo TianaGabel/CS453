@@ -3,10 +3,11 @@ import visitor.*;
 import java.util.*;
 
 import myImplementation.SymbolTable.STMethodNode;
+import myImplementation.SymbolTable.STWinterface;
 import myImplementation.SymbolTable.SymbolTableNode;
 import syntaxtree.*;
 
-public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
+public class ToVaporVisitor<W> extends GJVoidDepthFirst<W>{
    String INDENT = "    ";
    // String name = "";
    int indentCount = 0;
@@ -64,28 +65,28 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
    //
    // Auto class visitors--probably don't need to be overridden.
    //
-   public void visit(NodeList n) {
+   public void visit(NodeList n,W w) {
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
-         e.nextElement().accept(this);
+         e.nextElement().accept(this, w);
    }
 
-   public void visit(NodeListOptional n) {
+   public void visit(NodeListOptional n,W w) {
       if ( n.present() )
          for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
-            e.nextElement().accept(this);
+            e.nextElement().accept(this, w);
    }
 
-   public void visit(NodeOptional n) {
+   public void visit(NodeOptional n,W w) {
       if ( n.present() )
-         n.node.accept(this);
+         n.node.accept(this, w);
    }
 
-   public void visit(NodeSequence n) {
+   public void visit(NodeSequence n,W w) {
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
-         e.nextElement().accept(this);
+         e.nextElement().accept(this, w);
    }
 
-   public void visit(NodeToken n) { }
+   public void visit(NodeToken n,W w) { }
 
    //
    // User-generated visitor methods below
@@ -96,10 +97,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> ( TypeDeclaration() )*
     * f2 -> <EOF>
     */
-   public void visit(Goal n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(Goal n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
@@ -122,28 +123,41 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f16 -> "}"
     * f17 -> "}"
     */
-   public void visit(MainClass n) {
+   public void visit(MainClass n,W w) {
       System.out.println("func Main ()");
       indentCount++;
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
-      n.f7.accept(this);
-      n.f8.accept(this);
-      n.f9.accept(this);
+      // n.f0.accept(this, w);
+      // n.f1.accept(this, w);
+      // n.f2.accept(this, w);
+      // n.f3.accept(this, w);
+      // n.f4.accept(this, w);
+      // n.f5.accept(this, w);
+      // n.f6.accept(this, w);
+      // n.f7.accept(this, w);
+      // n.f8.accept(this, w);
+      // n.f9.accept(this, w);
       //Todo prevent handling of args as an array
-      //n.f10.accept(this);
-      //n.f11.accept(this);
-      n.f12.accept(this);
-      n.f13.accept(this);
-      n.f14.accept(this);
-      n.f15.accept(this);
-      n.f16.accept(this);
-      n.f17.accept(this);
+      //n.f10.accept(this, w);
+      //n.f11.accept(this, w);
+      //end array
+      // n.f12.accept(this, w);
+      // n.f13.accept(this, w);
+      // n.f14.accept(this, w);
+      //n.f15.accept(this, w);
+      // n.f16.accept(this, w);
+      // n.f17.accept(this, w);
+
+      ArrayList<String> s = ((STMethodNode)root.getChildren().get(0).unorderedChildren.get("Main")).mainFunctionCall;
+      //TODO replace the 4 will a call to the object size
+      System.out.println(INDENT + "t.0 = HeapAllocZ(4)");
+      System.out.println(INDENT + "[t.0] = :vmt_" + s.get(0));
+      System.out.println(INDENT + "t.1 = [t.0]");
+      //TODO if it is not the first method needs to be updated
+      System.out.println(INDENT + "t.1 = [t.1+0]");
+      //TODO are there any instances with multiple args
+      if (s.size() > 2) {System.out.println(INDENT + "t.2 = call t.1(t.0 " +  s.get(2) + ")");}
+      else {System.out.println(INDENT + "t.2 = call t.1(t.0)");}
+      System.out.println(INDENT + "PrintIntS(t.2)");
       System.out.println(INDENT + "ret");
       indentCount--;
       System.out.println("");
@@ -153,8 +167,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> ClassDeclaration()
     *       | ClassExtendsDeclaration()
     */
-   public void visit(TypeDeclaration n) {
-      n.f0.accept(this);
+   public void visit(TypeDeclaration n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
@@ -165,13 +179,13 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f4 -> ( MethodDeclaration() )*
     * f5 -> "}"
     */
-   public void visit(ClassDeclaration n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
+   public void visit(ClassDeclaration n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
+      n.f5.accept(this, w);
    }
 
    /**
@@ -184,15 +198,15 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f6 -> ( MethodDeclaration() )*
     * f7 -> "}"
     */
-   public void visit(ClassExtendsDeclaration n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
-      n.f7.accept(this);
+   public void visit(ClassExtendsDeclaration n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
+      n.f5.accept(this, w);
+      n.f6.accept(this, w);
+      n.f7.accept(this, w);
    }
 
    /**
@@ -200,10 +214,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> Identifier()
     * f2 -> ";"
     */
-   public void visit(VarDeclaration n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(VarDeclaration n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
@@ -221,28 +235,28 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f11 -> ";"
     * f12 -> "}"
     */
-   public void visit(MethodDeclaration n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(MethodDeclaration n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
       
       String s = ((STMethodNode) root.findExisitingSymbol(varStack.pop())).vaporFunctionDef();
       System.out.println(s);
       tempCount = 0;
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
+      n.f5.accept(this, w);
+      n.f6.accept(this, w);
       indentCount++;
-      n.f7.accept(this);
-      n.f8.accept(this);
-      n.f9.accept(this);
+      n.f7.accept(this, w);
+      n.f8.accept(this, w);
+      n.f9.accept(this, w);
       printStack();
       System.out.println(indents() + "ret " + tempVar());
       indentCount--;
-      n.f10.accept(this);
-      n.f11.accept(this);
-      n.f12.accept(this);
+      n.f10.accept(this, w);
+      n.f11.accept(this, w);
+      n.f12.accept(this, w);
       System.out.println("");
    }
 
@@ -250,27 +264,27 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f0 -> FormalParameter()
     * f1 -> ( FormalParameterRest() )*
     */
-   public void visit(FormalParameterList n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public void visit(FormalParameterList n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
    }
 
    /**
     * f0 -> Type()
     * f1 -> Identifier()
     */
-   public void visit(FormalParameter n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public void visit(FormalParameter n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
    }
 
    /**
     * f0 -> ","
     * f1 -> FormalParameter()
     */
-   public void visit(FormalParameterRest n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public void visit(FormalParameterRest n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
    }
 
    /**
@@ -279,9 +293,9 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     *       | IntegerType()
     *       | Identifier()
     */
-   public void visit(Type n) {
+   public void visit(Type n,W w) {
       //SKIP
-      n.f0.accept(this);
+      n.f0.accept(this, w);
    }
 
    /**
@@ -289,26 +303,26 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "["
     * f2 -> "]"
     */
-   public void visit(ArrayType n) {
+   public void visit(ArrayType n,W w) {
       //TODO creations of an array
       //Plan on creating a function for doing this and calling
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
     * f0 -> "boolean"
     */
-   public void visit(BooleanType n) {
-      n.f0.accept(this);
+   public void visit(BooleanType n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
     * f0 -> "int"
     */
-   public void visit(IntegerType n) {
-      n.f0.accept(this);
+   public void visit(IntegerType n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
@@ -319,8 +333,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     *       | WhileStatement()
     *       | PrintStatement()
     */
-   public void visit(Statement n) {
-      n.f0.accept(this);
+   public void visit(Statement n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
@@ -328,10 +342,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> ( Statement() )*
     * f2 -> "}"
     */
-   public void visit(Block n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(Block n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
@@ -340,12 +354,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> Expression()
     * f3 -> ";"
     */
-   public void visit(AssignmentStatement n) {
-      n.f0.accept(this);
+   public void visit(AssignmentStatement n,W w) {
+      n.f0.accept(this, w);
       currentStack.push(indents() + varStack.peek() + " = " + newTempVar());
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
       printStack();
    }
 
@@ -358,15 +372,15 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f5 -> Expression()
     * f6 -> ";"
     */
-   public void visit(ArrayAssignmentStatement n) {
+   public void visit(ArrayAssignmentStatement n,W w) {
       // TODO
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
+      n.f5.accept(this, w);
+      n.f6.accept(this, w);
    }
 
    /**
@@ -378,14 +392,14 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f5 -> "else"
     * f6 -> Statement()
     */
-   public void visit(IfStatement n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
+   public void visit(IfStatement n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
+      n.f5.accept(this, w);
+      n.f6.accept(this, w);
    }
 
    /**
@@ -395,12 +409,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     * f4 -> Statement()
     */
-   public void visit(WhileStatement n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
+   public void visit(WhileStatement n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
    }
 
    /**
@@ -410,16 +424,16 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f3 -> ")"
     * f4 -> ";"
     */
-   public void visit(PrintStatement n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public void visit(PrintStatement n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
       String s = indents() + "PrintInts(" + newTempVar() + ")";
       varStack.push(tempVar());
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
       printStack();
       System.out.println(s);
-      n.f4.accept(this);
+      n.f4.accept(this, w);
    }
 
    /**
@@ -433,8 +447,8 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     *       | MessageSend()
     *       | PrimaryExpression()
     */
-   public void visit(Expression n) {
-      n.f0.accept(this);
+   public void visit(Expression n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
@@ -442,10 +456,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "&&"
     * f2 -> PrimaryExpression()
     */
-   public void visit(AndExpression n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(AndExpression n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
@@ -453,10 +467,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "<"
     * f2 -> PrimaryExpression()
     */
-   public void visit(CompareExpression n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(CompareExpression n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
@@ -464,13 +478,13 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "+"
     * f2 -> PrimaryExpression()
     */
-   public void visit(PlusExpression n) {
+   public void visit(PlusExpression n,W w) {
       //TODO this change needs to be updated in below
       newTempVar();
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
       newTempVar();
-      n.f2.accept(this);
+      n.f2.accept(this, w);
       String a = varStack.pop();
       String b = varStack.pop();
       String s = indents() + varStack.peek() + " = AddS( " + a + " " + b + " )";
@@ -483,12 +497,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "-"
     * f2 -> PrimaryExpression()
     */
-   public void visit(MinusExpression n) {
+   public void visit(MinusExpression n,W w) {
       newTempVar();
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
       newTempVar();
-      n.f2.accept(this);
+      n.f2.accept(this, w);
       printStack();
       System.out.println(indents() + newTempVar() + " = SubS( " + varStack.pop() + " " + varStack.pop() + " )");
    }
@@ -498,12 +512,12 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "*"
     * f2 -> PrimaryExpression()
     */
-   public void visit(TimesExpression n) {
+   public void visit(TimesExpression n,W w) {
       newTempVar();
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
       newTempVar();
-      n.f2.accept(this);
+      n.f2.accept(this, w);
       printStack();
       //TODO update to a proper multiply
       System.out.println(indents() + newTempVar() + " = AddS( " + varStack.pop() + " " + varStack.pop() + " )");
@@ -515,11 +529,11 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> PrimaryExpression()
     * f3 -> "]"
     */
-   public void visit(ArrayLookup n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+   public void visit(ArrayLookup n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
    }
 
    /**
@@ -527,10 +541,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> "."
     * f2 -> "length"
     */
-   public void visit(ArrayLength n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(ArrayLength n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
    /**
@@ -541,46 +555,46 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f4 -> ( ExpressionList() )?
     * f5 -> ")"
     */
-   public void visit(MessageSend n) {
+   public void visit(MessageSend n,W w) {
       //Address of the function table
       String t = newTempVar();
       System.out.println(indents() + t + " = [" + varStack.pop() + "]");
       //TODO Address of the function this may need to be updated via where it is at according to the symbol table
       System.out.println(indents() + newTempVar() + " = [" + t + "]");
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
       printStack();
       varStack.push("");
       String s = indents() + varStack.pop() + " = call " + tempVar() + "(" + "TODO" + " ";
       s += varStack.pop();
       s += ")";
       currentStack.push(s);
-      n.f5.accept(this);
+      n.f5.accept(this, w);
    }
 
    /**
     * f0 -> Expression()
     * f1 -> ( ExpressionRest() )*
     */
-   public void visit(ExpressionList n) {
+   public void visit(ExpressionList n,W w) {
       currentStack.push(indents() + tempVar() + " = " + newTempVar());
       String s =  varStack.pop();
       s += tempVar() + " ";
       varStack.push(s);
-      n.f0.accept(this);
-      n.f1.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
    }
 
    /**
     * f0 -> ","
     * f1 -> Expression()
     */
-   public void visit(ExpressionRest n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public void visit(ExpressionRest n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
    }
 
    /**
@@ -594,51 +608,51 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     *       | NotExpression()
     *       | BracketExpression()
     */
-   public void visit(PrimaryExpression n) {
-      n.f0.accept(this);
+   public void visit(PrimaryExpression n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
     * f0 -> <INTEGER_LITERAL>
     */
-   public void visit(IntegerLiteral n) {
+   public void visit(IntegerLiteral n,W w) {
       currentStack.push(indents() + tempVar() + " = " + n.f0.toString());
       varStack.push(tempVar());
-      n.f0.accept(this);
+      n.f0.accept(this, w);
    }
 
    /**
     * f0 -> "true"
     */
-   public void visit(TrueLiteral n) {
+   public void visit(TrueLiteral n,W w) {
       currentStack.push(indents() + tempVar() + " = 1");
       varStack.push(tempVar());
-      n.f0.accept(this);
+      n.f0.accept(this, w);
    }
 
    /**
     * f0 -> "false"
     */
-   public void visit(FalseLiteral n) {
+   public void visit(FalseLiteral n,W w) {
       currentStack.push(indents() + tempVar() + " = 0");
       varStack.push(tempVar());
-      n.f0.accept(this);
+      n.f0.accept(this, w);
    }
 
    /**
     * f0 -> <IDENTIFIER>
     */
-   public void visit(Identifier n) {
+   public void visit(Identifier n,W w) {
       String name = n.f0.toString();
       varStack.push(name);
-      n.f0.accept(this);
+      n.f0.accept(this, w);
    }
 
    /**
     * f0 -> "this"
     */
-   public void visit(ThisExpression n) {
-      n.f0.accept(this);
+   public void visit(ThisExpression n,W w) {
+      n.f0.accept(this, w);
    }
 
    /**
@@ -648,18 +662,18 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f3 -> Expression()
     * f4 -> "]"
     */
-   public void visit(ArrayAllocationExpression n) {
+   public void visit(ArrayAllocationExpression n,W w) {
       hasArrays = true;
       String s = "call :AllocArray(";
       varStack.push("");
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
       printStack();
       s += varStack.pop() + ")";
       System.out.println(s);
-      n.f4.accept(this);
+      n.f4.accept(this, w);
    }
 
    /**
@@ -668,23 +682,23 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f2 -> "("
     * f3 -> ")"
     */
-   public void visit(AllocationExpression n) {
+   public void visit(AllocationExpression n,W w) {
       //TODO size needs to be retrieved from symbol table
       System.out.println(indents() + tempVar() + " = heapAllocZ(4)");
       System.out.println(indents() + "[" + tempVar() + "] = :vmt_" + n.f1.toString());
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
    }
 
    /**
     * f0 -> "!"
     * f1 -> Expression()
     */
-   public void visit(NotExpression n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
+   public void visit(NotExpression n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
    }
 
    /**
@@ -692,10 +706,10 @@ public class ToVaporVisitor<R,A> extends DepthFirstVisitor{
     * f1 -> Expression()
     * f2 -> ")"
     */
-   public void visit(BracketExpression n) {
-      n.f0.accept(this);
-      n.f1.accept(this);
-      n.f2.accept(this);
+   public void visit(BracketExpression n,W w) {
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
    }
 
 }

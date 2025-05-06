@@ -38,9 +38,10 @@ public class J2V {
             }
         }
 
-        ToVaporVisitor<Void, String> vaporV = new ToVaporVisitor<Void,String>();
+        //TODO update type
+        ToVaporVisitor<String> vaporV = new ToVaporVisitor<String>();
         vaporV.setRoot(STroot);
-		root.accept(vaporV);
+		root.accept(vaporV, "");
         vaporV.programClose();
 
         //TODO tack on method for creating arrays

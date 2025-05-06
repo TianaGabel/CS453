@@ -1,6 +1,6 @@
 class simpleA {
     public static void main(String[] args) {
-        System.out.println(new Twenty().generate());
+        System.out.println(new Twenty().increaseResult(2));
     }
 }
 

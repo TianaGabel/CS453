@@ -1,12 +1,15 @@
 package myImplementation;
 
 import visitor.*;
+
+import java.lang.reflect.Method;
 import java.util.*;
 
 import myImplementation.SymbolTable.STClassNode;
 import myImplementation.SymbolTable.STMethodNode;
 import myImplementation.SymbolTable.STVariableNode;
 import myImplementation.SymbolTable.SymbolTableNode;
+import myImplementation.SymbolTable.SymbolType;
 import myImplementation.SymbolTable.VarType;
 import syntaxtree.*;
 
@@ -105,9 +108,11 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
       currentNode.addNode(currentID, "Array");
       n.f12.accept(this);
       n.f13.accept(this);
+      currentNode = currentNode.addNode("Main", "Method");
       n.f14.accept(this);
       n.f15.accept(this);
       n.f16.accept(this);
+      currentNode = currentNode.Parent;
       n.f17.accept(this);
       currentNode = root;
    }
@@ -555,6 +560,9 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
    public void visit(IntegerLiteral n) {
       n.f0.accept(this);
       currentID = n.f0.toString();
+      if (currentNode.identifier.equals("Main")){
+         ((STMethodNode)currentNode).mainFunctionCall.add(currentID);
+      }
    }
 
    /**
@@ -578,6 +586,9 @@ public class SymTableVisitor<R,A> extends DepthFirstVisitor{
     */
    public void visit(Identifier n) {
       currentID = n.f0.toString();
+      if (currentNode.identifier.equals("Main")){
+         ((STMethodNode)currentNode).mainFunctionCall.add(currentID);
+      }
       n.f0.accept(this);
    }
 
