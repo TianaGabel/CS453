@@ -135,7 +135,12 @@ public class SymbolTableNode {
     }
 
     public STMethodNode getMain(){
-        return (STMethodNode)this.getChildren().get(0).unorderedChildren.get("Main");
+        SymbolTableNode m = this.findExisitingSymbol("Main");
+        if (m != null) {
+            return (STMethodNode)m;
+        }
+        m = this.getChildren().get(0).unorderedChildren.get("Main");
+        return (STMethodNode)m;
     }
     
 }

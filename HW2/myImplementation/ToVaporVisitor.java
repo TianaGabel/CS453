@@ -1,6 +1,7 @@
 package myImplementation;
 import visitor.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 import myImplementation.SymbolTable.STMethodNode;
 import myImplementation.SymbolTable.STVaporArgInterface;
@@ -77,7 +78,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       System.out.println("func Main ()");
       w.incrIndent();
 
-      ArrayList<String> s = (w.getRoot().getMain()).mainFunctionCall;
+      ArrayList<String> s = w.getRoot().getMain().mainFunctionCall;
       //TODO replace the 4 with a call to the object size (or not if we do just assume its the first method)
       System.out.println(INDENT + "t.0 = HeapAllocZ(4)");
       System.out.println(INDENT + "[t.0] = :vmt_" + s.get(0));
@@ -349,11 +350,23 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f4 -> Statement()
     */
    public void visit(WhileStatement n,W w) {
+      w.varStack.push(w.newControlVar("While"));
+      String name = w.varStack.peek();
+      System.out.println(w.indents() + name +"_test:");
+      w.incrIndent();
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
+      System.out.println( w.indents() + "if0 " + w.varStack.pop() + " goto :"+ name +"_end");
+      w.decrIndent();
+      System.out.println(w.indents() + name +"_body:");
+      w.incrIndent();
       n.f3.accept(this, w);
       n.f4.accept(this, w);
+      System.out.println(w.indents() + "goto :"+ name +"_test");
+      w.decrIndent();
+      System.out.println(w.indents() + name +"_end:");
+      w.varStack.pop();
    }
 
    /**
@@ -438,7 +451,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       String a = w.varStack.pop();
       String b = w.varStack.pop();
       w.varStack.add(w.newTempVar());
-      String s = w.indents() + w.varStack.peek() + " = SubS( " + a + " " + b + " )";
+      String s = w.indents() + w.varStack.peek() + " = SubS( " + b + " " + a + " )";
       System.out.println(s);
    }
 
@@ -454,7 +467,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       String a = w.varStack.pop();
       String b = w.varStack.pop();
       w.varStack.add(w.newTempVar());
-      String s = w.indents() + w.varStack.peek() + " = AddS( " + a + " " + b + " )";
+      String s = w.indents() + w.varStack.peek() + " = MulS( " + a + " " + b + " )";
       System.out.println(s);
    }
 

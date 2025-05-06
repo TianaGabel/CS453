@@ -1,5 +1,5 @@
 const vmt_Twenty
-    :Twenty.reset
+    :Twenty.foo
     :Twenty.increaseResult
     :Twenty.generate
 
@@ -8,7 +8,7 @@ func Main ()
     [t.0] = :vmt_Twenty
     t.1 = [t.0]
     t.1 = [t.1+0]
-    t.2 = call t.1(t.0 2)
+    t.2 = call t.1(t.0)
     PrintIntS(t.2)
     ret
 
@@ -22,7 +22,21 @@ func Twenty.increaseResult(this x)
     result = t.1
     ret result
 
-func Twenty.reset(this)
-    result = 0
-    ret result
+func Twenty.foo(this)
+    v = 0
+    While1_test:
+        if0 10 goto :While1_end
+    While1_body:
+        While2_test:
+            if0 4 goto :While2_end
+        While2_body:
+            t.1 = AddS( 1 v )
+            v = t.1
+             goto :While2_test
+        While2_end:
+        t.2 = AddS( 1 v )
+        v = t.2
+         goto :While1_test
+    While1_end:
+    ret v
 

@@ -13,6 +13,7 @@ public class STVaporArg implements STVaporArgInterface{
     public void decrIndent(){indentCount--;}
 
     private int tempCounter = 0;
+    private int controlCounter = 0;
     public void resetTemp(){tempCounter = 0;}
     //The idea is that I can keep expressions seperate from statement stuff
     public Deque<String> pendingLines = new ArrayDeque<>();
@@ -43,6 +44,14 @@ public class STVaporArg implements STVaporArgInterface{
         StringBuilder sb = new StringBuilder();
         sb.append("t.");
         sb.append(tempCounter);
+        return sb.toString();
+    }
+
+    public String newControlVar(String type){
+        controlCounter++;
+        StringBuilder sb = new StringBuilder();
+        sb.append(type);
+        sb.append(controlCounter);
         return sb.toString();
     }
     // addAfter

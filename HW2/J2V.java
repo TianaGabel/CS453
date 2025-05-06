@@ -36,6 +36,7 @@ public class J2V {
                         System.out.println(INDENT + ":" + n.identifier + "." + m.identifier);
                     }
                 }
+                //TODO inheritance based on example 4
                 System.out.println("");
             }
         }

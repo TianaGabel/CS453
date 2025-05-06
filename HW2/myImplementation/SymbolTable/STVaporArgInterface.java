@@ -21,6 +21,7 @@ public interface STVaporArgInterface {
     public String indents();
     public String getTempVar();
     public String newTempVar();
+    public String newControlVar(String type);
     // addAfter
     // addbefore
     // print whatever is current stored, probably don't really care about the depth
