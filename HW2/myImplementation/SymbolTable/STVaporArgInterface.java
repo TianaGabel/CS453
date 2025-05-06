@@ -7,24 +7,16 @@ import java.util.Stack;
 
 public interface STVaporArgInterface {
 
-    public final String INDENT = "    ";
-    public int indentCount = 0;
     public void incrIndent();
     public void decrIndent();
 
-    public int tempCounter = 0;
     public void resetTemp();
     public Deque<String> pendingLines = new ArrayDeque<>();
     public Stack<Deque> pendingStates = new Stack<>();
     public Stack<String> varStack = new Stack<>();
 
-    
-    SymbolTableNode root = null;
-    SymbolTableNode currentNode = null;
-    String currentType = "";
-    String expressionExitID = "";
-
     public void setRoot(SymbolTableNode r);
+    public SymbolTableNode getRoot();
 
     public String indents();
     public String getTempVar();

@@ -12,16 +12,14 @@ public class STVaporArg implements STVaporArgInterface{
     public void incrIndent(){indentCount++;}
     public void decrIndent(){indentCount--;}
 
-    public int tempCounter = 0;
+    private int tempCounter = 0;
     public void resetTemp(){tempCounter = 0;}
     //The idea is that I can keep expressions seperate from statement stuff
     public Deque<String> pendingLines = new ArrayDeque<>();
     public Stack<Deque> pendingStates = new Stack<>();
     public Stack<String> varStack = new Stack<>();
 
-    SymbolTableNode root = null;
-    SymbolTableNode currentNode = null;
-    String currentType = "";
+    public SymbolTableNode root;
 
     public STVaporArg(SymbolTableNode r){
         root = r;
@@ -29,6 +27,9 @@ public class STVaporArg implements STVaporArgInterface{
 
     public void setRoot(SymbolTableNode r){
         root = r;
+    }
+    public SymbolTableNode getRoot(){
+        return root;
     }
 
     public String getTempVar() {

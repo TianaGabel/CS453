@@ -77,7 +77,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       System.out.println("func Main ()");
       w.incrIndent();
 
-      ArrayList<String> s = (w.root.getMain()).mainFunctionCall;
+      ArrayList<String> s = (w.getRoot().getMain()).mainFunctionCall;
       //TODO replace the 4 with a call to the object size (or not if we do just assume its the first method)
       System.out.println(INDENT + "t.0 = HeapAllocZ(4)");
       System.out.println(INDENT + "[t.0] = :vmt_" + s.get(0));
@@ -174,7 +174,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       
-      STMethodNode m = (STMethodNode) w.root.findExisitingSymbol(w.currentID);
+      STMethodNode m = (STMethodNode) w.getRoot().findExisitingSymbol(w.varStack.pop());
       String s = m.vaporFunctionDef();
       System.out.println(s);
       w.resetTemp();
@@ -186,9 +186,10 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f7.accept(this, w);
       n.f8.accept(this, w);
       n.f9.accept(this, w);
-      w.printStatement();
       n.f10.accept(this, w);
-      System.out.println(INDENT + "ret " + w.getTempVar());
+      //w.printStatement(); //ensure nothing remains
+      System.out.println(INDENT + "ret " + w.varStack.pop());
+      w.decrIndent();
       n.f11.accept(this, w);
       n.f12.accept(this, w);
       System.out.println("");
@@ -293,11 +294,12 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(AssignmentStatement n,W w) {
       n.f0.accept(this, w);
-      String t = w.currentID;
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       n.f3.accept(this, w);
-      System.out.println(w.indents() + t + " = " + w.expressionExitID);
+      String e = w.varStack.pop();
+      String i = w.varStack.pop();
+      System.out.println(w.indents() + i + " = " + e);
    }
 
    /**
@@ -367,7 +369,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f2.accept(this, w);
       n.f3.accept(this, w);
       n.f4.accept(this, w);
-      System.out.println(w.indents() + "PrintInts(" + w.expressionExitID + ")");
+      System.out.println(w.indents() + "PrintInts(" + w.varStack.pop() + ")");
    }
 
    /**
@@ -489,6 +491,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f5 -> ")"
     */
    public void visit(MessageSend n,W w) {
+      w.varStack.push("MESSAGE SEND");
       //Address of the function table
       // String t = newTempVar();
       // System.out.println(indents() + t + " = [" + varStack.pop() + "]");
@@ -560,16 +563,15 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       //Todo
       n.f0.accept(this, w);
       n.f0.accept(this, w);
-      w.varStack.add(n.f0.toString());
+      w.varStack.add("1");
    }
 
    /**
     * f0 -> "false"
     */
    public void visit(FalseLiteral n,W w) {
-      currentStack.push(indents() + tempVar() + " = 0");
-      varStack.push(tempVar());
       n.f0.accept(this, w);
+      w.varStack.add("0");
    }
 
    /**
@@ -577,7 +579,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(Identifier n,W w) {
       String name = n.f0.toString();
-      varStack.push(name);
+      w.varStack.push(name);
       n.f0.accept(this, w);
    }
 
@@ -585,6 +587,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f0 -> "this"
     */
    public void visit(ThisExpression n,W w) {
+      w.varStack.push("this");
       n.f0.accept(this, w);
    }
 
@@ -597,16 +600,15 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(ArrayAllocationExpression n,W w) {
       hasArrays = true;
-      String s = "call :AllocArray(";
-      varStack.push("");
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       n.f3.accept(this, w);
-      printStack();
-      s += varStack.pop() + ")";
-      System.out.println(s);
       n.f4.accept(this, w);
+      //TODO fix this to allocate correctly
+      String s = "call :AllocArray(" + w.varStack.pop();
+      System.out.println(s);
+      //TODO push new ref to array to the stack.
    }
 
    /**
@@ -616,13 +618,15 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f3 -> ")"
     */
    public void visit(AllocationExpression n,W w) {
-      //TODO size needs to be retrieved from symbol table
-      System.out.println(indents() + tempVar() + " = heapAllocZ(4)");
-      System.out.println(indents() + "[" + tempVar() + "] = :vmt_" + n.f1.toString());
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       n.f3.accept(this, w);
+      w.newTempVar();
+      w.varStack.push(w.getTempVar());
+      //TODO size needs to be retrieved from symbol table
+      System.out.println(w.indents() + w.getTempVar() + " = heapAllocZ(4)");
+      System.out.println(w.indents() + "[" + w.getTempVar() + "] = :vmt_" + n.f1.toString());
    }
 
    /**
@@ -630,8 +634,10 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f1 -> Expression()
     */
    public void visit(NotExpression n,W w) {
+      //Todo unsure how this would work
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.varStack.pop();
    }
 
    /**
