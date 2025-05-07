@@ -1,132 +1,26 @@
-Main
-[Lcs132.vapor.ast.VVarRef$Local;@2a139a55
-cs132.vapor.ast.VFunction$Stack@15db9742
-t.0
-[Lcs132.vapor.ast.VCodeLabel;@6d06d69c
-    cs132.vapor.ast.VCall@7852e922
-BT.Start
-[Lcs132.vapor.ast.VVarRef$Local;@4e25154f
-cs132.vapor.ast.VFunction$Stack@70dea4e
-this
-[Lcs132.vapor.ast.VCodeLabel;@5c647e05
-    cs132.vapor.ast.VBuiltIn@33909752
-Tree.Init
-[Lcs132.vapor.ast.VVarRef$Local;@55f96302
-cs132.vapor.ast.VFunction$Stack@3d4eac69
-this
-[Lcs132.vapor.ast.VCodeLabel;@42a57993
-    cs132.vapor.ast.VMemWrite@75b84c92
-Tree.SetRight
-[Lcs132.vapor.ast.VVarRef$Local;@6bc7c054
-cs132.vapor.ast.VFunction$Stack@232204a1
-this
-[Lcs132.vapor.ast.VCodeLabel;@4aa298b7
-    cs132.vapor.ast.VMemWrite@7d4991ad
-Tree.SetLeft
-[Lcs132.vapor.ast.VVarRef$Local;@28d93b30
-cs132.vapor.ast.VFunction$Stack@1b6d3586
-this
-[Lcs132.vapor.ast.VCodeLabel;@4554617c
-    cs132.vapor.ast.VMemWrite@74a14482
-Tree.GetRight
-[Lcs132.vapor.ast.VVarRef$Local;@1540e19d
-cs132.vapor.ast.VFunction$Stack@677327b6
-this
-[Lcs132.vapor.ast.VCodeLabel;@14ae5a5
-    cs132.vapor.ast.VMemRead@7f31245a
-Tree.GetLeft
-[Lcs132.vapor.ast.VVarRef$Local;@6d6f6e28
-cs132.vapor.ast.VFunction$Stack@135fbaa4
-this
-[Lcs132.vapor.ast.VCodeLabel;@45ee12a7
-    cs132.vapor.ast.VMemRead@330bedb4
-Tree.GetKey
-[Lcs132.vapor.ast.VVarRef$Local;@2503dbd3
-cs132.vapor.ast.VFunction$Stack@4b67cf4d
-this
-[Lcs132.vapor.ast.VCodeLabel;@7ea987ac
-    cs132.vapor.ast.VMemRead@12a3a380
-Tree.SetKey
-[Lcs132.vapor.ast.VVarRef$Local;@29453f44
-cs132.vapor.ast.VFunction$Stack@5cad8086
-this
-[Lcs132.vapor.ast.VCodeLabel;@6e0be858
-    cs132.vapor.ast.VMemWrite@61bbe9ba
-Tree.GetHas_Right
-[Lcs132.vapor.ast.VVarRef$Local;@610455d6
-cs132.vapor.ast.VFunction$Stack@511d50c0
-this
-[Lcs132.vapor.ast.VCodeLabel;@60e53b93
-    cs132.vapor.ast.VMemRead@5e2de80c
-Tree.GetHas_Left
-[Lcs132.vapor.ast.VVarRef$Local;@1d44bcfa
-cs132.vapor.ast.VFunction$Stack@266474c2
-this
-[Lcs132.vapor.ast.VCodeLabel;@6f94fa3e
-    cs132.vapor.ast.VMemRead@5e481248
-Tree.SetHas_Left
-[Lcs132.vapor.ast.VVarRef$Local;@66d3c617
-cs132.vapor.ast.VFunction$Stack@63947c6b
-this
-[Lcs132.vapor.ast.VCodeLabel;@2b193f2d
-    cs132.vapor.ast.VMemWrite@355da254
-Tree.SetHas_Right
-[Lcs132.vapor.ast.VVarRef$Local;@4dc63996
-cs132.vapor.ast.VFunction$Stack@d716361
-this
-[Lcs132.vapor.ast.VCodeLabel;@6ff3c5b5
-    cs132.vapor.ast.VMemWrite@3764951d
-Tree.Compare
-[Lcs132.vapor.ast.VVarRef$Local;@4b1210ee
-cs132.vapor.ast.VFunction$Stack@4d7e1886
-this
-[Lcs132.vapor.ast.VCodeLabel;@3cd1a2f1
-    cs132.vapor.ast.VAssign@2f0e140b
-Tree.Insert
-[Lcs132.vapor.ast.VVarRef$Local;@7440e464
-cs132.vapor.ast.VFunction$Stack@49476842
-this
-[Lcs132.vapor.ast.VCodeLabel;@78308db1
-    cs132.vapor.ast.VBuiltIn@27c170f0
-Tree.Delete
-[Lcs132.vapor.ast.VVarRef$Local;@5451c3a8
-cs132.vapor.ast.VFunction$Stack@2626b418
-this
-[Lcs132.vapor.ast.VCodeLabel;@5a07e868
-    cs132.vapor.ast.VAssign@76ed5528
-Tree.Remove
-[Lcs132.vapor.ast.VVarRef$Local;@2c7b84de
-cs132.vapor.ast.VFunction$Stack@3fee733d
-this
-[Lcs132.vapor.ast.VCodeLabel;@5acf9800
-    cs132.vapor.ast.VBranch@4617c264
-Tree.RemoveRight
-[Lcs132.vapor.ast.VVarRef$Local;@36baf30c
-cs132.vapor.ast.VFunction$Stack@7a81197d
-this
-[Lcs132.vapor.ast.VCodeLabel;@5ca881b5
-    cs132.vapor.ast.VBranch@24d46ca6
-Tree.RemoveLeft
-[Lcs132.vapor.ast.VVarRef$Local;@4517d9a3
-cs132.vapor.ast.VFunction$Stack@372f7a8d
-this
-[Lcs132.vapor.ast.VCodeLabel;@2f92e0f4
-    cs132.vapor.ast.VBranch@28a418fc
-Tree.Search
-[Lcs132.vapor.ast.VVarRef$Local;@5305068a
-cs132.vapor.ast.VFunction$Stack@1f32e575
-this
-[Lcs132.vapor.ast.VCodeLabel;@279f2327
-    cs132.vapor.ast.VAssign@2ff4acd0
-Tree.Print
-[Lcs132.vapor.ast.VVarRef$Local;@54bedef2
-cs132.vapor.ast.VFunction$Stack@5caf905d
-this
-[Lcs132.vapor.ast.VCodeLabel;@27716f4
-    cs132.vapor.ast.VAssign@8efb846
-Tree.RecPrint
-[Lcs132.vapor.ast.VVarRef$Local;@2a84aee7
-cs132.vapor.ast.VFunction$Stack@a09ee92
-this
-[Lcs132.vapor.ast.VCodeLabel;@30f39991
-    cs132.vapor.ast.VBranch@452b3a41
+builtincs132.vapor.ast.VBuiltIn@2a139a55
+memwrite cs132.vapor.ast.VMemWrite@15db9742
+branchcs132.vapor.ast.VBranch@6d06d69c
+builtincs132.vapor.ast.VBuiltIn@7852e922
+memreadcs132.vapor.ast.VMemRead@4e25154f
+memreadcs132.vapor.ast.VMemRead@70dea4e
+callcs132.vapor.ast.VCall@5c647e05
+builtincs132.vapor.ast.VBuiltIn@33909752
+retcs132.vapor.ast.VReturn@55f96302
+builtincs132.vapor.ast.VBuiltIn@3d4eac69
+builtincs132.vapor.ast.VBuiltIn@42a57993
+builtincs132.vapor.ast.VBuiltIn@75b84c92
+builtincs132.vapor.ast.VBuiltIn@6bc7c054
+builtincs132.vapor.ast.VBuiltIn@232204a1
+builtincs132.vapor.ast.VBuiltIn@4aa298b7
+memreadcs132.vapor.ast.VMemRead@7d4991ad
+memreadcs132.vapor.ast.VMemRead@28d93b30
+callcs132.vapor.ast.VCall@1b6d3586
+retcs132.vapor.ast.VReturn@4554617c
+builtincs132.vapor.ast.VBuiltIn@74a14482
+builtincs132.vapor.ast.VBuiltIn@1540e19d
+builtincs132.vapor.ast.VBuiltIn@677327b6
+builtincs132.vapor.ast.VBuiltIn@14ae5a5
+builtincs132.vapor.ast.VBuiltIn@7f31245a
+builtincs132.vapor.ast.VBuiltIn@6d6f6e28
+retcs132.vapor.ast.VReturn@135fbaa4

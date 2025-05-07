@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import javax.management.RuntimeErrorException;
+
 public class V2VM {
   public static void main(String[] args) {
     try{
@@ -20,21 +22,31 @@ public class V2VM {
       //VDataSegment[] dataSegments (THE CONST DELCARATION)
       //Vfunction[] functions    (BASICALLY EVERYTHING ELSE)
 
-      for(VFunction vf : vp.functions){
-        //ALL LISTS MAY BE UNINITIALZIED
-        System.out.println(vf.ident);
-        System.out.println(vf.params);
-        System.out.println(vf.stack);
-        System.out.println(vf.vars[0]);
-        //System.out.println(vf.index);
-        System.out.println(vf.labels);   
-
-        System.out.println("    " +vf.body[0]);
-      }
       //vfunction has a body(list of instructions), index/rank for this function
       //code labels, list of params, stack declaration, list of local variables
+      //NOTE: apparently runtime exceptions ... osmething
+      //NOTE: the visitor doesn't support functions so I guess loop for now and we can dd it later
 
-      //index/rank, ismutable, values(data in segment)
+      
+      VMWrapper wrapper = new VMWrapper();
+      BasicVisitor<VMWrapper,RuntimeException> bv =  new BasicVisitor();
+      RuntimeException r = new RuntimeException();
+      for(VFunction vf : vp.functions){
+        for(VInstr vi: vf.body){
+          vi.accept(wrapper, bv);
+
+        }
+        //ALL LISTS MAY BE UNINITIALZIED
+        // System.out.println(vf.ident);
+        // System.out.println(vf.params);
+        // System.out.println(vf.stack);
+        // System.out.println(vf.vars[0]);
+        // //System.out.println(vf.index);
+        // System.out.println(vf.labels);   
+        // System.out.println("    " +vf.body[0]);
+
+      }
+
 
     } catch(Exception e){
       System.out.println("BOO main failure");
