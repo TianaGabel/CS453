@@ -1,26 +1,32 @@
-builtincs132.vapor.ast.VBuiltIn@2a139a55
-memwrite cs132.vapor.ast.VMemWrite@15db9742
-branchcs132.vapor.ast.VBranch@6d06d69c
-builtincs132.vapor.ast.VBuiltIn@7852e922
-memreadcs132.vapor.ast.VMemRead@4e25154f
-memreadcs132.vapor.ast.VMemRead@70dea4e
-callcs132.vapor.ast.VCall@5c647e05
-builtincs132.vapor.ast.VBuiltIn@33909752
-retcs132.vapor.ast.VReturn@55f96302
-builtincs132.vapor.ast.VBuiltIn@3d4eac69
-builtincs132.vapor.ast.VBuiltIn@42a57993
-builtincs132.vapor.ast.VBuiltIn@75b84c92
-builtincs132.vapor.ast.VBuiltIn@6bc7c054
-builtincs132.vapor.ast.VBuiltIn@232204a1
-builtincs132.vapor.ast.VBuiltIn@4aa298b7
-memreadcs132.vapor.ast.VMemRead@7d4991ad
-memreadcs132.vapor.ast.VMemRead@28d93b30
-callcs132.vapor.ast.VCall@1b6d3586
-retcs132.vapor.ast.VReturn@4554617c
-builtincs132.vapor.ast.VBuiltIn@74a14482
-builtincs132.vapor.ast.VBuiltIn@1540e19d
-builtincs132.vapor.ast.VBuiltIn@677327b6
-builtincs132.vapor.ast.VBuiltIn@14ae5a5
-builtincs132.vapor.ast.VBuiltIn@7f31245a
-builtincs132.vapor.ast.VBuiltIn@6d6f6e28
-retcs132.vapor.ast.VReturn@135fbaa4
+
+Main
+t.0 = HeapAllocZ(4)
+[t.0+0] = :vmt_MT4
+if t.0 goto :null1
+Error("null pointer")
+t.1 = [t.0+0]
+t.1 = [t.1+0]
+t.2 = call t.1(t.0 1 2 3 4 5 6)
+PrintIntS(t.2)
+ret
+
+MT4.Start
+PrintIntS(p1)
+PrintIntS(p2)
+PrintIntS(p3)
+PrintIntS(p4)
+PrintIntS(p5)
+PrintIntS(p6)
+t.0 = [this+0]
+t.0 = [t.0+4]
+aux = call t.0(this p6 p5 p4 p3 p2 p1)
+ret aux
+
+MT4.Change
+PrintIntS(p1)
+PrintIntS(p2)
+PrintIntS(p3)
+PrintIntS(p4)
+PrintIntS(p5)
+PrintIntS(p6)
+ret 0

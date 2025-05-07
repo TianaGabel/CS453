@@ -35,7 +35,12 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     // The value being branched on.
 
     public void visit(P p, VBranch b) {
-        System.out.println("branch" + b);   
+        //System.out.println("branch"); 
+        if (b.positive){
+            System.out.println("if " + b.value + " goto " + b.target);  
+        } else {
+            System.out.println("if0 " + b.value + " goto " + b.target);  
+        }
     }
             
     // abstract  void	visit(P p, VBuiltIn c)
@@ -53,7 +58,21 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     //      lookup(String name) "no description given"
      
     public void visit(P p, VBuiltIn c) {
-        System.out.println("builtin" + c);   
+        String s = VBuiltInArgsToString(c);
+        if ((c.dest != null)) {
+            if (s.isEmpty()){
+                System.out.println(c.dest + " = " + c.op.name + "()");
+            } else {
+                System.out.println(c.dest + " = " + c.op.name + "(" + s + ")");
+            }
+        } else {
+            if (s.isEmpty()){
+                //TODO
+                System.out.println(c.op.name + "()");
+            } else {
+                System.out.println(c.op.name + "(" + s + ")");
+            }
+        }
     }
                
     // abstract  void	visit(P p, VCall c)
@@ -61,20 +80,34 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     //  addr "The address of the function being called"
     //  VAddr<VFunction>
     //       
-    //  arg "The list of arguments to pass to the function."
+    //  args "The list of arguments to pass to the function."
     //  argsVOperand[]
     //           
     // dest "The variable used to store the return value of the function."
     //  VVarRef.Local        
     public void visit(P p, VCall c) {
-        System.out.println("call" + c); 
+        String s = VBuiltInArgsToString(c);
+        if ((c.dest != null)) {
+            if (s.isEmpty()){
+                System.out.println(c.dest + " = call "+   c.addr + "()");
+            } else {
+                System.out.println(c.dest + " = call " + c.addr + "(" + s + ")");
+            }
+        } else {
+            if (s.isEmpty()){
+                //TODO
+                System.out.println("call "+ c.addr + "()");
+            } else {
+                System.out.println("call " + c.addr + "(" + s + ")");
+            }
+        }
     }
                
     // abstract  void	visit(P p, VGoto g)
     // target "The target of the jump."
     // VAddr<VCodeLabel>	target
     public void visit(P p, VGoto g) {
-        System.out.println("goto" + g); 
+        System.out.println("goto" + g.target); 
     }
     
                
@@ -85,7 +118,8 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     // Source
     // sourcepPos
     public void visit(P p, VMemRead r) {
-        System.out.println("memread" + r); 
+        //System.out.println("--memread--");
+        System.out.println(r.dest + " = [" + VMemRefToString(r.source) + "]"); 
     }
                
     // abstract  void   visit(P p, VMemWrite w)
@@ -95,13 +129,57 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     // Source
     // sourcepPos
     public void visit(P p, VMemWrite w) {
-        System.out.println("memwrite " + w); 
+        //System.out.println("--memwrite--");
+        System.out.println("[" + VMemRefToString(w.dest) + "] = " + w.source); 
+
     }
                
     // abstract  void	visit(P p, VReturn r)
     // value
     public void visit(P p, VReturn r) {
-        System.out.println("ret" + r); 
+        if (r.value != null){
+            System.out.println("ret " + r.value); 
+        } else {
+            System.out.println("ret"); 
+        }
+    }
+
+
+
+
+
+    ///MISC HELPER METHODS
+    private String VMemRefToString(VMemRef ref){
+        if (ref instanceof VMemRef.Global){
+            return "" + ((VMemRef.Global)ref).base + "+" + ((VMemRef.Global)ref).byteOffset;
+        } else {
+            return "BOOOO";
+        }
+
+    }
+
+    private String VBuiltInArgsToString(VBuiltIn c){
+        String s = "";
+        for (int i = 0; i < c.args.length; i++){
+            s += "" + c.args[i];
+            break;
+        }
+        for (int i = 1; i < c.args.length; i++){
+            s += " " + c.args[i];
+        }
+        return s;
+    }
+
+    private String VBuiltInArgsToString(VCall c){
+        String s = "";
+        for (int i = 0; i < c.args.length; i++){
+            s += "" + c.args[i];
+            break;
+        }
+        for (int i = 1; i < c.args.length; i++){
+            s += " " + c.args[i];
+        }
+        return s;
     }
     
 }

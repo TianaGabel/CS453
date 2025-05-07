@@ -32,6 +32,7 @@ public class V2VM {
       BasicVisitor<VMWrapper,RuntimeException> bv =  new BasicVisitor();
       RuntimeException r = new RuntimeException();
       for(VFunction vf : vp.functions){
+        System.out.println("\n" + vf.ident);
         for(VInstr vi: vf.body){
           vi.accept(wrapper, bv);
 
