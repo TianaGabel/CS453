@@ -30,4 +30,7 @@ public interface STVaporArgInterface {
     public void addAfter(String line);
     public void printStatement(); //Statements are usually self contained
     public String printExpression(); //Expressions usually have some sort of result, so passing along temp encompassing it
+
+
+    public void programClose();
 }

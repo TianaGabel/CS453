@@ -7,6 +7,12 @@ class simpleA {
 class Twenty{
     int result;
     public int generate(){
+        int a;
+        int b;
+        int[] d;
+        a = 0;
+        b = ((2*a)+a)-1;
+        d = new int[5];
         result = 10 + 20;
         return result;
     }

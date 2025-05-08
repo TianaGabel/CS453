@@ -87,14 +87,14 @@ public class STVaporArg implements STVaporArgInterface{
         return varStack.peek();
     }
 
-    //automatic set up for array allocation
+    //automatic set up for array allocation from lecutre slides
     public void programClose(){
         System.out.println("func AllocArray(size)\n" +
             "    bytes = MulS(size 4)\n" +
             "    bytes = Add(bytes 4)\n" +
             "    v = HeapAllocZ(bytes)\n" +
             "    [v] = size\n" +
-            "    ret v)");
+            "    ret v");
     }
   
     public  String indents() {

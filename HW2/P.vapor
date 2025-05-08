@@ -1,52 +1,45 @@
-const vmt_Twenty
-    :Twenty.bar
-    :Twenty.foo
-    :Twenty.increaseResult
-    :Twenty.generate
+const vmt_A
+    :A.bar
+    :A.foo
+
+const vmt_B
+    :B.foo
+    :A.bar
+
+const vmt_C
+    :B.foo
+    :A.bar
 
 func Main ()
     t.0 = HeapAllocZ(4)
-    [t.0] = :vmt_Twenty
+    [t.0] = :vmt_a
     t.1 = [t.0]
     t.1 = [t.1+0]
     t.2 = call t.1(t.0)
     PrintIntS(t.2)
     ret
 
-func Twenty.generate(this)
-    t.1 = AddS( 20 10 )
-    result = t.1
+func A.foo(this)
+    ret 1
+
+func A.bar(this a b)
+    d = a
+    c = b
+    t.1 = MulS(c d)
+    ret t.1
+
+func A.foo(this)
+    t.1 = heapAllocZ(4)
+    [t.1] = :vmt_A
+    a = t.1
+    PrintInts(MESSAGE SEND)
+    result = MESSAGE SEND
+    PrintInts(result)
     ret result
 
-func Twenty.increaseResult(this x)
-    t.1 = AddS( x result )
-    result = t.1
-    ret result
-
-func Twenty.bar(this)
-    v = 0
-    While1_test:
-        if0 10 goto :While1_end
-    While1_body:
-        While2_test:
-            if0 4 goto :While2_end
-        While2_body:
-            t.1 = AddS( 1 v )
-            v = t.1
-            goto :While2_test
-        While2_end:
-        t.2 = AddS( 1 v )
-        v = t.2
-        goto :While1_test
-    While1_end:
+func AllocArray(size)
+    bytes = MulS(size 4)
+    bytes = Add(bytes 4)
+    v = HeapAllocZ(bytes)
+    [v] = size
     ret v
-
-func Twenty.foo(this)
-    if0 20 goto :If3_else
-        c = 9
-        goto:If3_end
-    If3_else:
-        c = 1
-    If3_end:
-    ret c
-

@@ -32,8 +32,19 @@ public class STClassNode extends SymbolTableNode{
             if (pc.identifier.equals(this.identifier)){
                 //TODO throw circular inheritance error
             }
-            children.addAll(pc.fields());
             children.addAll(getChildren());
+            for (SymbolTableNode n: pc.fields()){
+                boolean elderhasattribute = false;
+                for (SymbolTableNode child: children){
+                    if(child.identifier.equals(n.identifier)){
+                        elderhasattribute = true;
+                    }
+                }
+                if (!elderhasattribute){
+                    children.add(n);
+                }
+
+            }
         }
 
         return children;

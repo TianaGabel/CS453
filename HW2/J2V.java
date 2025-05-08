@@ -5,6 +5,7 @@ import syntaxtree.Node;
 
 import java.util.*;
 import myImplementation.*;
+import myImplementation.SymbolTable.STClassNode;
 import myImplementation.SymbolTable.STVaporArg;
 import myImplementation.SymbolTable.STVaporArgInterface;
 import myImplementation.SymbolTable.SymbolTableNode;
@@ -22,18 +23,14 @@ public class J2V {
         SymbolTableNode STroot = pv.getRoot();
         ArrayList<SymbolTableNode> STClasses = STroot.getChildren();
 
-        // TODO get the file extension from the command line
-        //PrintStream fileStream = new PrintStream(vapor_program);
-        //System.setOut(fileStream);
-
         String INDENT = "    ";
 
         for (SymbolTableNode n: STClasses) {
             if (n.getType().equals("CLASS")){
                 System.out.println("const vmt_" + n.identifier);
-                for (SymbolTableNode m: n.getChildren()) {
+                for (SymbolTableNode m: ((STClassNode)n).fields()) {
                     if (m.getType().equals("METHOD")) {
-                        System.out.println(INDENT + ":" + n.identifier + "." + m.identifier);
+                        System.out.println(INDENT + ":" + m.Parent.identifier + "." + m.identifier);
                     }
                 }
                 //TODO inheritance based on example 4
