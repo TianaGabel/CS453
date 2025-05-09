@@ -92,6 +92,20 @@ public class SymbolTableNode {
         return null;
     }
 
+    public SymbolTableNode findExisitingMethod(String id){
+        //Should only be called by root
+        SymbolTableNode result;
+        //method level only
+        for (SymbolTableNode c : getChildren()){
+            for (SymbolTableNode m: c.getChildren()){
+                if (m.identifier.equals(id) & (m instanceof STMethodNode)){
+                    return (STMethodNode)m;
+                }
+            }
+        }
+        return null;
+    }
+
     public String getType(){
         return type.toString();
     }

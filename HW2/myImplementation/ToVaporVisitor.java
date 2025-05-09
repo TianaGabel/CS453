@@ -429,21 +429,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(Expression n,W w) {
       n.f0.accept(this, w);
-      boolean isTemp = false;
-      //TODO if the expression is the name of something, ensure that it is local
-      try{
-         isTemp = w.varStack.peek().substring(0, 2).equals("t."); //style t.1
-      } catch (Exception e){}
-      boolean isValue = w.varStack.peek().matches("-?\\d+(\\.\\d+)?"); //credit to for the regex https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
-      if((!isTemp)&&(!isValue)){
-         //System.out.println(w.varStack.peek());
-         if(!w.islocal(w.varStack.peek())){
-            //It's probably a field
-            int temp = ((STClassNode)w.getSTClass()).mapField(w.varStack.pop());
-            System.out.println(w.indents() + w.newTempVar() + " = [this+" + temp + "]");
-            w.varStack.push(w.getTempVar());
-         }
-      }
    }
 
    /**
@@ -589,7 +574,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       String methodName = w.varStack.pop();
       String instanceName = w.varStack.pop();
       int methodLoc;
-      methodLoc =((STClassNode)w.getRoot().findExisitingSymbol(methodName).Parent).mapMethod(methodName);
+      methodLoc =((STClassNode)w.getRoot().findExisitingMethod(methodName).Parent).mapMethod(methodName);
 
       String instanceLoc= instanceName; //t.0
       String t1 = w.newTempVar();
@@ -635,6 +620,20 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(PrimaryExpression n,W w) {
       n.f0.accept(this, w);
+      boolean isTemp = false;
+      try{
+         isTemp = w.varStack.peek().substring(0, 2).equals("t."); //style t.1
+      } catch (Exception e){}
+      boolean isValue = w.varStack.peek().matches("-?\\d+(\\.\\d+)?"); //credit to for the regex https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
+      if((!isTemp)&&(!isValue)){
+         //System.out.println(w.varStack.peek());
+         if(!w.islocal(w.varStack.peek())){
+            //It's probably a field
+            int temp = ((STClassNode)w.getSTClass()).mapField(w.varStack.pop());
+            System.out.println(w.indents() + w.newTempVar() + " = [this+" + temp + "]");
+            w.varStack.push(w.getTempVar());
+         }
+      }
    }
 
    /**
@@ -725,8 +724,9 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       //referenced from example code
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      String temp = w.varStack.pop();
       w.varStack.add(w.newTempVar());
-      String s = w.indents() + w.varStack.peek() + " = Sub(1 " + w.varStack.pop() + ")";
+      String s = w.indents() + w.varStack.peek() + " = Sub(1 " + temp + ")";
       System.out.println(s);
    }
 

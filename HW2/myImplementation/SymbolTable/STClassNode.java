@@ -69,10 +69,16 @@ public class STClassNode extends SymbolTableNode{
     }
 
     public int mapField(String id){
+        if (size == 0){
+            setupStuff();
+        }
         return mapToFields.get(id);
     }
 
     public int mapMethod(String id){
+        if (size == 0){
+            setupStuff();
+        }
         return mapToFunctionTable.get(id);
     }
     
