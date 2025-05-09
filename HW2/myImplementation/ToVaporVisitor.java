@@ -3,6 +3,7 @@ import visitor.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
+import myImplementation.SymbolTable.STClassNode;
 import myImplementation.SymbolTable.STMethodNode;
 import myImplementation.SymbolTable.STVaporArgInterface;
 import myImplementation.SymbolTable.STWinterface;
@@ -80,12 +81,14 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       w.incrIndent();
 
       ArrayList<String> s = w.getRoot().getMain().mainFunctionCall;
-      //TODO replace the 4 with a call to the object size (or not if we do just assume its the first method)
-      System.out.println(INDENT + "t.0 = HeapAllocZ(4)");
+      //ArrayList<SymbolTableNode> s = w.getRoot().getMain().getChildren();
+      //System.out.println(s + "----");
+      int size = ((STClassNode)w.getRoot().findExisitingClass(s.get(0))).getSize();
+      System.out.println(INDENT + "t.0 = HeapAllocZ("+size+")");
       System.out.println(INDENT + "[t.0] = :vmt_" + s.get(0));
       System.out.println(INDENT + "t.1 = [t.0]");
-      //TODO if it is not the first method needs to be updated
-      System.out.println(INDENT + "t.1 = [t.1+0]");
+      int targetMethod = ((STClassNode)w.getRoot().findExisitingClass(s.get(0))).mapMethod(s.get(1));
+      System.out.println(INDENT + "t.1 = [t.1+"+ targetMethod + "]");
 
       System.out.print(INDENT + "t.2 = call t.1(t.0");
       for(int i=2; i < s.size(); i++){
@@ -118,6 +121,8 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    public void visit(ClassDeclaration n,W w) {
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.setSTClass(w.getRoot().findExisitingClass(w.varStack.peek()));
+      ((STClassNode)w.getSTClass()).setupStuff();
       n.f2.accept(this, w);
       n.f3.accept(this, w);
       n.f4.accept(this, w);
@@ -137,6 +142,8 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    public void visit(ClassExtendsDeclaration n,W w) {
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.setSTClass(w.getRoot().findExisitingClass(w.varStack.peek()));
+      ((STClassNode)w.getSTClass()).setupStuff();
       n.f2.accept(this, w);
       n.f3.accept(this, w);
       n.f4.accept(this, w);
@@ -153,6 +160,9 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    public void visit(VarDeclaration n,W w) {
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.addLocal(w.varStack.peek());
+      //System.out.println(w.varStack.peek()+ "--");
+      //System.out.println(w.locals);
       n.f2.accept(this, w);
    }
 
@@ -172,11 +182,13 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f12 -> "}"
     */
    public void visit(MethodDeclaration n,W w) {
+      w.resetLocals();
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       
-      STMethodNode m = (STMethodNode) w.getRoot().findExisitingSymbol(w.varStack.pop());
+      STMethodNode m = (STMethodNode) w.getSTClass().findExisitingSymbol(w.varStack.pop());
+      w.setSTMethod(m);
       String s = m.vaporFunctionDef();
       System.out.println(s);
       w.resetTemp();
@@ -189,7 +201,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f8.accept(this, w);
       n.f9.accept(this, w);
       n.f10.accept(this, w);
-      //w.printStatement(); //ensure nothing remains
       System.out.println(INDENT + "ret " + w.varStack.pop());
       w.decrIndent();
       n.f11.accept(this, w);
@@ -203,6 +214,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(FormalParameterList n,W w) {
       n.f0.accept(this, w);
+      w.addLocal(w.varStack.peek());
       n.f1.accept(this, w);
    }
 
@@ -222,6 +234,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    public void visit(FormalParameterRest n,W w) {
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.addLocal(w.varStack.peek());
    }
 
    /**
@@ -241,8 +254,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f2 -> "]"
     */
    public void visit(ArrayType n,W w) {
-      //TODO creations of an array
-      //Plan on creating a function for doing this and calling
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
@@ -273,7 +284,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    public void visit(Statement n,W w) {
       w.initStatement();
       n.f0.accept(this, w);
-      //TODO we will operate in blocks as statement should not vary in vars significantly
       w.printStatement();
    }
 
@@ -301,7 +311,12 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f3.accept(this, w);
       String e = w.varStack.pop();
       String i = w.varStack.pop();
-      System.out.println(w.indents() + i + " = " + e);
+      if (w.islocal(i)){
+         System.out.println(w.indents() + i + " = " + e);
+      } else {
+         int field = ((STClassNode)w.getSTClass()).mapField(i);
+         System.out.println(w.indents() + "[this+" + field + "]" + " = " + e);
+      }
    }
 
    /**
@@ -314,7 +329,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f6 -> ";"
     */
    public void visit(ArrayAssignmentStatement n,W w) {
-      // TODO
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
@@ -322,6 +336,11 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f4.accept(this, w);
       n.f5.accept(this, w);
       n.f6.accept(this, w);
+      String exToAssign = w.varStack.pop();
+      String index = w.varStack.pop();
+      String i = w.varStack.pop();
+      //TODO check this is correct syntax
+      System.out.println(w.indents() +i + "[" + index + "] = " + exToAssign);
    }
 
    /**
@@ -344,7 +363,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       w.incrIndent();
       n.f3.accept(this, w);
       n.f4.accept(this, w);
-      System.out.println( w.indents()+ "goto:" + name +"_end");
+      System.out.println( w.indents()+ "goto :" + name +"_end");
       w.decrIndent();
       System.out.println(w.indents() + name +"_else:");
       w.incrIndent();
@@ -394,7 +413,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f2.accept(this, w);
       n.f3.accept(this, w);
       n.f4.accept(this, w);
-      System.out.println(w.indents() + "PrintInts(" + w.varStack.pop() + ")");
+      System.out.println(w.indents() + "PrintIntS(" + w.varStack.pop() + ")");
    }
 
    /**
@@ -421,7 +440,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f0.accept(this, w);
       n.f1.accept(this, w);
       n.f2.accept(this, w);
-      //TODO assuming no and exists this should do the same thing
       String a = w.varStack.pop();
       String b = w.varStack.pop();
       w.varStack.add(w.newTempVar());
@@ -536,24 +554,37 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f5 -> ")"
     */
    public void visit(MessageSend n,W w) {
-      w.varStack.push("MESSAGE SEND");
       //Address of the function table
-      // String t = newTempVar();
-      // System.out.println(indents() + t + " = [" + varStack.pop() + "]");
-      // //TODO Address of the function this may need to be updated via where it is at according to the symbol table
-      // System.out.println(indents() + newTempVar() + " = [" + t + "]");
-      // n.f0.accept(this, w);
-      // n.f1.accept(this, w);
-      // n.f2.accept(this, w);
-      // n.f3.accept(this, w);
-      // n.f4.accept(this, w);
-      // printStack();
-      // varStack.push("");
-      // String s = indents() + varStack.pop() + " = call " + tempVar() + "(" + "TODO" + " ";
-      // s += varStack.pop();
-      // s += ")";
-      // currentStack.push(s);
-      // n.f5.accept(this, w);
+      //Ex:
+      //ft = [instance]
+      //ft = [ft + method]
+      //t.2 = call ft(instance a)
+      n.f0.accept(this, w);
+      n.f1.accept(this, w);
+      n.f2.accept(this, w);
+      n.f3.accept(this, w);
+      n.f4.accept(this, w);
+      n.f5.accept(this, w);
+
+      String params = "";
+      for (int i =0; i < w.getParamCount();i++){
+         params += " " + w.varStack.pop(); 
+      }
+
+      String methodName = w.varStack.pop();
+      String instanceName = w.varStack.pop();
+      int methodLoc;
+      methodLoc =((STClassNode)w.getRoot().findExisitingSymbol(methodName).Parent).mapMethod(methodName);
+
+      String instanceLoc= instanceName; //t.0
+      String t1 = w.newTempVar();
+      String t2 = w.newTempVar();
+      w.varStack.push(t2);
+      
+      System.out.println(w.indents() + t1 + " = [" + instanceLoc + "]");
+      System.out.println(w.indents() + t1 + " = [" + t1 +  " + " + methodLoc + "]");
+      System.out.println(w.indents() + t2 + " =  call " + t1 + "(" + instanceLoc + params +")");
+      w.resetParamCount();
    }
 
    /**
@@ -561,12 +592,9 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f1 -> ( ExpressionRest() )*
     */
    public void visit(ExpressionList n,W w) {
-      // currentStack.push(indents() + tempVar() + " = " + newTempVar());
-      // String s =  varStack.pop();
-      // s += tempVar() + " ";
-      // varStack.push(s);
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.incrParamCount();
    }
 
    /**
@@ -576,6 +604,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    public void visit(ExpressionRest n,W w) {
       n.f0.accept(this, w);
       n.f1.accept(this, w);
+      w.incrParamCount();
    }
 
    /**
@@ -667,8 +696,9 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f3.accept(this, w);
       String classID = w.varStack.pop();
       w.varStack.push(w.newTempVar());
-      //TODO size needs to be retrieved from symbol table
-      System.out.println(w.indents() + w.getTempVar() + " = heapAllocZ(4)");
+
+      int size = ((STClassNode)w.getRoot().findExisitingClass(classID)).getSize();
+      System.out.println(w.indents() + w.getTempVar() + " = HeapAllocZ("+ size +")");
       System.out.println(w.indents() + "[" + w.getTempVar() + "] = :vmt_" + classID);
    }
 
@@ -677,10 +707,12 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f1 -> Expression()
     */
    public void visit(NotExpression n,W w) {
-      //Todo unsure how this would work
+      //referenced from example code
       n.f0.accept(this, w);
       n.f1.accept(this, w);
-      w.varStack.pop();
+      w.varStack.add(w.newTempVar());
+      String s = w.indents() + w.varStack.peek() + " = Sub(1 " + w.varStack.pop() + ")";
+      System.out.println(s);
    }
 
    /**

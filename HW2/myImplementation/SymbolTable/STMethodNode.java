@@ -45,17 +45,6 @@ public class STMethodNode extends SymbolTableNode {
         //Check that arguments match the types given by params
     }
 
-    // @Override
-    // public void isVar(String id){
-    //     for(SymbolTableNode n: getChildren()){
-    //         if (n.identifier.equals(id)){
-    //             return;
-    //         }
-    //     }
-    //     //this also doesn't consider class field if they exist
-    //     //TODO Throw and exception
-    // }
-
     @Override
     public SymbolTableNode findExistingSymbolFromRoot(String id){
         SymbolTableNode n;

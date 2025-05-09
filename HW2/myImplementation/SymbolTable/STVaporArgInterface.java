@@ -1,6 +1,7 @@
 package myImplementation.SymbolTable;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Stack;
@@ -14,9 +15,23 @@ public interface STVaporArgInterface {
     public Deque<String> pendingLines = new ArrayDeque<>();
     public Stack<Deque> pendingStates = new Stack<>();
     public Stack<String> varStack = new Stack<>();
+    public ArrayList<String> locals = new ArrayList<>();
 
     public void setRoot(SymbolTableNode r);
     public SymbolTableNode getRoot();
+    public void setSTClass(SymbolTableNode r);
+    public SymbolTableNode getSTClass();
+    public void setSTMethod(SymbolTableNode r);
+    public SymbolTableNode getSTMethod();
+    
+    public void addLocal(String id);
+
+    public boolean islocal(String id);
+    public void resetLocals();
+
+    public void incrParamCount();
+    public int getParamCount();
+    public void resetParamCount();
 
     public String indents();
     public String getTempVar();

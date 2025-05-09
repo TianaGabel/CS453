@@ -136,9 +136,11 @@ public class SymbolTableNode {
 
     public STMethodNode getMain(){
         SymbolTableNode m = this.findExisitingSymbol("Main");
-        if (m != null) {
+        //System.out.println(m.getClass() + "---");
+        if ((m != null)&&(!(m instanceof STClassNode))) {
             return (STMethodNode)m;
         }
+        System.out.println("BOOOOOO");
         m = this.getChildren().get(0).unorderedChildren.get("Main");
         return (STMethodNode)m;
     }

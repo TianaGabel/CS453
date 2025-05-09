@@ -14,13 +14,17 @@ public class STVaporArg implements STVaporArgInterface{
 
     private int tempCounter = 0;
     private int controlCounter = 0;
+    private int paramCount = 0;
     public void resetTemp(){tempCounter = 0;}
     //The idea is that I can keep expressions seperate from statement stuff
     public Deque<String> pendingLines = new ArrayDeque<>();
     public Stack<Deque> pendingStates = new Stack<>();
     public Stack<String> varStack = new Stack<>();
+    public ArrayList<String> localsl = new ArrayList<>();
 
     public SymbolTableNode root;
+    public SymbolTableNode currentClass;
+    public SymbolTableNode currentMethod;
 
     public STVaporArg(SymbolTableNode r){
         root = r;
@@ -32,6 +36,46 @@ public class STVaporArg implements STVaporArgInterface{
     public SymbolTableNode getRoot(){
         return root;
     }
+
+    public void setSTClass(SymbolTableNode r){
+        currentClass = r; //TODO
+    }
+    public SymbolTableNode getSTClass(){
+        return currentClass;
+    }
+
+    public void setSTMethod(SymbolTableNode r){
+        currentMethod = r; //TODO
+    }
+    public SymbolTableNode getSTMethod(){
+        return currentMethod;
+    }
+
+    public void addLocal(String id){
+        locals.add(id);
+        //System.out.println(locals);
+    }
+
+    public void resetLocals(){
+        locals.clear();
+    }
+
+    public boolean islocal(String id){
+        return locals.contains(id);
+    }
+
+    public void incrParamCount(){
+        paramCount++;
+    }
+
+    public int getParamCount(){
+        return paramCount;
+    }
+
+    public void resetParamCount(){
+        paramCount = 0;
+    }
+
 
     public String getTempVar() {
         StringBuilder sb = new StringBuilder();
