@@ -61,7 +61,7 @@ public class STVaporArg implements STVaporArgInterface{
     }
 
     public boolean islocal(String id){
-        return locals.contains(id);
+        return locals.contains(id) || id.equals("this");
     }
 
     public void incrParamCount(){

@@ -417,18 +417,33 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
    }
 
    /**
-    * f0 -> AndExpression()
-    *       | CompareExpression()
-    *       | PlusExpression()
-    *       | MinusExpression()
-    *       | TimesExpression()
-    *       | ArrayLookup()
-    *       | ArrayLength()
-    *       | MessageSend()
-    *       | PrimaryExpression()
+    * f0 -> AndExpression()   //num
+    *       | CompareExpression()   //num
+    *       | PlusExpression()  //num
+    *       | MinusExpression() //num
+    *       | TimesExpression()  //num
+    *       | ArrayLookup()  //temp
+    *       | ArrayLength() //temp
+    *       | MessageSend() //always temp
+    *       | PrimaryExpression() 
     */
    public void visit(Expression n,W w) {
       n.f0.accept(this, w);
+      boolean isTemp = false;
+      //TODO if the expression is the name of something, ensure that it is local
+      try{
+         isTemp = w.varStack.peek().substring(0, 2).equals("t."); //style t.1
+      } catch (Exception e){}
+      boolean isValue = w.varStack.peek().matches("-?\\d+(\\.\\d+)?"); //credit to for the regex https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
+      if((!isTemp)&&(!isValue)){
+         //System.out.println(w.varStack.peek());
+         if(!w.islocal(w.varStack.peek())){
+            //It's probably a field
+            int temp = ((STClassNode)w.getSTClass()).mapField(w.varStack.pop());
+            System.out.println(w.indents() + w.newTempVar() + " = [this+" + temp + "]");
+            w.varStack.push(w.getTempVar());
+         }
+      }
    }
 
    /**
@@ -568,7 +583,7 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
 
       String params = "";
       for (int i =0; i < w.getParamCount();i++){
-         params += " " + w.varStack.pop(); 
+         params = " " + w.varStack.pop() + params; 
       }
 
       String methodName = w.varStack.pop();
