@@ -13,10 +13,10 @@ javac J2V.java
 
 
 # java J2V < ../Tests/mj/BinaryTree.java > P.vapor  #pass bug was reversed params    
- java J2V < ../Tests/mj/BubbleSort.java > P.vapor   #fail looks like array issue
-# java J2V < ../Tests/mj/Factorial.java > P.vapor    
-# java J2V < ../Tests/mj/LinearSearch.java > P.vapor #fail arrays
+# java J2V < ../Tests/mj/BubbleSort.java > P.vapor   #pass
+# java J2V < ../Tests/mj/Factorial.java > P.vapor    #pass
+# java J2V < ../Tests/mj/LinearSearch.java > P.vapor #pass
 # java J2V < ../Tests/mj/LinkedList.java > P.vapor  #fail
 # java J2V < ../Tests/mj/MoreThan4.java > P.vapor #pass   
-# java J2V < ../Tests/mj/QuickSort.java > P.vapor
-# java J2V < ../Tests/mj/TreeVisitor.java > P.vapor   
+# java J2V < ../Tests/mj/QuickSort.java > P.vapor #pass
+# java J2V < ../Tests/mj/TreeVisitor.java > P.vapor #pass 
