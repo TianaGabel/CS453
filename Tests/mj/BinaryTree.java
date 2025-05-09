@@ -32,8 +32,8 @@ class BT {
 	System.out.println(root.Search(16));
 	System.out.println(root.Search(50));
 	System.out.println(root.Search(12));
-	ntb = root.Delete(12);
-	ntb = root.Print();
+	ntb = root.Delete(12);      
+	ntb = root.Print();  //the error occurs here
 	System.out.println(root.Search(12));
 
 	return 0 ;
@@ -129,7 +129,7 @@ class Tree{
 	Tree current_node ;
 
 	new_node = new Tree();
-	ntb = new_node.Init(v_key) ;
+	ntb = new_node.Init(v_key);
 	current_node = this ;
 	cont = true ;
 	while (cont){
@@ -331,4 +331,3 @@ class Tree{
     }
 
 }
-   

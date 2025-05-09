@@ -336,11 +336,26 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
       n.f4.accept(this, w);
       n.f5.accept(this, w);
       n.f6.accept(this, w);
+      /*number[j] = t;
+         t.16 = [this+4]
+            if t.16 goto :null7
+               Error("null pointer")
+            null7:
+        t.17 = [t.16]
+        t.17 = Lt(j t.17)
+            if t.17 goto :bounds6
+               Error("array index out of bounds")
+            bounds6:
+        t.17 = MulS(j 4)
+        t.17 = Add(t.17 t.16)
+        [t.17+4] = t */
       String exToAssign = w.varStack.pop();
       String index = w.varStack.pop();
-      String i = w.varStack.pop();
-      //TODO check this is correct syntax
-      System.out.println(w.indents() +i + "[" + index + "] = " + exToAssign);
+      String arr = w.varStack.pop();
+      String t1 = w.newTempVar();
+      System.out.println(w.indents()+t1+"= MulS(" + index + " 4)");
+      System.out.println(w.indents()+t1+"= Add(" + t1 + " " + arr +")");
+      System.out.println(w.indents()+"[" + t1 + "+4] = " + exToAssign);
    }
 
    /**
@@ -422,13 +437,27 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     *       | PlusExpression()  //num
     *       | MinusExpression() //num
     *       | TimesExpression()  //num
-    *       | ArrayLookup()  //temp
+    *       | ArrayLookup()  //shockingly usually field
     *       | ArrayLength() //temp
     *       | MessageSend() //always temp
     *       | PrimaryExpression() 
     */
    public void visit(Expression n,W w) {
       n.f0.accept(this, w);
+      boolean isTemp = false;
+      try{
+         isTemp = w.varStack.peek().substring(0, 2).equals("t."); //style t.1
+      } catch (Exception e){}
+      boolean isValue = w.varStack.peek().matches("-?\\d+(\\.\\d+)?"); //credit to for the regex https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
+      if((!isTemp)&&(!isValue)){
+         //System.out.println(w.varStack.peek());
+         if(!w.islocal(w.varStack.peek())){
+            //It's probably a field
+            int temp = ((STClassNode)w.getSTClass()).mapField(w.varStack.pop());
+            System.out.println(w.indents() + w.newTempVar() + " = [this+" + temp + "]");
+            w.varStack.push(w.getTempVar());
+         }
+      }
    }
 
    /**
@@ -518,14 +547,30 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     * f3 -> "]"
     */
    public void visit(ArrayLookup n,W w) {
-      w.varStack.push(w.newTempVar());
+      /*
+       * aux04 = arr[aux07]
+       * t.4 = [this+4]
+         t.5 = [t.4]
+         t.5 = Lt(aux07 t.5)
+            if t.5 goto :bounds1
+            Error("array index out of bounds")
+            bounds1:
+         t.5 = MulS(aux07 4)
+         t.5 = Add(t.5 t.4)
+         aux04 = [t.5+4]
+       */
+
       n.f0.accept(this, w);
-      //pop array var from stack
       n.f1.accept(this, w);
       n.f2.accept(this, w);
       n.f3.accept(this, w);
-      //pop inter var
-      //use current stack with the other 2 in order to create array
+      String index = w.varStack.pop();
+      String arr = w.varStack.pop();
+      String t1 = w.newTempVar();
+      System.out.println(w.indents()+t1+"= MulS(" + index + " 4)");
+      System.out.println(w.indents()+t1+"= Add(" + t1 + " " + arr+")");
+      w.varStack.push(w.newTempVar());
+      System.out.println(w.indents()+w.getTempVar() + "= [" + t1 + "+4]");
 
    }
 
@@ -620,20 +665,6 @@ public class ToVaporVisitor<W extends STVaporArgInterface> extends GJVoidDepthFi
     */
    public void visit(PrimaryExpression n,W w) {
       n.f0.accept(this, w);
-      boolean isTemp = false;
-      try{
-         isTemp = w.varStack.peek().substring(0, 2).equals("t."); //style t.1
-      } catch (Exception e){}
-      boolean isValue = w.varStack.peek().matches("-?\\d+(\\.\\d+)?"); //credit to for the regex https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
-      if((!isTemp)&&(!isValue)){
-         //System.out.println(w.varStack.peek());
-         if(!w.islocal(w.varStack.peek())){
-            //It's probably a field
-            int temp = ((STClassNode)w.getSTClass()).mapField(w.varStack.pop());
-            System.out.println(w.indents() + w.newTempVar() + " = [this+" + temp + "]");
-            w.varStack.push(w.getTempVar());
-         }
-      }
    }
 
    /**

@@ -1,7 +1,34 @@
+5/08/2025
+-implemented support for inheritence and tested it
+-implemented support for accessing and assigning to class attributes
+-implemented message send
+-implemented not and && builtin operators
+-lots and lots of testing
+-bug fixes were mainly ensuring variables were intialized if classes were out of order
+or limiting the findexistingsymbol to a specific type of symbol to prevent bad casts
+-main problems at the moment are finding array locations when they are class fields, should just require duplicating the code in expression or making a santiy check method
+- Known problems I will probably not fix:
+- a file named Main.java will fail, I assume because of the above symbol bug
+- similarly there could exist a variable that gets past the sanity check when it shouldn'table
+TODO:
+-array variable sanity check
+-quick run pass other checks for complilation not accuracy for now.
+-SUBMIT this
+
+5/07/2025
+-lots of work into homework 3 support for most builtin operations, fixed method signature bugs
+-setting up context seems to be important, so we want need to add support for mapping, checking locals and finding methods
+-ran J2V example tests and documented which ones passed and which failed and why
+
+5/06/2025
+-Basically implemented a way to print the original vapor code
+-visitor is missing the line that the if's and goto are supposed to jump to
+
 5/05/2025
 Aim to HW$4
 - get some better general specs of the vapor ast
-- figure out why it won't run and update .sh file
+- figure out why it won't run and update .sh file 
+    -Answer: invisible chars
 
 - Mirror instruction visitor implementation?? (is that even what it is for)
 - maybe make a dictionary of registers (For spill everywhere I image only about 3-4 are needed)
@@ -12,6 +39,11 @@ HW3
 - build in one direction or the other (double sided queue or just a string)
 - output at the end of certain operations (or don't unsure tbh, maybe the println since that is the correctness check)
 - Create a generic main method for the println statement
+
+Actually done:
+-updated visitor to pass args, removed stack, but then added stack back, but to backup scopes when a new scope is entered
+-supports most simple things, but not arrays, message sends, or field accesses/setting
+-fixed issue in HW4 started compiling information together
 
 
 5/02/2025

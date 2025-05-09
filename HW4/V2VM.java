@@ -34,7 +34,7 @@ public class V2VM {
       for(VFunction vf : vp.functions){
         System.out.println("\n" + vf.ident);
         for(VInstr vi: vf.body){
-          vi.accept(wrapper, bv);
+          //vi.accept(wrapper, bv);
 
         }
         //ALL LISTS MAY BE UNINITIALZIED

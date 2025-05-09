@@ -1,32 +1,31 @@
 
 Main
-t.0 = HeapAllocZ(4)
-[t.0+0] = :vmt_MT4
-if t.0 goto :null1
-Error("null pointer")
-t.1 = [t.0+0]
-t.1 = [t.1+0]
-t.2 = call t.1(t.0 1 2 3 4 5 6)
-PrintIntS(t.2)
-ret
+
+[Ljava.lang.String;@2a139a55
+t.0
+t.1
+t.2
 
 MT4.Start
-PrintIntS(p1)
-PrintIntS(p2)
-PrintIntS(p3)
-PrintIntS(p4)
-PrintIntS(p5)
-PrintIntS(p6)
-t.0 = [this+0]
-t.0 = [t.0+4]
-aux = call t.0(this p6 p5 p4 p3 p2 p1)
-ret aux
+
+[Ljava.lang.String;@15db9742
+this
+p1
+p2
+p3
+p4
+p5
+p6
+t.0
+aux
 
 MT4.Change
-PrintIntS(p1)
-PrintIntS(p2)
-PrintIntS(p3)
-PrintIntS(p4)
-PrintIntS(p5)
-PrintIntS(p6)
-ret 0
+
+[Ljava.lang.String;@6d06d69c
+this
+p1
+p2
+p3
+p4
+p5
+p6
