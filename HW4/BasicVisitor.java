@@ -1,7 +1,7 @@
 import cs132.vapor.ast.*; //should cover most bases
 
 
-
+//This is basically a pretty printer for basic vapor code, a good reference when it comes to the actual output
 public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> extends VInstr.VisitorP<P,E> {
     //ALL HAVE sourcePos
 

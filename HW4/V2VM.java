@@ -26,17 +26,27 @@ public class V2VM {
       //code labels, list of params, stack declaration, list of local variables
       //NOTE: apparently runtime exceptions ... osmething
       //NOTE: the visitor doesn't support functions so I guess loop for now and we can dd it later
-
       
       VMWrapper wrapper = new VMWrapper();
-      BasicVisitor<VMWrapper,RuntimeException> bv =  new BasicVisitor();
-      RuntimeException r = new RuntimeException();
-      for(VFunction vf : vp.functions){
-        System.out.println("\n" + vf.ident);
-        for(VInstr vi: vf.body){
-          //vi.accept(wrapper, bv);
 
+      RegAllocVisitor<VMWrapper,RuntimeException> regalloc =  new RegAllocVisitor();
+
+      //BasicVisitor<VMWrapper,RuntimeException> bv =  new BasicVisitor();
+      ToVaporMVisitor<VMWrapper,RuntimeException> bv =  new ToVaporMVisitor();
+      bv.setWrapper(wrapper);
+      RuntimeException r = new RuntimeException();
+      int countForlabels = 0;
+      for(VFunction vf : vp.functions){
+        wrapper.resetRegisters();
+        wrapper.incrIn(vf.params.length-1);
+        wrapper.addFunction(vf.ident);
+        System.out.println(wrapper.getFunctionDeclartion(vf.ident));
+        bv.addParams(vf.params);
+        for(VInstr vi: vf.body){
+          vi.accept(wrapper, bv);
+          //System.out.println("-");
         }
+        countForlabels++;
         //ALL LISTS MAY BE UNINITIALZIED
         // System.out.println(vf.ident);
         // System.out.println(vf.params);
@@ -46,6 +56,21 @@ public class V2VM {
         // System.out.println(vf.labels);   
         // System.out.println("    " +vf.body[0]);
 
+        //Start with analysis of the function body (regalloc) in order to compute in/out/local
+        //in -> things that were passed as a param to this method
+        //out -> things that were passed as args to message sends
+        //local ->spilled vars
+
+        //v0 for return value refs
+        //args for args or purely use the out array for spill everywhere
+        //unsure the purpose of the s registers
+
+        //next start allocating t0 to t7 for every local var,back these up before any function call
+        //then restore after the fact
+
+        //Language translation stuff basic
+        //func Main() becomes func Main [in 0, out 0, local 0]
+        //t.42 or other temporaries become $t0
       }
 
 

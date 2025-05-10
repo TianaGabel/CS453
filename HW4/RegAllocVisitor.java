@@ -2,7 +2,7 @@ import cs132.vapor.ast.*; //should cover most bases
 
 
 
-public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> extends VInstr.VisitorP<P,E> {
+public class RegAllocVisitor<P extends VMWrapperinterface,E extends Throwable> extends VInstr.VisitorP<P,E> {
     //ALL HAVE sourcePos
 
     // * abstract  void	visit(P p, VAssign a)
@@ -70,7 +70,9 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     public void visit(P p, VCall c) {
         //set out variables
         //backup local registers
+        //this will always be $a0
         int argsCount = c.args.length;
+        p.incrOut(argsCount - 1);
         //restore local registers
     }
                
@@ -89,7 +91,6 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     // sourcepPos
     public void visit(P p, VMemRead r) {
         //we may be making more of these I guess
-
      }
                
     // abstract  void   visit(P p, VMemWrite w)
@@ -105,46 +106,9 @@ public class BasicVisitor<P extends VMWrapperinterface,E extends Throwable> exte
     // abstract  void	visit(P p, VReturn r)
     // value
     public void visit(P p, VReturn r) {
-        //in future translations throw the out arrays here for non-main functions
         //also handling for v0
     }
 
-
-
-
-
-    ///MISC HELPER METHODS
-    private String VMemRefToString(VMemRef ref){
-        if (ref instanceof VMemRef.Global){
-            return "" + ((VMemRef.Global)ref).base + "+" + ((VMemRef.Global)ref).byteOffset;
-        } else {
-            return "BOOOO";
-        }
-
-    }
-
-    private String VBuiltInArgsToString(VBuiltIn c){
-        String s = "";
-        for (int i = 0; i < c.args.length; i++){
-            s += "" + c.args[i];
-            break;
-        }
-        for (int i = 1; i < c.args.length; i++){
-            s += " " + c.args[i];
-        }
-        return s;
-    }
-
-    private String VBuiltInArgsToString(VCall c){
-        String s = "";
-        for (int i = 0; i < c.args.length; i++){
-            s += "" + c.args[i];
-            break;
-        }
-        for (int i = 1; i < c.args.length; i++){
-            s += " " + c.args[i];
-        }
-        return s;
-    }
+    
     
 }

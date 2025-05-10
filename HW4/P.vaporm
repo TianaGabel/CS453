@@ -1,31 +1,62 @@
 
-Main
+func Main [in 0,out 0,local 0]
+   $t0 = HeapAllocZ(4)
+   [$t0] = $t01
+   if $t0 goto :null1
+   Error($t02)
+   $t03 = [$t0]
+   $t03 = [$t03]
+   $a0 = $t0
+   out[0] = 1
+   out[1] = 2
+   out[2] = 3
+   out[3] = 4
+   out[4] = 5
+   out[5] = 6
+   call $t03
+   $t04 = $v0
+   PrintIntS($t04)
+   ret
 
-[Ljava.lang.String;@2a139a55
-t.0
-t.1
-t.2
+func MT4.Start [in 6,out 0,local 0]
+   $t0 = in[0]
+   $t01 = in[1]
+   $t02 = in[2]
+   $t03 = in[3]
+   $t04 = in[4]
+   $t05 = in[5]
+   PrintIntS($t0)
+   PrintIntS($t01)
+   PrintIntS($t02)
+   PrintIntS($t03)
+   PrintIntS($t04)
+   PrintIntS($t05)
+   $t06 = [$a0]
+   $t06 = [$t06+4]
+   $a0 = $a0
+   out[0] = $t05
+   out[1] = $t04
+   out[2] = $t03
+   out[3] = $t02
+   out[4] = $t01
+   out[5] = $t0
+   call $t06
+   $t07 = $v0
+   $v0 = aux
+   ret
 
-MT4.Start
-
-[Ljava.lang.String;@15db9742
-this
-p1
-p2
-p3
-p4
-p5
-p6
-t.0
-aux
-
-MT4.Change
-
-[Ljava.lang.String;@6d06d69c
-this
-p1
-p2
-p3
-p4
-p5
-p6
+func MT4.Change [in 6,out 0,local 0]
+   $t0 = in[0]
+   $t01 = in[1]
+   $t02 = in[2]
+   $t03 = in[3]
+   $t04 = in[4]
+   $t05 = in[5]
+   PrintIntS($t0)
+   PrintIntS($t01)
+   PrintIntS($t02)
+   PrintIntS($t03)
+   PrintIntS($t04)
+   PrintIntS($t05)
+   $v0 = 0
+   ret
