@@ -72,6 +72,7 @@ public class RegAllocVisitor<P extends VMWrapperinterface,E extends Throwable> e
         //backup local registers
         //this will always be $a0
         int argsCount = c.args.length;
+        System.out.println();
         p.incrOut(argsCount - 1);
         //restore local registers
     }

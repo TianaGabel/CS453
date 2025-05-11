@@ -1,11 +1,20 @@
+const vmt_MT4
+   :MT4.Start
+   :MT4.Change
 
-func Main [in 0,out 0,local 0]
+
+ 
+func Main [in 0,out 6,local 0]
    $t0 = HeapAllocZ(4)
-   [$t0] = $t01
+   [$t0] = :vmt_MT4
    if $t0 goto :null1
-   Error($t02)
-   $t03 = [$t0]
-   $t03 = [$t03]
+   Error($t1)
+   if $t0 goto :null2
+   Error($t1)
+   null2:
+   null1:
+   $t2 = [$t0]
+   $t2 = [$t2]
    $a0 = $t0
    out[0] = 1
    out[1] = 2
@@ -13,50 +22,53 @@ func Main [in 0,out 0,local 0]
    out[3] = 4
    out[4] = 5
    out[5] = 6
-   call $t03
-   $t04 = $v0
-   PrintIntS($t04)
+   call $t2
+   $t3 = $v0
+   PrintIntS($t3)
    ret
 
-func MT4.Start [in 6,out 0,local 0]
+
+ 
+func MT4.Start [in 6,out 6,local 0]
    $t0 = in[0]
-   $t01 = in[1]
-   $t02 = in[2]
-   $t03 = in[3]
-   $t04 = in[4]
-   $t05 = in[5]
+   $t1 = in[1]
+   $t2 = in[2]
+   $t3 = in[3]
+   $t4 = in[4]
+   $t5 = in[5]
    PrintIntS($t0)
-   PrintIntS($t01)
-   PrintIntS($t02)
-   PrintIntS($t03)
-   PrintIntS($t04)
-   PrintIntS($t05)
-   $t06 = [$a0]
-   $t06 = [$t06+4]
+   PrintIntS($t1)
+   PrintIntS($t2)
+   PrintIntS($t3)
+   PrintIntS($t4)
+   PrintIntS($t5)
+   $t6 = [$a0]
+   $t6 = [$t6+4]
    $a0 = $a0
-   out[0] = $t05
-   out[1] = $t04
-   out[2] = $t03
-   out[3] = $t02
-   out[4] = $t01
+   out[0] = $t5
+   out[1] = $t4
+   out[2] = $t3
+   out[3] = $t2
+   out[4] = $t1
    out[5] = $t0
-   call $t06
-   $t07 = $v0
-   $v0 = aux
+   call $t6
+   $t7 = $v0
+   $v0 = $t7
    ret
 
 func MT4.Change [in 6,out 0,local 0]
    $t0 = in[0]
-   $t01 = in[1]
-   $t02 = in[2]
-   $t03 = in[3]
-   $t04 = in[4]
-   $t05 = in[5]
+   $t1 = in[1]
+   $t2 = in[2]
+   $t3 = in[3]
+   $t4 = in[4]
+   $t5 = in[5]
    PrintIntS($t0)
-   PrintIntS($t01)
-   PrintIntS($t02)
-   PrintIntS($t03)
-   PrintIntS($t04)
-   PrintIntS($t05)
+   PrintIntS($t1)
+   PrintIntS($t2)
+   PrintIntS($t3)
+   PrintIntS($t4)
+   PrintIntS($t5)
    $v0 = 0
    ret
+

@@ -9,8 +9,7 @@ public class VMWrapper implements VMWrapperinterface{
 
     public void addVarToRegister(String id){
         if (registersInUse < 8){
-            String r = "$t0";
-            if (registersInUse != 0){r += registersInUse;}
+            String r = "$t" + registersInUse;
 
             localVarToRegister.put(id,r);
             registersInUse++;
@@ -69,16 +68,13 @@ public class VMWrapper implements VMWrapperinterface{
         localCount = 0;
     }
 
-    public void incrIn(){inCount++;}
-    public void incrOut(){outCount++;}
-    public void incrLocal(){localCount++;}
     public void incrIn(int a){inCount+= Math.max(a,0);}
-    public void incrOut(int a){outCount+=a;}
+    public void incrOut(int a){outCount=Math.max(a, outCount);System.out.println(" ");}
     public void incrLocal(int a){localCount+=a;}
 
     public String getFunctionDeclartion(String id){
         int[] temp = reallocMap.get(id);
-        String s = "\nfunc " + id + " [in " + temp[0] + ",out " + temp[1] + ",local " + temp[2] + "]";
+        String s = "func " + id + " [in " + temp[0] + ",out " + temp[1] + ",local " + temp[2] + "]";
         return s; 
     }
 }

@@ -140,10 +140,10 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // value
     public void visit(P p, VReturn r) {
         if (r.value != null){
-            print("$v0 = " + r.value);
-            print("ret"); 
+            print("$v0 = " + convertName(r.value.toString()));
+            print("ret\n"); 
         } else {
-            print("ret"); 
+            print("ret\n"); 
         }
     }
 
@@ -173,7 +173,8 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
             return "$a0";
         }
         boolean isValue = id.matches("-?\\d+(\\.\\d+)?");
-        if (isValue){
+        boolean isft =  id.substring(0, 1).equals(":");
+        if (isValue || isft){
             return id;
         }
         // try{
