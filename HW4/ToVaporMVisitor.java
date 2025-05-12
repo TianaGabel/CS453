@@ -37,13 +37,14 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // The value being branched on.
 
     public void visit(P p, VBranch b) {
-        p.backupToLocals();
         //print("branch"); 
+        p.backupToLocals();
         if (b.positive){
             print("if " + convertName(b.value.toString()) + " goto " + b.target);  
         } else {
             print("if0 " + convertName(b.value.toString()) + " goto " + b.target);  
         }
+        p.backupToLocals();
     }
             
     // abstract  void	visit(P p, VBuiltIn c)
@@ -121,6 +122,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // target "The target of the jump."
     // VAddr<VCodeLabel>	target
     public void visit(P p, VGoto g) {
+        p.backupToLocals();
         print("goto " + g.target); 
     }
     
