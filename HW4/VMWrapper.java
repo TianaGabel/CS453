@@ -59,7 +59,8 @@ public class VMWrapper implements VMWrapperinterface{
                 localVarToRegister.put(id, newRegister);
             } else {
                 String varLocalLoc = varsToLocals.get(varAtNewRegister);
-                System.out.println(varLocalLoc + " = " + newRegister);
+                //System.out.println(varLocalLoc + " = " + newRegister);
+                print(varLocalLoc + " = " + newRegister);
                 localVarToRegister.put(varAtNewRegister,varLocalLoc);
                 localVarToRegister.put(id, newRegister);
             }
@@ -137,7 +138,8 @@ public class VMWrapper implements VMWrapperinterface{
             if (registersInUse < MAXREGISTERS){
                 //Case empty registers
                 String newRegister = "$t" + registersInUse;
-                System.out.println(newRegister + " = " + currentLoc);
+                //System.out.println(newRegister + " = " + currentLoc);
+                print(newRegister + " = " + currentLoc);
                 localVarToRegister.remove(id);
                 localVarToRegister.put(id,newRegister);
                 registersInUse++;
@@ -145,7 +147,8 @@ public class VMWrapper implements VMWrapperinterface{
             else if (sRegistersInUse < MAXSREGISTERS){
                 //Case empty registers
                 String newRegister = "$s" + sRegistersInUse;
-                System.out.println(newRegister + " = " + currentLoc);
+                //System.out.println(newRegister + " = " + currentLoc);
+                print(newRegister + " = " + currentLoc);
                 localVarToRegister.remove(id);
                 localVarToRegister.put(id,newRegister);
                 sRegistersInUse++;
@@ -164,8 +167,8 @@ public class VMWrapper implements VMWrapperinterface{
             //     return "boo";
             // }
             String varLocalLoc = varsToLocals.get(varAtNewRegister);
-            System.out.println(varLocalLoc + " = " + newRegister);
-            System.out.println(newRegister + " = " + localVarToRegister.get(id));
+            print(varLocalLoc + " = " + newRegister);
+            print(newRegister + " = " + localVarToRegister.get(id));
 
             localVarToRegister.put(varAtNewRegister,varLocalLoc);
             localVarToRegister.put(id, newRegister);
@@ -194,7 +197,7 @@ public class VMWrapper implements VMWrapperinterface{
                 register = localVarToRegister.get((String)vars[i]);
                 localVarToRegister.remove((String)vars[i]);
                 String varLocalLoc = varsToLocals.get((String)vars[i]);
-                System.out.println(varLocalLoc + " = " + register);
+                print(varLocalLoc + " = " + register);
                 localVarToRegister.put((String)vars[i], varLocalLoc);
             }
         }
@@ -203,9 +206,7 @@ public class VMWrapper implements VMWrapperinterface{
     }
 
     public void restoreLocals(){
-        // add back as many locals
-        // also print that this is being done
-        // reset registers afterwards
+        // NOT USED, the only potential use is just post a while loop, but otherwise the registers will be reallocated
         Object[] vars = prevState.keySet().toArray();
         String loc;
         String newRegister;
@@ -260,5 +261,10 @@ public class VMWrapper implements VMWrapperinterface{
                         "  [$t1] = $t0\r\n" + //
                         "  $v0 = $t1\r\n" + //
                         "  ret");
+    }
+
+    private void print(String line){
+        String INDENT = "   ";
+        System.out.println(INDENT + line);
     }
 }

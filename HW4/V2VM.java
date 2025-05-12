@@ -29,6 +29,7 @@ public class V2VM {
         for (VOperand v: vds.values){
           System.out.println( "   " +v);
         }
+        System.out.println("");
       }
 
       for(VFunction vf : vp.functions){
@@ -48,8 +49,8 @@ public class V2VM {
         for(VInstr vi: vf.body){
           vi.accept(wrapper, regalloc); //out
         }
-        wrapper.incrIn(vf.params.length-1); //in
-        wrapper.incrLocal(vf.vars.length+1);  //min for backup local
+        wrapper.incrIn(vf.params.length-4); //in
+        wrapper.incrLocal(vf.vars.length);  //min for backup local
         wrapper.addFunction(vf.ident);
 
         System.out.println(wrapper.getFunctionDeclartion(vf.ident));

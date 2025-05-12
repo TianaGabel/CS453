@@ -9,7 +9,7 @@ public class RegAllocVisitor<P extends VMWrapperinterface,E extends Throwable> e
     public void visit(P p, VBuiltIn c) {}
     public void visit(P p, VCall c) {
         int argsCount = c.args.length;
-        p.incrOut(argsCount - 1);
+        p.incrOut(argsCount - 4);
     }
     public void visit(P p, VGoto g) {}
     public void visit(P p, VMemRead r) {}

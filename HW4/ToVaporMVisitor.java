@@ -44,7 +44,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
         } else {
             print("if0 " + convertName(b.value.toString()) + " goto " + b.target);  
         }
-        p.backupToLocals();
+        //p.backupToLocals();
     }
             
     // abstract  void	visit(P p, VBuiltIn c)
@@ -102,8 +102,11 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
             if (c.args.length != 0){
                 //the this
                 print("$a0 = " + convertName(c.args[0].toString()));
-                for (int i = 1; i < c.args.length; i++){ //other params
-                    print("out[" + (i-1) + "] = " + convertName(c.args[i].toString()));
+                for (int i = 1; i < Math.min(4,c.args.length); i++){ //other params
+                    print("$a" + (i) + " = " + convertName(c.args[i].toString()));
+                }
+                for (int i = 4; i < c.args.length; i++){ //other params
+                    print("out[" + (i-4) + "] = " + convertName(c.args[i].toString()));
                 }
             }
             String callVar = convertName(c.addr.toString());
@@ -135,8 +138,8 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // sourcepPos
     public void visit(P p, VMemRead r) {
         //print("--memread--");
-        String src = convertName(r.source);
         String dest = convertName(r.dest.toString());
+        String src = convertName(r.source);
         print(dest + " = [" + src + "]"); 
     }
                
@@ -148,8 +151,9 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // sourcepPos
     public void visit(P p, VMemWrite w) {
         //print("--memwrite--");
-        String src = convertName(w.source.toString());
+        
         String dest = convertName(w.dest);
+        String src = convertName(w.source.toString());
         print("[" + dest + "] = " + src); 
 
     }
@@ -179,8 +183,12 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
 
     public void addParams(VVarRef[] refs){
         String s;
-        for (int i = 1; i < refs.length; i++){
-                s = convertName(refs[i].toString()) +" = in[" + (i-1) + "]";
+        for (int i = 1; i < Math.min(4,refs.length); i++){ //other params
+                s = convertName(refs[i].toString()) +" = $a" + i;
+                print(s);
+        }
+        for (int i = 4; i < refs.length; i++){
+                s = convertName(refs[i].toString()) +" = in[" + (i-4) + "]";
                 print(s);
         }
 
