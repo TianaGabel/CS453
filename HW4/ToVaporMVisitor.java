@@ -17,7 +17,9 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // -> Vbuiltin
     // -> Vcall
     public void visit(P p, VAssign a) {
-            print(convertName(a.dest.toString()) + " = " + convertName(a.source.toString()));
+        String src = convertName(a.source.toString());
+        String dest = convertName(a.dest.toString());
+        print(dest + " = " + src ); 
     }
            
     // abstract  void	visit(P p, VBranch b)
@@ -59,10 +61,11 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
      
     public void visit(P p, VBuiltIn c) {
         if (c.dest != null) { //everything else
-            String s = convertName(c.dest.toString()) + " = " + c.op.name + "(" ;
+            String s = " = " + c.op.name + "(" ;
             for (int i = 0; i < c.args.length; i++){
                 s += convertName(c.args[i].toString()) + " ";
             }
+            s = convertName(c.dest.toString()) + s;
             print(s + ")");
         }else { //case print
             String s = c.op.name + "(" ;
@@ -130,7 +133,9 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // sourcepPos
     public void visit(P p, VMemRead r) {
         //print("--memread--");
-        print(convertName(r.dest.toString()) + " = [" + convertName(r.source) + "]"); 
+        String src = convertName(r.source);
+        String dest = convertName(r.dest.toString());
+        print(dest + " = [" + src + "]"); 
     }
                
     // abstract  void   visit(P p, VMemWrite w)
@@ -141,7 +146,9 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // sourcepPos
     public void visit(P p, VMemWrite w) {
         //print("--memwrite--");
-        print("[" + convertName(w.dest) + "] = " + convertName(w.source.toString())); 
+        String src = convertName(w.source.toString());
+        String dest = convertName(w.dest);
+        print("[" + dest + "] = " + src); 
 
     }
                
@@ -176,7 +183,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
         }
 
     }
-    //TODO
+
     private String convertName(String id){
         if (id.equals("this")){
             return "$a0";
@@ -187,14 +194,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
         if (isValue || isft || isError){
             return id;
         }
-        // try{
-        //    isTemp = id.substring(0, 2).equals("t."); //style t.1
-        // } catch (Exception e){}
-        // if (isTemp){
-        //     return "$t" + id.substring(2);
-        // }
         return wrapper.getVarAsRegister(id);
-        //return id;
     }
 
     private String convertName(VMemRef ref){

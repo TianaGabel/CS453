@@ -3,10 +3,19 @@ import java.util.Set;
 
 public class VMWrapper implements VMWrapperinterface{
 
+    //id, register
     HashMap<String,String> localVarToRegister = new HashMap();
     int registersInUse = 0;   //  $t0 -$t07
     int sRegistersInUse = 0;   //  $s0 -$s07
     int localArrayInUse = 0;
+    int rotate = 0;
+
+    public void printMap(){
+        Object[] vars = localVarToRegister.keySet().toArray();  //fix for java's concurrent mod exception
+        for(int i=0; i < vars.length; i++){
+            System.out.println("--" +(String)vars[i] + " " + localVarToRegister.get((String)vars[i]));
+        }
+    }
 
     public void addVarToRegister(String id){
         if (localVarToRegister.keySet().contains(id)){
@@ -18,12 +27,12 @@ public class VMWrapper implements VMWrapperinterface{
             localVarToRegister.put(id,r);
             registersInUse++;
         } 
-        // else if (sRegistersInUse < 8){
-        //     String r = "$s" + sRegistersInUse;
+        else if (sRegistersInUse < 8){
+            String r = "$s" + sRegistersInUse;
 
-        //     localVarToRegister.put(id,r);
-        //     sRegistersInUse++;
-        // } 
+            localVarToRegister.put(id,r);
+            sRegistersInUse++;
+        } 
         else {
             String r = "local[" + localArrayInUse + "]";
             String newRegister = "$t7";
@@ -47,7 +56,7 @@ public class VMWrapper implements VMWrapperinterface{
         registersInUse = 0;
         Object[] vars = localVarToRegister.keySet().toArray();  //fix for java's concurrent mod exception
         for(int i=0; i < vars.length; i++){
-            if (localVarToRegister.get((String)vars[i]).substring(0,2).equals("$t")){
+            if (localVarToRegister.get((String)vars[i]).substring(0,1).equals("$")){
                 localVarToRegister.remove((String)vars[i]);
             }
         }
@@ -97,29 +106,35 @@ public class VMWrapper implements VMWrapperinterface{
                 localVarToRegister.put(id,newRegister);
                 registersInUse++;
             } 
-            // else if (sRegistersInUse < 8){
-            //     //Case empty registers
-            //     String newRegister = "$s" + sRegistersInUse;
-            //     System.out.println(newRegister + " = " + currentLoc);
-            //     localVarToRegister.remove(id);
-            //     localVarToRegister.put(id,newRegister);
-            //     sRegistersInUse++;
-            // } 
+            else if (sRegistersInUse < 8){
+                //Case empty registers
+                String newRegister = "$s" + sRegistersInUse;
+                System.out.println(newRegister + " = " + currentLoc);
+                localVarToRegister.remove(id);
+                localVarToRegister.put(id,newRegister);
+                sRegistersInUse++;
+            } 
             else {
+                // backupToLocals();
+                // return getVarAsRegister(id);
             //Case no empty registers
             String newRegister = "$t7";
+            if (rotate == 1 ){newRegister = "$t6";}
             System.out.println("$v1 = " + newRegister);
             System.out.println(newRegister + " = " + currentLoc);
             System.out.println(currentLoc + " = $v1");
             swapMapEntriesByRegister(newRegister, currentLoc);
+            rotate = (rotate + 1) % 2;
             }
         }
-
+        // System.out.println("---------------");
+        // printMap();
         return localVarToRegister.get(id);
     }
 
     private boolean checkIsRegisterName(String id){
-        return (id.substring(0, 2).equals("$t")) || id.substring(0, 2).equals("$s");
+        return (id.substring(0, 1).equals("$"));
+        //return (id.substring(0, 2).equals("$t")) || id.substring(0, 2).equals("$s");
     }
 
     private void swapMapEntriesByRegister(String reg1, String reg2){
@@ -130,9 +145,11 @@ public class VMWrapper implements VMWrapperinterface{
         for(int i=0; i < vars.length; i++){ //TODO break early
             if (localVarToRegister.get((String)vars[i]).equals(reg1)){
                 varName1 = (String)vars[i];
+                //System.out.println("TRUE1!");
             }
             if (localVarToRegister.get((String)vars[i]).equals(reg2)){
                 varName2 = (String)vars[i];
+                //System.out.println("TRUE2!");
             }
         }
 

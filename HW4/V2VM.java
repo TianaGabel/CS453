@@ -74,6 +74,7 @@ public class V2VM {
         //wrapper.incrLocal(2);
         wrapper.incrLocal(vf.vars.length+1);  //min for backup local
         wrapper.incrLocal((vf.vars.length*2)-12);  //if more are needed
+        wrapper.incrLocal(80);
 
         wrapper.addFunction(vf.ident); //out stuff and local
         System.out.println(wrapper.getFunctionDeclartion(vf.ident));
@@ -97,6 +98,7 @@ public class V2VM {
           }
           //System.out.println("-");
         }
+        //wrapper.printMap();
         wrapper.resetRegisters();
         wrapper.resetSRegisters();
         wrapper.resetLocals();
