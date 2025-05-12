@@ -48,7 +48,6 @@ public class V2VM {
         for (VOperand v: vds.values){
           System.out.println( "   " +v);
         }
-        System.out.println("");
       }
 
       for(VFunction vf : vp.functions){
@@ -69,7 +68,13 @@ public class V2VM {
         for(VInstr vi: vf.body){
           vi.accept(wrapper, regalloc);
         }
+        //System.out.println("----" + vf.vars.length);
         wrapper.incrIn(vf.params.length-1);  //in stuff
+
+        //wrapper.incrLocal(2);
+        wrapper.incrLocal(vf.vars.length+1);  //min for backup local
+        wrapper.incrLocal((vf.vars.length*2)-12);  //if more are needed
+
         wrapper.addFunction(vf.ident); //out stuff and local
         System.out.println(wrapper.getFunctionDeclartion(vf.ident));
         wrapper.resetReallocCounts();
@@ -77,6 +82,13 @@ public class V2VM {
         //Stuff for everything else
         int countForlabels = 0;
         bv.addParams(vf.params);
+        if (vf.ident.equals("AllocArray")){   //missing a this param, so it is mishandled by the visitor
+          wrapper.addArray();
+          return;
+        }
+        if (labelsByLoc.get(countForlabels) != null){
+            System.out.println(labelsByLoc.get(countForlabels));
+        }
         for(VInstr vi: vf.body){
           vi.accept(wrapper, bv);
           countForlabels++;
@@ -86,6 +98,8 @@ public class V2VM {
           //System.out.println("-");
         }
         wrapper.resetRegisters();
+        wrapper.resetSRegisters();
+        wrapper.resetLocals();
       }
 
 

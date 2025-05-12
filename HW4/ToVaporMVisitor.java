@@ -58,22 +58,19 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     //      lookup(String name) "no description given"
      
     public void visit(P p, VBuiltIn c) {
-        String s = VBuiltInArgsToString(c);
-        if ((c.dest != null)) {
-            if (s.isEmpty()){
-                print(convertName(c.dest.toString()) + " = " + c.op.name + "()");
-            } else {
-                //TODO does not handle multiple args
-                print(convertName(c.dest.toString()) + " = " + c.op.name + "(" + convertName(s) + ")");
+        if (c.dest != null) { //everything else
+            String s = convertName(c.dest.toString()) + " = " + c.op.name + "(" ;
+            for (int i = 0; i < c.args.length; i++){
+                s += convertName(c.args[i].toString()) + " ";
             }
-        } else {
-            if (s.isEmpty()){
-                //TODO
-                print(c.op.name + "()");
-            } else {
-                print(c.op.name + "(" + convertName(s) + ")");
+            print(s + ")");
+        }else { //case print
+            String s = c.op.name + "(" ;
+            for (int i = 0; i < c.args.length; i++){
+                s += convertName(c.args[i].toString()) + " ";
             }
-        }
+            print(s + ")");
+        } 
     }
                
     // abstract  void	visit(P p, VCall c)
@@ -87,21 +84,33 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // dest "The variable used to store the return value of the function."
     //  VVarRef.Local        
     public void visit(P p, VCall c) {
+        if (!c.addr.toString().contains(".")){ //function not a method
+                print("$a1 = " + convertName(c.args[0].toString()));
+            if ((c.dest != null)) {
+                //TODO the destination should be pushed to be the return value;
+                print("call "+  convertName(c.addr.toString()));
+                print(convertName(c.dest.toString()) + " = $v0");
+            } else {
+                print("call " + convertName(c.addr.toString()));
+            }
+            return;
+        }
         String s = VBuiltInArgsToString(c);
         if (!s.isEmpty()){
             //the this
             print("$a0 = " + convertName(c.args[0].toString()));
-            for (int i = 1; i < c.args.length; i++){
+            for (int i = 1; i < c.args.length; i++){ //other params
                 s = "out[" + (i-1) + "] = " + convertName(c.args[i].toString());
                 print(s);
         }
         }
+        String callVar = convertName(c.addr.toString());
+        p.backupToLocals(); //backup values
         if ((c.dest != null)) {
-            //TODO the destination should be pushed to be the return value;
-            print("call "+  convertName(c.addr.toString()));
+            print("call "+  callVar);
             print(convertName(c.dest.toString()) + " = $v0");
         } else {
-            print("call " + convertName(c.addr.toString()));
+            print("call " + callVar);
         }
     }
                
@@ -109,7 +118,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // target "The target of the jump."
     // VAddr<VCodeLabel>	target
     public void visit(P p, VGoto g) {
-        print("goto" + g.target); 
+        print("goto " + g.target); 
     }
     
                
@@ -174,7 +183,8 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
         }
         boolean isValue = id.matches("-?\\d+(\\.\\d+)?");
         boolean isft =  id.substring(0, 1).equals(":");
-        if (isValue || isft){
+        boolean isError = id.substring(0, 1).equals("\"");
+        if (isValue || isft || isError){
             return id;
         }
         // try{

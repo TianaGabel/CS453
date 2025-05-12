@@ -5,19 +5,15 @@ rm V2VM.class
 javac -cp vapor-parser.jar:. V2VM.java 
 
 # can update later with vars $1 $2
-java  V2VM < P.vapor > P.vaporm
-
-#java V2VM < ../Tests/simpleA.java > P.vaporm
-# java V2VM < ../Tests/simple/inheritance.java > P.vaporm
-#java V2VM < ../Tests/simple/V2VMexamples.java > P.vaporm
-# java V2VM < ../Tests/simple/whileandif.java > P.vaporm   
+#java  V2VM < P.vapor > P.vaporm
 
 
-# java V2VM < ../Tests/mj/BinaryTree.java > P.vaporm   
-# java V2VM < ../Tests/mj/BubbleSort.java > P.vaporm
-# java V2VM < ../Tests/mj/Factorial.java > P.vaporm
-# java V2VM < ../Tests/mj/LinearSearch.java > P.vaporm
-# java V2VM < ../Tests/mj/LinkedList.java > P.vaporm
-# java V2VM < ../Tests/mj/MoreThan4.java > P.vaporm  
-# java V2VM < ../Tests/mj/QuickSort.java > P.vaporm
-# java V2VM < ../Tests/mj/TreeVisitor.java > P.vaporm
+
+# java V2VM < ../Tests/vapor/BinaryTree.vapor > P.vaporm   #error in running
+# java V2VM < ../Tests/vapor/BubbleSort.vapor > P.vaporm   #still failed due to a bad addition
+# java V2VM < ../Tests/vapor/Factorial.vapor > P.vaporm   #pass
+# java V2VM < ../Tests/vapor/LinearSearch.vapor> P.vaporm  #compiles and runs
+# java V2VM < ../Tests/vapor/LinkedList.vapor > P.vaporm
+ java V2VM < ../Tests/vapor/MoreThan4.vapor > P.vaporm  #pass
+# java V2VM < ../Tests/vapor/QuickSort.vapor > P.vaporm
+# java V2VM < ../Tests/vapor/TreeVisitor.vapor > P.vaporm

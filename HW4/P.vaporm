@@ -1,20 +1,14 @@
 const vmt_MT4
    :MT4.Start
    :MT4.Change
-
-
- 
-func Main [in 0,out 6,local 0]
-   $t0 = HeapAllocZ(4)
+func Main [in 0,out 6,local 4]
+   $t0 = HeapAllocZ(4 )
    [$t0] = :vmt_MT4
    if $t0 goto :null1
-   Error($t1)
-   if $t0 goto :null2
-   Error($t1)
-   null2:
+   Error("null pointer" )
    null1:
-   $t2 = [$t0]
-   $t2 = [$t2]
+   $t1 = [$t0]
+   $t1 = [$t1]
    $a0 = $t0
    out[0] = 1
    out[1] = 2
@@ -22,28 +16,45 @@ func Main [in 0,out 6,local 0]
    out[3] = 4
    out[4] = 5
    out[5] = 6
-   call $t2
-   $t3 = $v0
-   PrintIntS($t3)
+local[0] = $t1
+local[1] = $t0
+   call $t1
+   $t0 = $v0
+   PrintIntS($t0 )
    ret
 
-
- 
-func MT4.Start [in 6,out 6,local 0]
+func MT4.Start [in 6,out 6,local 14]
    $t0 = in[0]
    $t1 = in[1]
    $t2 = in[2]
    $t3 = in[3]
    $t4 = in[4]
    $t5 = in[5]
-   PrintIntS($t0)
-   PrintIntS($t1)
-   PrintIntS($t2)
-   PrintIntS($t3)
-   PrintIntS($t4)
-   PrintIntS($t5)
+   PrintIntS($t0 )
+   PrintIntS($t1 )
+   PrintIntS($t2 )
+   PrintIntS($t3 )
+   PrintIntS($t4 )
+   PrintIntS($t5 )
    $t6 = [$a0]
    $t6 = [$t6+4]
+   $t7 = 5
+local[0] = $t7
+   $t7 = 1
+local[1] = $t7
+   $t7 = 0
+local[2] = $t7
+   $t7 = 14
+   PrintIntS($t7 )
+$v1 = $t7
+$t7 = local[2]
+local[2] = $v1
+   PrintIntS($t7 )
+$v1 = $t7
+$t7 = local[0]
+local[0] = $v1
+   PrintIntS($t7 )
+   PrintIntS($t7 )
    $a0 = $a0
    out[0] = $t5
    out[1] = $t4
@@ -51,24 +62,34 @@ func MT4.Start [in 6,out 6,local 0]
    out[3] = $t2
    out[4] = $t1
    out[5] = $t0
+local[3] = $t0
+local[4] = $t1
+local[5] = $t2
+local[6] = $t3
+local[7] = $t4
+local[8] = $t5
+local[9] = $t6
+local[10] = $t7
    call $t6
-   $t7 = $v0
-   $v0 = $t7
+   $t0 = $v0
+$t1 = local[10]
+   PrintIntS($t1 )
+   $v0 = $t0
    ret
 
-func MT4.Change [in 6,out 0,local 0]
+func MT4.Change [in 6,out 0,local 8]
    $t0 = in[0]
    $t1 = in[1]
    $t2 = in[2]
    $t3 = in[3]
    $t4 = in[4]
    $t5 = in[5]
-   PrintIntS($t0)
-   PrintIntS($t1)
-   PrintIntS($t2)
-   PrintIntS($t3)
-   PrintIntS($t4)
-   PrintIntS($t5)
+   PrintIntS($t0 )
+   PrintIntS($t1 )
+   PrintIntS($t2 )
+   PrintIntS($t3 )
+   PrintIntS($t4 )
+   PrintIntS($t5 )
    $v0 = 0
    ret
 
