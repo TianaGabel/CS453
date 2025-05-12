@@ -1,0 +1,48 @@
+
+const vmt_MT4
+  :MT4.Start
+  :MT4.Change
+
+
+func Main()
+  t.0 = HeapAllocZ(4)
+  [t.0] = :vmt_MT4
+  if t.0 goto :null1
+    Error("null pointer")
+  null1:
+  t.1 = [t.0]
+  t.1 = [t.1+0]
+  t.2 = call t.1(t.0 1 2 3 4 5 6)
+  PrintIntS(t.2)
+  ret
+
+func MT4.Start(this p1 p2 p3 p4 p5 p6)
+  PrintIntS(p1)
+  PrintIntS(p2)
+  PrintIntS(p3)
+  PrintIntS(p4)
+  PrintIntS(p5)
+  PrintIntS(p6)
+  t.0 = [this]
+  t.0 = [t.0+4]
+  t.7 = 5
+  t.8 = 1
+  t.9 = 0
+  t.10 = 14
+  PrintIntS(t.10)
+  PrintIntS(t.9)
+  PrintIntS(t.7)
+  PrintIntS(t.7)
+  aux = call t.0(this p6 p5 p4 p3 p2 p1)
+  PrintIntS(t.7)
+  ret aux
+
+func MT4.Change(this p1 p2 p3 p4 p5 p6)
+  PrintIntS(p1)
+  PrintIntS(p2)
+  PrintIntS(p3)
+  PrintIntS(p4)
+  PrintIntS(p5)
+  PrintIntS(p6)
+  ret 0
+  

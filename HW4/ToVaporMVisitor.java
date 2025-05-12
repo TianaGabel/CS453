@@ -115,6 +115,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
         } else {
             print("call " + callVar);
         }
+        p.restoreLocals(); //backup values
     }
                
     // abstract  void	visit(P p, VGoto g)

@@ -1,3 +1,28 @@
+5/10/2025
+- function declarations updated by regallocVistior
+- support for return args
+- basic register allocation map + add and access methods
+- It's commented pretty well, but premise is clear registers and locals at the top of a function, allocate registers freely until you run out, then swap as needed.
+- notes from 4/9: out is the max count of arg in a call(basically the size of the comm buffer)
+TODO:
+- easy swap is to use a0-a4
+
+5/09/2025
+ Morning
+ - just added sanity check code at each point it was needed, should be moved into the wrapper as a method if you refactor
+ - passes all J2v example tests, fails linked list one from given code
+ - submitted Hw3 for grading
+ - Started registerallocation visitor
+ - started wrapper implementation
+ - basic way to convert variables of the type t.0
+ TODO
+- update function declarations
+- add the end of ifs (I think they are the labels [] in Vfunction.)
+- stuff from office hours
+- no need to handle errors (they shouldn't need to be updated)
+- could just use locals [], I actually think it would be easier to use the out [] and in [] which can be handled in-line for function params and calls
+- no need to update the ast, unless you want to just use vmemref local counts, but since we don't have an available printer I probably won'table
+
 5/08/2025
 -implemented support for inheritence and tested it
 -implemented support for accessing and assigning to class attributes
@@ -6,10 +31,11 @@
 -lots and lots of testing
 -bug fixes were mainly ensuring variables were intialized if classes were out of order
 or limiting the findexistingsymbol to a specific type of symbol to prevent bad casts
+-spent way too long figuring out params were read backwards ...duh
 -main problems at the moment are finding array locations when they are class fields, should just require duplicating the code in expression or making a santiy check method
 - Known problems I will probably not fix:
 - a file named Main.java will fail, I assume because of the above symbol bug
-- similarly there could exist a variable that gets past the sanity check when it shouldn'table
+- similarly there could exist a variable that gets past the sanity check when it shouldn't able (no var in java can start with a num or t.)
 TODO:
 -array variable sanity check
 -quick run pass other checks for complilation not accuracy for now.
@@ -77,6 +103,7 @@ TODO start debugging the incorrectly propagated type issues
 
 4/21/2025
 - downloaded dependencies and ran main for HW4.
+- website files don't run? (windows invisible chars)
 
 4/13/2025
 - Minor updates to symbol as required
@@ -142,7 +169,7 @@ todo:
 - \look back on examples of the pretty printer from class
 - \ensure that you are able to build the program
 - \what is pico (a smaller version of minijava)
-- is there a way to directly import the testing files above
+- is there a way to directly import the testing files above (wget)
 - should stuff be typed sooner to the start or is it?
 - debugger is gonna be needed methinks
 

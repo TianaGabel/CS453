@@ -5,6 +5,7 @@ public interface VMWrapperinterface {
     public void addVarToRegister(String id);
     public String getVarAsRegister(String id);
     public void backupToLocals();
+    public void restoreLocals();
 
     public void addFunction(String id);
     public void resetReallocCounts();

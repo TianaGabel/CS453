@@ -7,9 +7,7 @@ javac -cp vapor-parser.jar:. V2VM.java
 # can update later with vars $1 $2
 #java  V2VM < P.vapor > P.vaporm
 
-
-
-# java V2VM < ../Tests/vapor/BinaryTree.vapor > P.vaporm   #error too many calls so locals is too small
+ java V2VM < ../Tests/vapor/BinaryTree.vapor > P.vaporm   #error too many calls so locals is too small
 # java V2VM < ../Tests/vapor/BubbleSort.vapor > P.vaporm   #loops get 
 # java V2VM < ../Tests/vapor/Factorial.vapor > P.vaporm   #pass
 # java V2VM < ../Tests/vapor/LinearSearch.vapor> P.vaporm  #pass

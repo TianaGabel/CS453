@@ -5,6 +5,7 @@ public class VMWrapper implements VMWrapperinterface{
 
     //id, register
     HashMap<String,String> localVarToRegister = new HashMap();
+    HashMap<String,String> prevState = new HashMap();
     int registersInUse = 0;   //  $t0 -$t07
     int sRegistersInUse = 0;   //  $s0 -$s07
     int localArrayInUse = 0;
@@ -161,6 +162,7 @@ public class VMWrapper implements VMWrapperinterface{
         // remove the variables in registers and readd to locals
         // also print that this is being done
         // reset registers afterwards
+        prevState = new HashMap<>(localVarToRegister); //deep copy
         Object[] vars = localVarToRegister.keySet().toArray();
         String register;
         String newLoc;
@@ -172,8 +174,26 @@ public class VMWrapper implements VMWrapperinterface{
                 System.out.println(newLoc + " = " + register);
             }
         }
-        resetSRegisters();
-        resetRegisters();
+        //resetSRegisters();
+        //resetRegisters();
+    }
+
+    public void restoreLocals(){
+        // add back as many locals
+        // also print that this is being done
+        // reset registers afterwards
+        Object[] vars = prevState.keySet().toArray();
+        String loc;
+        String newRegister;
+        for(int i=0; i < vars.length; i++){
+            if (checkIsRegisterName(prevState.get((String)vars[i]))){ //look for registers in the prevstate
+                loc = localVarToRegister.get((String)vars[i]); //current loc
+                localVarToRegister.remove((String)vars[i]); 
+                newRegister = prevState.get((String)vars[i]); //past/future loc
+                System.out.println(newRegister + " = " + loc);
+                localVarToRegister.put((String)vars[i],newRegister);
+            }
+        }
     }
 
 
