@@ -4,17 +4,32 @@ import java.util.Set;
 public class VMWrapper implements VMWrapperinterface{
 
     //id, register
+    HashMap<String,String> varsToLocals = new HashMap<>(); //basically each has a set location in local
     HashMap<String,String> localVarToRegister = new HashMap();
     HashMap<String,String> prevState = new HashMap();
     int registersInUse = 0;   //  $t0 -$t07
     int sRegistersInUse = 0;   //  $s0 -$s07
-    int localArrayInUse = 0;
-    int rotate = 0;
+    //int localArrayInUse = 0;
+    boolean rotate = false;
+    boolean rotate2 = false;
+    int MAXREGISTERS = 8;
+    int MAXSREGISTERS = 8;
 
-    public void printMap(){
-        Object[] vars = localVarToRegister.keySet().toArray();  //fix for java's concurrent mod exception
+    public void initLocals(String[] vars){
+        int count = 0;
+        String r;
+        for(String v: vars){
+            r = "local[" + count + "]";
+            varsToLocals.put(v.toString(),r);
+            count++;
+        }
+        //printMap(varsToLocals);
+    }
+
+    public void printMap(HashMap<String,String> m){
+        Object[] vars = m.keySet().toArray();  //fix for java's concurrent mod exception
         for(int i=0; i < vars.length; i++){
-            System.out.println("--" +(String)vars[i] + " " + localVarToRegister.get((String)vars[i]));
+            System.out.println("--" +(String)vars[i] + " " + m.get((String)vars[i]));
         }
     }
 
@@ -22,35 +37,60 @@ public class VMWrapper implements VMWrapperinterface{
         if (localVarToRegister.keySet().contains(id)){
             return;
         }
-        if (registersInUse < 8){
+        if (registersInUse < MAXREGISTERS){
             String r = "$t" + registersInUse;
 
             localVarToRegister.put(id,r);
             registersInUse++;
         } 
-        else if (sRegistersInUse < 8){
+        else if (sRegistersInUse < MAXSREGISTERS){
             String r = "$s" + sRegistersInUse;
 
             localVarToRegister.put(id,r);
             sRegistersInUse++;
         } 
         else {
-            String r = "local[" + localArrayInUse + "]";
-            String newRegister = "$t7";
-            System.out.println(r + " = " + newRegister);
-            localVarToRegister.put(id,r);
-            swapMapEntriesByRegister(newRegister, r);
-            localArrayInUse++;
+            String newRegister = "$t5";
+            if (rotate2){newRegister = "$t4";}
+            rotate2 = !rotate2;
+
+            String varAtNewRegister = getVarName(newRegister);
+            if (varAtNewRegister == null){
+                localVarToRegister.put(id, newRegister);
+            } else {
+                String varLocalLoc = varsToLocals.get(varAtNewRegister);
+                System.out.println(varLocalLoc + " = " + newRegister);
+                localVarToRegister.put(varAtNewRegister,varLocalLoc);
+                localVarToRegister.put(id, newRegister);
+            }
         }
         //it either gets a spot in one of the t0$ registers
-        //or pushes out t7$
+        //or pushes out 5 or 4 to it's spot in local
     }
 
     public String addVarToLocals(String id){
-        String r = "local[" + localArrayInUse + "]";
-        localVarToRegister.put(id,r);
-        localArrayInUse++;
-        return r;
+        String varLocalLoc = varsToLocals.get(id);
+        localVarToRegister.put(id,varLocalLoc);
+        return varLocalLoc;
+    }
+
+    public String getVarName(String r){
+        //System.out.println(r + "------BOoo");
+        Object[] vars = localVarToRegister.keySet().toArray();  //fix for java's concurrent mod exception
+        for(int i=0; i < vars.length; i++){
+            //System.out.println(localVarToRegister.get((String)vars[i]) + "------BOoo");
+            if (localVarToRegister.get((String)vars[i]).equals(r)){
+                return (String)vars[i];
+            }
+        }
+        return null;
+    }
+    
+    public void resetAll(){
+        resetLocals();
+        resetRegisters();
+        resetSRegisters();
+        localVarToRegister.clear();
     }
 
     public void resetRegisters(){
@@ -74,13 +114,7 @@ public class VMWrapper implements VMWrapperinterface{
     }
 
     public void resetLocals(){
-        localArrayInUse = 0;
-        Object[] vars = localVarToRegister.keySet().toArray();  //fix for java's concurrent mod exception
-        for(int i=0; i < vars.length; i++){
-            if (localVarToRegister.get((String)vars[i]).substring(0,2).equals("lo")){
-                localVarToRegister.remove((String)vars[i]);
-            }
-        }
+        varsToLocals.clear();
     }
 
     public String getVarAsRegister(String id){
@@ -95,11 +129,12 @@ public class VMWrapper implements VMWrapperinterface{
         if (!localVarToRegister.keySet().contains(id)){
             addVarToRegister(id);
         }
+        //printMap(localVarToRegister);
         String currentLoc =localVarToRegister.get(id);
         if (!checkIsRegisterName(currentLoc)){
             //swap logic TODO if you end up doing any liveness it would pick the newRegister to use
             //Case empty registers
-            if (registersInUse < 8){
+            if (registersInUse < MAXREGISTERS){
                 //Case empty registers
                 String newRegister = "$t" + registersInUse;
                 System.out.println(newRegister + " = " + currentLoc);
@@ -107,7 +142,7 @@ public class VMWrapper implements VMWrapperinterface{
                 localVarToRegister.put(id,newRegister);
                 registersInUse++;
             } 
-            else if (sRegistersInUse < 8){
+            else if (sRegistersInUse < MAXSREGISTERS){
                 //Case empty registers
                 String newRegister = "$s" + sRegistersInUse;
                 System.out.println(newRegister + " = " + currentLoc);
@@ -119,13 +154,21 @@ public class VMWrapper implements VMWrapperinterface{
                 // backupToLocals();
                 // return getVarAsRegister(id);
             //Case no empty registers
-            String newRegister = "$t7";
-            if (rotate == 1 ){newRegister = "$t6";}
-            System.out.println("$v1 = " + newRegister);
-            System.out.println(newRegister + " = " + currentLoc);
-            System.out.println(currentLoc + " = $v1");
-            swapMapEntriesByRegister(newRegister, currentLoc);
-            rotate = (rotate + 1) % 2;
+
+            String newRegister = "$t3";
+            if (rotate){newRegister = "$t2";}
+            rotate = !rotate;
+            
+            String varAtNewRegister = getVarName(newRegister);
+            // if (varAtNewRegister == null){
+            //     return "boo";
+            // }
+            String varLocalLoc = varsToLocals.get(varAtNewRegister);
+            System.out.println(varLocalLoc + " = " + newRegister);
+            System.out.println(newRegister + " = " + localVarToRegister.get(id));
+
+            localVarToRegister.put(varAtNewRegister,varLocalLoc);
+            localVarToRegister.put(id, newRegister);
             }
         }
         // System.out.println("---------------");
@@ -138,31 +181,11 @@ public class VMWrapper implements VMWrapperinterface{
         //return (id.substring(0, 2).equals("$t")) || id.substring(0, 2).equals("$s");
     }
 
-    private void swapMapEntriesByRegister(String reg1, String reg2){
-        String varName1 = "";
-        String varName2 = "";
-
-        Object[] vars = localVarToRegister.keySet().toArray();
-        for(int i=0; i < vars.length; i++){ //TODO break early
-            if (localVarToRegister.get((String)vars[i]).equals(reg1)){
-                varName1 = (String)vars[i];
-                //System.out.println("TRUE1!");
-            }
-            if (localVarToRegister.get((String)vars[i]).equals(reg2)){
-                varName2 = (String)vars[i];
-                //System.out.println("TRUE2!");
-            }
-        }
-
-        localVarToRegister.put(varName1,reg2);
-        localVarToRegister.put(varName2,reg1);
-    }
 
     public void backupToLocals(){
         // remove the variables in registers and readd to locals
         // also print that this is being done
         // reset registers afterwards
-        prevState = new HashMap<>(localVarToRegister); //deep copy
         Object[] vars = localVarToRegister.keySet().toArray();
         String register;
         String newLoc;
@@ -170,12 +193,13 @@ public class VMWrapper implements VMWrapperinterface{
             if (checkIsRegisterName(localVarToRegister.get((String)vars[i]))){
                 register = localVarToRegister.get((String)vars[i]);
                 localVarToRegister.remove((String)vars[i]);
-                newLoc = addVarToLocals((String)vars[i]);
-                System.out.println(newLoc + " = " + register);
+                String varLocalLoc = varsToLocals.get((String)vars[i]);
+                System.out.println(varLocalLoc + " = " + register);
+                localVarToRegister.put((String)vars[i], varLocalLoc);
             }
         }
-        //resetSRegisters();
-        //resetRegisters();
+        resetSRegisters();
+        resetRegisters();
     }
 
     public void restoreLocals(){

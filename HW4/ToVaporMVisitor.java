@@ -37,6 +37,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     // The value being branched on.
 
     public void visit(P p, VBranch b) {
+        p.backupToLocals();
         //print("branch"); 
         if (b.positive){
             print("if " + convertName(b.value.toString()) + " goto " + b.target);  
@@ -90,32 +91,30 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
         if (!c.addr.toString().contains(".")){ //function not a method
                 print("$a1 = " + convertName(c.args[0].toString()));
             if ((c.dest != null)) {
-                //TODO the destination should be pushed to be the return value;
                 print("call "+  convertName(c.addr.toString()));
                 print(convertName(c.dest.toString()) + " = $v0");
             } else {
                 print("call " + convertName(c.addr.toString()));
             }
             return;
-        }
-        String s = VBuiltInArgsToString(c);
-        if (!s.isEmpty()){
-            //the this
-            print("$a0 = " + convertName(c.args[0].toString()));
-            for (int i = 1; i < c.args.length; i++){ //other params
-                s = "out[" + (i-1) + "] = " + convertName(c.args[i].toString());
-                print(s);
-        }
-        }
-        String callVar = convertName(c.addr.toString());
-        p.backupToLocals(); //backup values
-        if ((c.dest != null)) {
-            print("call "+  callVar);
-            print(convertName(c.dest.toString()) + " = $v0");
         } else {
-            print("call " + callVar);
-        }
-        p.restoreLocals(); //backup values
+            if (c.args.length != 0){
+                //the this
+                print("$a0 = " + convertName(c.args[0].toString()));
+                for (int i = 1; i < c.args.length; i++){ //other params
+                    print("out[" + (i-1) + "] = " + convertName(c.args[i].toString()));
+                }
+            }
+            String callVar = convertName(c.addr.toString());
+            p.backupToLocals(); //backup values
+            if ((c.dest != null)) {
+                print("call "+  callVar);
+                print(convertName(c.dest.toString()) + " = $v0");
+            } else {
+                print("call " + callVar);
+            }
+            //p.restoreLocals(); //backup values
+    }
     }
                
     // abstract  void	visit(P p, VGoto g)
