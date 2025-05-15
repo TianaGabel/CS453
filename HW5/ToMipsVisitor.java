@@ -39,9 +39,9 @@ public class ToMipsVisitor<P extends VMWrapperinterface,E extends Throwable> ext
     public void visit(P p, VBranch b) {
         print(loadVar("$t9", b.value.toString()));
         if (b.positive){
-            print("bnez $t9 " + b.target);  
+            print("bnez $t9 " + b.target.toString().substring(1));  
         } else {
-            print("beqz $t9 " + b.target);  
+            print("beqz $t9 " + b.target.toString().substring(1));  
         }
     }
             
@@ -79,24 +79,26 @@ public class ToMipsVisitor<P extends VMWrapperinterface,E extends Throwable> ext
                 print("move " + c.dest +" $v0");
             }
         } else {
+            System.out.println(loadVar("$t9", c.args[1].toString()));
+            System.out.println(loadVar(c.dest.toString(), c.args[0].toString()));
         switch(c.op.name) {
         case "Sub":
-            print("subu " + c.dest + " " + c.args[0] + " " + c.args[1]);
+            print("subu " + c.dest + " " + c.dest + " $t9");
             break;
         case "Add":
-            print("addu " + c.dest + " " + c.args[0] + " " + c.args[1]);
+            print("addu " + c.dest + " " + c.dest + " $t9");
             break;
         case "MulS":
-            print("mul " + c.dest + " " + c.args[0] + " " + c.args[1]);
+            print("mul " + c.dest + " " + c.dest + " $t9");
             break;
         case "Eq":
             //unsure if this needs implemented
             break;
         case "LtS":
-            print("slt " + c.dest + " " + c.args[0] + " " + c.args[1]);
+            print("slt " + c.dest + " " + c.dest + " $t9");
             break;
         case "Lt":
-            print("slt " + c.dest + " " + c.args[0] + " " + c.args[1]);
+            print("slt " + c.dest + " " + c.dest + " $t9");
             break;
         default:
             // code block
@@ -116,14 +118,18 @@ public class ToMipsVisitor<P extends VMWrapperinterface,E extends Throwable> ext
     // dest "The variable used to store the return value of the function."
     //  VVarRef.Local        
     public void visit(P p, VCall c) {
-        print("jal " + (c.addr.toString()));
+        if (c.addr.toString().substring(0,1).equals("$")){
+            print("jalr " + (c.addr.toString()));
+        } else {
+            print("jal " + (c.addr.toString().substring(1)));
+        }
     }
                
     // abstract  void	visit(P p, VGoto g)
     // target "The target of the jump."
     // VAddr<VCodeLabel>	target
     public void visit(P p, VGoto g) {
-        print("j " + g.target); 
+        print("j " + g.target.toString().substring(1)); 
     }
     
                
@@ -171,7 +177,7 @@ public class ToMipsVisitor<P extends VMWrapperinterface,E extends Throwable> ext
         }else if (isError){
             return "la " + dest + " _str0";
         } else {
-            return "la " + dest + " " + src;
+            return "la " + dest + " " + src.substring(1);
         }
     }
 

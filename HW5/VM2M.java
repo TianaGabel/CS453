@@ -74,9 +74,7 @@ public class VM2M {
           }
         }
       }
-      wrapper.endOfProgram();
-
-
+      System.out.println(wrapper.endOfProgram());
     } catch(Exception e){
       e.printStackTrace();
     }

@@ -32,24 +32,7 @@ public class VMWrapper implements VMWrapperinterface{
     }
 
     public String endOfProgram(){
-        String s = "AllocArray:\n" + //
-                        "  sw $fp -8($sp)\n" + //
-                        "  move $fp $sp\n" + //
-                        "  subu $sp $sp 8\n" + //
-                        "  sw $ra -4($fp)\n" + //
-                        "  move $t0 $a0\n" + //
-                        "  mul $t1 $t0 4\n" + //
-                        "  addu $t1 $t1 4\n" + //
-                        "  move $a0 $t1\n" + //
-                        "  jal _heapAlloc\n" + //
-                        "  move $t1 $v0\n" + //
-                        "  sw $t0 0($t1)\n" + //
-                        "  move $v0 $t1\n" + //
-                        "  lw $ra -4($fp)\n" + //
-                        "  lw $fp -8($fp)\n" + //
-                        "  addu $sp $sp 8\n" + //
-                        "  jr $ra\n" + //
-                        "_print:\n" + //
+        String s =  "_print:\n" + //
                         "  li $v0 1   # syscall: print integer\n" + //
                         "  syscall\n" + //
                         "  la $a0 _newline\n" + //
@@ -72,9 +55,7 @@ public class VMWrapper implements VMWrapperinterface{
                         ".align 0\n" + //
                         "_newline: .asciiz \"\\n" + //
                         "\"\n" + //
-                        "_str0: .asciiz \"null pointer\\n" + //
-                        "_str1: .asciiz \"array index out of bounds\"\n" +
-                        "\"";
+                        "_str0: .asciiz \"misc error\"\n";
         return s;
     }
 }
