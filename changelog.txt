@@ -1,3 +1,36 @@
+5/15/2025
+- changed function calls and params to allow for structs to be called
+- debugging of tree visitor
+
+5/14/2025
+- the bulk of actual implementation for hw25
+- mostly just literal translation, rewrote the method to store any variable into a register to make life simpler.
+- fixed bugs including bad jump call, defining duplicate allocate array functions, still unsure signed add is okay
+- version for submission for hw5
+
+5/13/2025
+- created a general layout for stack frame based on examples from class and exam proper
+- understanding of the different type of move commands
+- segmenting the output examples to compare to vaporm
+- also made some intentionally "buggy" test cases
+
+5/12/2025
+- scrapped the previous method of register allocation (it still exists for the registers, but not for locals anymore)
+- basically each variable gets a spot in the local array, for when it is spilled or backed up
+- fixed infinite loop issue via excessive backups, probably could figure out a better way of doing this, I made couple mappings on my phone, but need to check if that it is sufficient
+- fixed issue with swapping being initialized/having 2 registers as the designated targets in case of spills and avoiding backing up a nonsense value
+- switched out first 4 of in to arg registers and likewise for params
+
+5/11/2025
+- Implemented missing features calls and builtins
+- added a basic way of handling functions (those without a this, maybe called a struct?)
+- very basic implementation of backing up variables, does not work consistently
+- tried to add support for multiple vars being allocated a register, via a sort of flip-flop, but I'm unsure what the problem is?
+- also added code labels back in.
+TODO:
+- currently only passes 3 of the test cases + the cases in slides
+- main issue is that spilled variables inside of a loop are a big problem since they aren't reliably backed up or change register/loc along one path, but not the other.
+
 5/10/2025
 - function declarations updated by regallocVistior
 - support for return args
@@ -58,7 +91,7 @@ Aim to HW$4
 
 - Mirror instruction visitor implementation?? (is that even what it is for)
 - maybe make a dictionary of registers (For spill everywhere I image only about 3-4 are needed)
-- figure out the limitations of those 3 arrays that were mentioned, can we not use the local one??
+- figure out the limitations of those 3 arrays that were mentioned, what does local=false mean?
 
 HW3
 - change visitor to also pass arguments, remove stack and maybe throw those methods into the wrapper we made earlier
@@ -70,7 +103,10 @@ Actually done:
 -updated visitor to pass args, removed stack, but then added stack back, but to backup scopes when a new scope is entered
 -supports most simple things, but not arrays, message sends, or field accesses/setting
 -fixed issue in HW4 started compiling information together
+-decompiled a few classes, but the documentation is fairly through, rough outline and basic visitor to figure out what is what
 
+5/03/2025
+- updated translation of main in hw3 
 
 5/02/2025
 - implemented support for instances as variables/params/return types (still missing proper comparison)

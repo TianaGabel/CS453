@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Set;
 
-public class VMWrapper implements VMWrapperinterface{
+public class VM2Wrapper implements VMWrapperinterface{
     int inCount;
     int outCount;
     int localCount;

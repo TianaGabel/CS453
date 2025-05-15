@@ -1,0 +1,30 @@
+const vmt_Operator
+  :Operator.compute
+
+func Main()
+  t.0 = call :ObjAlloc(8 :vmt_Operator)
+  if t.0 goto :null1
+    Error("null pointer")
+  null1:
+  t.1 = [t.0+0]
+  t.1 = [t.1+0]
+  t.2 = call t.1(t.0)
+  PrintIntS(t.2)
+  ret
+
+func Operator.compute(this)
+  t.0 = LtS(10 20)
+  [this+4] = t.0
+  t.1 = [this+4]
+  if0 t.1 goto :if1_else
+    ret = 2
+    goto :if1_end
+  if1_else:
+    ret = 1
+  if1_end:
+  ret ret
+
+func ObjAlloc(bytes vmt)
+  obj = HeapAllocZ(bytes)
+  [obj+0] = vmt
+  ret obj
