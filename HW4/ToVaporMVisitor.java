@@ -90,7 +90,9 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     //  VVarRef.Local        
     public void visit(P p, VCall c) {
         if (!c.addr.toString().contains(".")){ //function not a method
-                print("$a1 = " + convertName(c.args[0].toString()));
+                for (int i = 0; i < Math.min(4,c.args.length); i++){ //other params
+                    print("$a" + (i) + " = " + convertName(c.args[i].toString()));
+                }
             if ((c.dest != null)) {
                 print("call "+  convertName(c.addr.toString()));
                 print(convertName(c.dest.toString()) + " = $v0");
@@ -100,9 +102,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
             return;
         } else {
             if (c.args.length != 0){
-                //the this
-                print("$a0 = " + convertName(c.args[0].toString()));
-                for (int i = 1; i < Math.min(4,c.args.length); i++){ //other params
+                for (int i = 0; i < Math.min(4,c.args.length); i++){ //other params
                     print("$a" + (i) + " = " + convertName(c.args[i].toString()));
                 }
                 for (int i = 4; i < c.args.length; i++){ //other params
