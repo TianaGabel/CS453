@@ -14,5 +14,8 @@ public interface VMWrapperinterface {
     public void incrOut(int a);
     public void incrLocal(int a);
 
+    public void setIsNotMethod();
+    public boolean isNotMethod();
+
     public String getFunctionDeclartion(String id);
 }

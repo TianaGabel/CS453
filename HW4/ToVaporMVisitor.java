@@ -91,7 +91,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     public void visit(P p, VCall c) {
         if (!c.addr.toString().contains(".")){ //function not a method
                 for (int i = 0; i < Math.min(4,c.args.length); i++){ //other params
-                    print("$a" + (i) + " = " + convertName(c.args[i].toString()));
+                    print("$a" + (i+1) + " = " + convertName(c.args[i].toString()));
                 }
             if ((c.dest != null)) {
                 print("call "+  convertName(c.addr.toString()));
@@ -183,13 +183,24 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
 
     public void addParams(VVarRef[] refs){
         String s;
-        for (int i = 1; i < Math.min(4,refs.length); i++){ //other params
-                s = convertName(refs[i].toString()) +" = $a" + i;
+        if (wrapper.isNotMethod()){
+            for (int i = 0; i < Math.min(4,refs.length); i++){ //other params
+                s = convertName(refs[i].toString()) +" = $a" + (i+1);
                 print(s);
-        }
-        for (int i = 4; i < refs.length; i++){
+            }
+            for (int i = 4; i < refs.length; i++){
                 s = convertName(refs[i].toString()) +" = in[" + (i-4) + "]";
                 print(s);
+            }
+        } else {
+            for (int i = 1; i < Math.min(4,refs.length); i++){ //other params
+                    s = convertName(refs[i].toString()) +" = $a" + i;
+                    print(s);
+            }
+            for (int i = 4; i < refs.length; i++){
+                    s = convertName(refs[i].toString()) +" = in[" + (i-4) + "]";
+                    print(s);
+            }
         }
 
     }

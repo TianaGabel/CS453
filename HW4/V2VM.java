@@ -61,11 +61,11 @@ public class V2VM {
 
         //Stuff for everything else
         int countForlabels = 0;
-        bv.addParams(vf.params);
-        if (vf.ident.equals("AllocArray")){   //missing a this param, so it is mishandled by the visitor
-          wrapper.addArray();
-          return;
+        
+        if ((vf.params.length > 0) && !vf.params[0].toString().equals("this")){   //missing a this param, so it is mishandled by the visitor
+          wrapper.setIsNotMethod();
         }
+        bv.addParams(vf.params);
         if (labelsByLoc.get(countForlabels) != null){ //labels if the first thing
             System.out.println(labelsByLoc.get(countForlabels));
         }

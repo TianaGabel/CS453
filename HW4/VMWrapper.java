@@ -92,6 +92,7 @@ public class VMWrapper implements VMWrapperinterface{
         resetRegisters();
         resetSRegisters();
         localVarToRegister.clear();
+        isNotMethod = false;
     }
 
     public void resetRegisters(){
@@ -253,14 +254,12 @@ public class VMWrapper implements VMWrapperinterface{
         return s; 
     }
 
-    public void addArray(){
-        System.out.println("  $t0 = $a1\r\n" + 
-                        "  $t1 = MulS($t0 4)\r\n" + 
-                        "  $t1 = Add($t1 4)\r\n" + //
-                        "  $t1 = HeapAllocZ($t1)\r\n" + //
-                        "  [$t1] = $t0\r\n" + //
-                        "  $v0 = $t1\r\n" + //
-                        "  ret");
+    boolean isNotMethod = false;
+    public void setIsNotMethod(){
+        isNotMethod = true;
+    }
+    public boolean isNotMethod(){
+        return isNotMethod;
     }
 
     private void print(String line){
