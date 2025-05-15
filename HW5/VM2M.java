@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import javax.management.RuntimeErrorException;
 
-public class V2VM {
+public class VM2M {
   public static void main(String[] args) {
     try{
       VaporProgram vp = parseVapor(System.in, System.out);
@@ -20,52 +20,49 @@ public class V2VM {
       VMWrapper wrapper = new VMWrapper();
       RuntimeException r = new RuntimeException();
 
-      RegAllocVisitor<VMWrapper,RuntimeException> regalloc =  new RegAllocVisitor();
-      ToVaporMVisitor<VMWrapper,RuntimeException> bv =  new ToVaporMVisitor();
+      ToMipsVisitor<VMWrapper,RuntimeException> bv =  new ToMipsVisitor();
       bv.setWrapper(wrapper);
 
+      //.data + functions
+      System.out.println(".data\n");
       for(VDataSegment vds: vp.dataSegments){
-        System.out.println("const " + vds.ident);
+        System.out.println(vds.ident + ":");
         for (VOperand v: vds.values){
-          System.out.println( "   " +v);
+          System.out.println( "   " + v.toString().substring(1));
         }
         System.out.println("");
       }
+      // .text
+      String txt = ".text\n" + //
+                "\n" + //
+                "  jal Main\n" + //
+                "  li $v0 10\n" + //
+                "  syscall\n";
+      System.out.println(txt);
 
       for(VFunction vf : vp.functions){
         HashMap<Integer,String> labelsByLoc = new HashMap<>();
+        wrapper.resetReallocCounts();
         //Stuff for labels
         for(VCodeLabel l: vf.labels){ 
           if (labelsByLoc.get(l.instrIndex) != null){ //in case 2 labels are at the same location
             String prev = labelsByLoc.get(l.instrIndex);
             labelsByLoc.put(l.instrIndex, (prev + "\n   " + l.ident + ":"));
           } else {
-            labelsByLoc.put(l.instrIndex, ("   " + l.ident + ":"));
-          }
+            labelsByLoc.put(l.instrIndex, ("" + l.ident + ":"));
         }
+      }
         
 
         //stuff for function declaration
-        for(VInstr vi: vf.body){
-          vi.accept(wrapper, regalloc); //out
-        }
-        wrapper.incrIn(vf.params.length-4); //in
-        wrapper.incrLocal(vf.vars.length);  //min for backup local
-        wrapper.addFunction(vf.ident);
+        //TODO fetch in,out and local counts
+        wrapper.setStackVars(vf.stack.in,vf.stack.out,vf.stack.local);
 
-        System.out.println(wrapper.getFunctionDeclartion(vf.ident));
-        wrapper.resetReallocCounts();
-
-        //Locals mapping
-        wrapper.initLocals(vf.vars);
+        System.out.println(vf.ident + ":");
+        System.out.println(wrapper.getPrologue());
 
         //Stuff for everything else
         int countForlabels = 0;
-        bv.addParams(vf.params);
-        if (vf.ident.equals("AllocArray")){   //missing a this param, so it is mishandled by the visitor
-          wrapper.addArray();
-          return;
-        }
         if (labelsByLoc.get(countForlabels) != null){ //labels if the first thing
             System.out.println(labelsByLoc.get(countForlabels));
         }
@@ -73,18 +70,14 @@ public class V2VM {
           vi.accept(wrapper, bv);
           countForlabels++;
           if (labelsByLoc.get(countForlabels) != null){ //labels elsewhere
-            wrapper.backupToLocals();
             System.out.println(labelsByLoc.get(countForlabels));
           }
-          //System.out.println("-");
         }
-        //wrapper.printMap();
-        wrapper.resetAll();
       }
+      wrapper.endOfProgram();
 
 
     } catch(Exception e){
-      System.out.println("BOO main failure");
       e.printStackTrace();
     }
 
@@ -98,9 +91,15 @@ public class V2VM {
     Op.Add, Op.Sub, Op.MulS, Op.Eq, Op.Lt, Op.LtS,
     Op.PrintIntS, Op.HeapAllocZ, Op.Error,
   };
-  boolean allowLocals = true;
-  String[] registers = null;
-  boolean allowStack = false;
+  boolean allowLocals = false;
+  String[] registers = {
+    "v0", "v1",
+    "a0", "a1", "a2", "a3",
+    "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
+    "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7",
+    "t8",
+  };
+  boolean allowStack = true;
 
   VaporProgram program;
   try {

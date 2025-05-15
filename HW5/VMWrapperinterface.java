@@ -1,18 +1,10 @@
 import java.util.HashMap;
 
 public interface VMWrapperinterface {
-
-    public void addVarToRegister(String id);
-    public String getVarAsRegister(String id);
-    public void backupToLocals();
-    public void restoreLocals();
-
-    public void addFunction(String id);
+    public void setStackVars(int in, int out, int locals);
     public void resetReallocCounts();
+    public String getPrologue();
+    public String getEpilogue();
 
-    public void incrIn(int a);
-    public void incrOut(int a);
-    public void incrLocal(int a);
-
-    public String getFunctionDeclartion(String id);
+    public String endOfProgram();
 }

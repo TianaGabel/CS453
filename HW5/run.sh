@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
-rm V2VM.class
+rm VM2M.class
 
-javac -cp vapor-parser.jar:. V2VM.java 
+javac -cp vapor-parser.jar:. VM2M.java 
 
-# can update later with vars $1 $2
-#java  V2VM < P.vapor > P.vaporm
+# java -jar mars.jar nc <input-file>
+java VM2M < P.vaporm > P.s
 
 
-# java V2VM < ../Tests/vapor/BinaryTree.vapor > P.vaporm   #incorrect and missing a significant amount of output
-# java V2VM < ../Tests/vapor/BubbleSort.vapor > P.vaporm   #pass
- java V2VM < ../Tests/vapor/ShortCircuit.vapor > P.vaporm   #pass
-# java V2VM < ../Tests/vapor/Factorial.vapor > P.vaporm   #pass
-# java V2VM < ../Tests/vapor/LinearSearch.vapor> P.vaporm  #pass
-# java V2VM < ../Tests/vapor/LinkedList.vapor > P.vaporm   #fails near the end after the 2220000 and just before the 3rd 1000000
-# java V2VM < ../Tests/vapor/MoreThan4.vapor > P.vaporm  #pass
-# java V2VM < ../Tests/vapor/QuickSort.vapor > P.vaporm   #lc pass
-# java V2VM < ../Tests/vapor/TreeVisitor.vapor > P.vaporm  #out-of-bounds memory read
-# java V2VM < ../Tests/vapor/whileTest.vapor > P.vaporm   #lc pass
+# java VM2M < ../Tests/vaporm/BinaryTree.vaporm > P.s  
+# java VM2M < ../Tests/vaporm/BubbleSort.vaporm > P.s   
+# java VM2M < ../Tests/vaporm/ShortCircuit.vaporm > P.s  
+# java VM2M < ../Tests/vaporm/Factorial.vaporm > P.s  
+# java VM2M < ../Tests/vaporm/LinearSearch.vaporm> P.s  
+# java VM2M < ../Tests/vaporm/LinkedList.vaporm > P.s  
+# java VM2M < ../Tests/vaporm/MoreThan4.vaporm > P.s  
+# java VM2M < ../Tests/vaporm/QuickSort.vaporm > P.s  
+# java VM2M < ../Tests/vaporm/TreeVisitor.vaporm > P.s 
+# java VM2M < ../Tests/vaporm/whileTest.vaporm > P.s

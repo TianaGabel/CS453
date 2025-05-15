@@ -1,0 +1,623 @@
+.data
+
+vmt_QS:
+   QS.Start
+   QS.Sort
+   QS.Print
+   QS.Init
+
+.text
+
+  jal Main
+  li $v0 10
+  syscall
+
+Main:
+  sw $fp -8($sp)
+  sw $ra -4($sp)
+  move $fp $sp
+  subu $sp $sp 8
+   li $a0 12
+   jal _heapAlloc
+   move $t0 $v0
+   la $t9 :vmt_QS
+   sw $t9 0($t0)
+   move $t9 $t0
+   bnez $t9 :null1
+   la $a0 _str0
+   j _error
+null1:
+   lw $t1 0($t0)
+   lw $t1 0($t1)
+   move $a0 $t0
+   li $a1 10
+   jal $t1
+   move $t1 $v0
+   move $a0 $t1
+   jal _print
+  lw $ra -4($fp)
+  lw $fp -8($fp)
+  addu $sp $sp 8
+   jr $ra
+
+QS.Start:
+  sw $fp -8($sp)
+  sw $ra -4($sp)
+  move $fp $sp
+  subu $sp $sp 12
+  
+   move $t9 $s0
+   sw $t9 -12($fp)
+   move $s0 $a0
+   move $t0 $a1
+   lw $t1 0($s0)
+   lw $t1 12($t1)
+   move $a0 $s0
+   move $a1 $t0
+   jal $t1
+   lw $t1 0($s0)
+   lw $t1 8($t1)
+   move $a0 $s0
+   jal $t1
+   li $a0 9999
+   jal _print
+   lw $t1 8($s0)
+   subu $t1 $t1 1
+   lw $t0 0($s0)
+   lw $t0 4($t0)
+   move $a0 $s0
+   li $a1 0
+   move $a2 $t1
+   jal $t0
+   lw $t0 0($s0)
+   lw $t0 8($t0)
+   move $a0 $s0
+   jal $t0
+   li $v0 0
+   lw $s0 -12($fp)
+  lw $ra -4($fp)
+  lw $fp -8($fp)
+  addu $sp $sp 12
+   jr $ra
+
+QS.Sort:
+  sw $fp -8($sp)
+  sw $ra -4($sp)
+  move $fp $sp
+  subu $sp $sp 20
+   move $t9 $s0
+   sw $t9 -12($fp)
+   move $t9 $s1
+   sw $t9 -16($fp)
+   move $t9 $s2
+   sw $t9 -20($fp)
+   move $s0 $a0
+   move $t0 $a1
+   move $s1 $a2
+   li $t1 0
+   slt $t2 $t0 $s1
+   move $t9 $t2
+   beqz $t9 :if1_else
+   lw $t2 4($s0)
+   move $t9 $t2
+   bnez $t9 :null2
+   la $a0 _str0
+   j _error
+null2:
+   lw $t3 0($t2)
+   slt $t3 $s1 $t3
+   move $t9 $t3
+   bnez $t9 :bounds1
+   la $a0 _str0
+   j _error
+bounds1:
+   mul $t3 $s1 4
+   addu $t3 $t3 $t2
+   lw $t3 4($t3)
+   subu $s2 $t0 1
+   move $t2 $s1
+   li $t4 1
+while1_top:
+   move $t9 $t4
+   beqz $t9 :while1_end
+   li $t5 1
+while2_top:
+   move $t9 $t5
+   beqz $t9 :while2_end
+   addu $s2 $s2 1
+   lw $t6 4($s0)
+   move $t9 $t6
+   bnez $t9 :null3
+   la $a0 _str0
+   j _error
+null3:
+   lw $t7 0($t6)
+   slt $t7 $s2 $t7
+   move $t9 $t7
+   bnez $t9 :bounds2
+   la $a0 _str0
+   j _error
+bounds2:
+   mul $t7 $s2 4
+   addu $t7 $t7 $t6
+   lw $t7 4($t7)
+   slt $t6 $t7 $t3
+   subu $t6 1 $t6
+   move $t9 $t6
+   beqz $t9 :if2_else
+   li $t5 0
+   j :if2_end
+if2_else:
+   li $t5 1
+if2_end:
+   j :while2_top
+while2_end:
+   li $t5 1
+while3_top:
+   move $t9 $t5
+   beqz $t9 :while3_end
+   subu $t2 $t2 1
+   lw $t6 4($s0)
+   move $t9 $t6
+   bnez $t9 :null4
+   la $a0 _str0
+   j _error
+null4:
+   lw $t8 0($t6)
+   slt $t8 $t2 $t8
+   move $t9 $t8
+   bnez $t9 :bounds3
+   la $a0 _str0
+   j _error
+bounds3:
+   mul $t8 $t2 4
+   addu $t8 $t8 $t6
+   lw $t7 4($t8)
+   slt $t7 $t3 $t7
+   subu $t7 1 $t7
+   move $t9 $t7
+   beqz $t9 :if3_else
+   li $t5 0
+   j :if3_end
+if3_else:
+   li $t5 1
+if3_end:
+   j :while3_top
+while3_end:
+   lw $t5 4($s0)
+   move $t9 $t5
+   bnez $t9 :null5
+   la $a0 _str0
+   j _error
+null5:
+   lw $t7 0($t5)
+   slt $t7 $s2 $t7
+   move $t9 $t7
+   bnez $t9 :bounds4
+   la $a0 _str0
+   j _error
+bounds4:
+   mul $t7 $s2 4
+   addu $t7 $t7 $t5
+   lw $t1 4($t7)
+   lw $t7 4($s0)
+   move $t9 $t7
+   bnez $t9 :null6
+   la $a0 _str0
+   j _error
+null6:
+   lw $t5 0($t7)
+   slt $t5 $s2 $t5
+   move $t9 $t5
+   bnez $t9 :bounds5
+   la $a0 _str0
+   j _error
+bounds5:
+   mul $t5 $s2 4
+   addu $t5 $t5 $t7
+   lw $t7 4($s0)
+   move $t9 $t7
+   bnez $t9 :null7
+   la $a0 _str0
+   j _error
+null7:
+   lw $t8 0($t7)
+   slt $t8 $t2 $t8
+   move $t9 $t8
+   bnez $t9 :bounds6
+   la $a0 _str0
+   j _error
+bounds6:
+   mul $t8 $t2 4
+   addu $t8 $t8 $t7
+   lw $t8 4($t8)
+   move $t9 $t8
+   sw $t9 4($t5)
+   lw $t8 4($s0)
+   move $t9 $t8
+   bnez $t9 :null8
+   la $a0 _str0
+   j _error
+null8:
+   lw $t5 0($t8)
+   slt $t5 $t2 $t5
+   move $t9 $t5
+   bnez $t9 :bounds7
+   la $a0 _str0
+   j _error
+bounds7:
+   mul $t5 $t2 4
+   addu $t5 $t5 $t8
+   move $t9 $t1
+   sw $t9 4($t5)
+   addu $t5 $s2 1
+   slt $t5 $t2 $t5
+   move $t9 $t5
+   beqz $t9 :if4_else
+   li $t4 0
+   j :if4_end
+if4_else:
+   li $t4 1
+if4_end:
+   j :while1_top
+while1_end:
+   lw $t4 4($s0)
+   move $t9 $t4
+   bnez $t9 :null9
+   la $a0 _str0
+   j _error
+null9:
+   lw $t3 0($t4)
+   slt $t3 $t2 $t3
+   move $t9 $t3
+   bnez $t9 :bounds8
+   la $a0 _str0
+   j _error
+bounds8:
+   mul $t3 $t2 4
+   addu $t3 $t3 $t4
+   lw $t4 4($s0)
+   move $t9 $t4
+   bnez $t9 :null10
+   la $a0 _str0
+   j _error
+null10:
+   lw $t2 0($t4)
+   slt $t2 $s2 $t2
+   move $t9 $t2
+   bnez $t9 :bounds9
+   la $a0 _str0
+   j _error
+bounds9:
+   mul $t2 $s2 4
+   addu $t2 $t2 $t4
+   lw $t2 4($t2)
+   move $t9 $t2
+   sw $t9 4($t3)
+   lw $t2 4($s0)
+   move $t9 $t2
+   bnez $t9 :null11
+   la $a0 _str0
+   j _error
+null11:
+   lw $t3 0($t2)
+   slt $t3 $s2 $t3
+   move $t9 $t3
+   bnez $t9 :bounds10
+   la $a0 _str0
+   j _error
+bounds10:
+   mul $t3 $s2 4
+   addu $t3 $t3 $t2
+   lw $t2 4($s0)
+   move $t9 $t2
+   bnez $t9 :null12
+   la $a0 _str0
+   j _error
+null12:
+   lw $t4 0($t2)
+   slt $t4 $s1 $t4
+   move $t9 $t4
+   bnez $t9 :bounds11
+   la $a0 _str0
+   j _error
+bounds11:
+   mul $t4 $s1 4
+   addu $t4 $t4 $t2
+   lw $t4 4($t4)
+   move $t9 $t4
+   sw $t9 4($t3)
+   lw $t4 4($s0)
+   move $t9 $t4
+   bnez $t9 :null13
+   la $a0 _str0
+   j _error
+null13:
+   lw $t3 0($t4)
+   slt $t3 $s1 $t3
+   move $t9 $t3
+   bnez $t9 :bounds12
+   la $a0 _str0
+   j _error
+bounds12:
+   mul $t3 $s1 4
+   addu $t3 $t3 $t4
+   move $t9 $t1
+   sw $t9 4($t3)
+   lw $t3 0($s0)
+   lw $t3 4($t3)
+   subu $t1 $s2 1
+   move $a0 $s0
+   move $a1 $t0
+   move $a2 $t1
+   jal $t3
+   lw $t1 0($s0)
+   lw $t1 4($t1)
+   addu $t3 $s2 1
+   move $a0 $s0
+   move $a1 $t3
+   move $a2 $s1
+   jal $t1
+   j :if1_end
+if1_else:
+   if1_end:
+   li $v0 0
+   lw $s0 -12($fp)
+   lw $s1 -16($fp)
+   lw $s2 -20($fp)
+  lw $ra -4($fp)
+  lw $fp -8($fp)
+  addu $sp $sp 20
+   jr $ra
+
+QS.Print:
+  sw $fp -8($sp)
+  sw $ra -4($sp)
+  move $fp $sp
+  subu $sp $sp 8
+   move $t0 $a0
+   li $t1 0
+while4_top:
+   lw $t2 8($t0)
+   slt $t2 $t1 $t2
+   move $t9 $t2
+   beqz $t9 :while4_end
+   lw $t2 4($t0)
+   move $t9 $t2
+   bnez $t9 :null14
+   la $a0 _str0
+   j _error
+null14:
+   lw $t3 0($t2)
+   slt $t3 $t1 $t3
+   move $t9 $t3
+   bnez $t9 :bounds13
+   la $a0 _str0
+   j _error
+bounds13:
+   mul $t3 $t1 4
+   addu $t3 $t3 $t2
+   lw $t3 4($t3)
+   move $a0 $t3
+   jal _print
+   addu $t1 $t1 1
+   j :while4_top
+while4_end:
+   li $v0 0
+  lw $ra -4($fp)
+  lw $fp -8($fp)
+  addu $sp $sp 8
+   jr $ra
+
+QS.Init:
+  sw $fp -8($sp)
+  sw $ra -4($sp)
+  move $fp $sp
+  subu $sp $sp 12
+   move $t9 $s0
+   sw $t9 -12($fp)
+   move $s0 $a0
+   move $t0 $a1
+   move $t9 $t0
+   sw $t9 8($s0)
+   move $a0 $t0
+   jal :AllocArray
+   move $t0 $v0
+   move $t9 $t0
+   sw $t9 4($s0)
+   lw $t0 4($s0)
+   move $t9 $t0
+   bnez $t9 :null15
+   la $a0 _str0
+   j _error
+null15:
+   lw $t1 0($t0)
+   slt $t1 0 $t1
+   move $t9 $t1
+   bnez $t9 :bounds14
+   la $a0 _str0
+   j _error
+bounds14:
+   mul $t1 0 4
+   addu $t1 $t1 $t0
+   li $t9 20
+   sw $t9 4($t1)
+   lw $t1 4($s0)
+   move $t9 $t1
+   bnez $t9 :null16
+   la $a0 _str0
+   j _error
+null16:
+   lw $t0 0($t1)
+   slt $t0 1 $t0
+   move $t9 $t0
+   bnez $t9 :bounds15
+   la $a0 _str0
+   j _error
+bounds15:
+   mul $t0 1 4
+   addu $t0 $t0 $t1
+   li $t9 7
+   sw $t9 4($t0)
+   lw $t0 4($s0)
+   move $t9 $t0
+   bnez $t9 :null17
+   la $a0 _str0
+   j _error
+null17:
+   lw $t1 0($t0)
+   slt $t1 2 $t1
+   move $t9 $t1
+   bnez $t9 :bounds16
+   la $a0 _str0
+   j _error
+bounds16:
+   mul $t1 2 4
+   addu $t1 $t1 $t0
+   li $t9 12
+   sw $t9 4($t1)
+   lw $t1 4($s0)
+   move $t9 $t1
+   bnez $t9 :null18
+   la $a0 _str0
+   j _error
+null18:
+   lw $t0 0($t1)
+   slt $t0 3 $t0
+   move $t9 $t0
+   bnez $t9 :bounds17
+   la $a0 _str0
+   j _error
+bounds17:
+   mul $t0 3 4
+   addu $t0 $t0 $t1
+   li $t9 18
+   sw $t9 4($t0)
+   lw $t0 4($s0)
+   move $t9 $t0
+   bnez $t9 :null19
+   la $a0 _str0
+   j _error
+null19:
+   lw $t1 0($t0)
+   slt $t1 4 $t1
+   move $t9 $t1
+   bnez $t9 :bounds18
+   la $a0 _str0
+   j _error
+bounds18:
+   mul $t1 4 4
+   addu $t1 $t1 $t0
+   li $t9 2
+   sw $t9 4($t1)
+   lw $t1 4($s0)
+   move $t9 $t1
+   bnez $t9 :null20
+   la $a0 _str0
+   j _error
+null20:
+   lw $t0 0($t1)
+   slt $t0 5 $t0
+   move $t9 $t0
+   bnez $t9 :bounds19
+   la $a0 _str0
+   j _error
+bounds19:
+   mul $t0 5 4
+   addu $t0 $t0 $t1
+   li $t9 11
+   sw $t9 4($t0)
+   lw $t0 4($s0)
+   move $t9 $t0
+   bnez $t9 :null21
+   la $a0 _str0
+   j _error
+null21:
+   lw $t1 0($t0)
+   slt $t1 6 $t1
+   move $t9 $t1
+   bnez $t9 :bounds20
+   la $a0 _str0
+   j _error
+bounds20:
+   mul $t1 6 4
+   addu $t1 $t1 $t0
+   li $t9 6
+   sw $t9 4($t1)
+   lw $t1 4($s0)
+   move $t9 $t1
+   bnez $t9 :null22
+   la $a0 _str0
+   j _error
+null22:
+   lw $t0 0($t1)
+   slt $t0 7 $t0
+   move $t9 $t0
+   bnez $t9 :bounds21
+   la $a0 _str0
+   j _error
+bounds21:
+   mul $t0 7 4
+   addu $t0 $t0 $t1
+   li $t9 9
+   sw $t9 4($t0)
+   lw $t0 4($s0)
+   move $t9 $t0
+   bnez $t9 :null23
+   la $a0 _str0
+   j _error
+null23:
+   lw $t1 0($t0)
+   slt $t1 8 $t1
+   move $t9 $t1
+   bnez $t9 :bounds22
+   la $a0 _str0
+   j _error
+bounds22:
+   mul $t1 8 4
+   addu $t1 $t1 $t0
+   li $t9 19
+   sw $t9 4($t1)
+   lw $t1 4($s0)
+   move $t9 $t1
+   bnez $t9 :null24
+   la $a0 _str0
+   j _error
+null24:
+   lw $t0 0($t1)
+   slt $t0 9 $t0
+   move $t9 $t0
+   bnez $t9 :bounds23
+   la $a0 _str0
+   j _error
+bounds23:
+   mul $t0 9 4
+   addu $t0 $t0 $t1
+   li $t9 5
+   sw $t9 4($t0)
+   li $v0 0
+   lw $s0 -12($fp)
+  lw $ra -4($fp)
+  lw $fp -8($fp)
+  addu $sp $sp 12
+   jr $ra
+
+AllocArray:
+  sw $fp -8($sp)
+  sw $ra -4($sp)
+  move $fp $sp
+  subu $sp $sp 8
+   move $t0 $a0
+   mul $t1 $t0 4
+   addu $t1 $t1 4
+   move $a0 $t1
+   jal _heapAlloc
+   move $t1 $v0
+   move $t9 $t0
+   sw $t9 0($t1)
+   move $v0 $t1
+  lw $ra -4($fp)
+  lw $fp -8($fp)
+  addu $sp $sp 8
+   jr $ra
+
