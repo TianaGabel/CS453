@@ -9,7 +9,8 @@ javac -cp vapor-parser.jar:. V2VM.java
 
 
 # java V2VM < ../Tests/vapor/BinaryTree.vapor > P.vaporm   #incorrect and missing a significant amount of output
- java V2VM < ../Tests/vapor/BubbleSort.vapor > P.vaporm   #pass
+# java V2VM < ../Tests/vapor/BubbleSort.vapor > P.vaporm   #pass
+ java V2VM < ../Tests/vapor/ShortCircuit.vapor > P.vaporm   #pass
 # java V2VM < ../Tests/vapor/Factorial.vapor > P.vaporm   #pass
 # java V2VM < ../Tests/vapor/LinearSearch.vapor> P.vaporm  #pass
 # java V2VM < ../Tests/vapor/LinkedList.vapor > P.vaporm   #fails near the end after the 2220000 and just before the 3rd 1000000
