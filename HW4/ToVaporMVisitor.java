@@ -207,9 +207,9 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
     }
 
     private String convertName(String id){
-        if (id.equals("this")){
-            return "$s0";
-        }
+        // if (id.equals("this")){
+        //     return "$s0";
+        // }
         boolean isValue = id.matches("-?\\d+(\\.\\d+)?");
         boolean isft =  id.substring(0, 1).equals(":");
         boolean isError = id.substring(0, 1).equals("\"");

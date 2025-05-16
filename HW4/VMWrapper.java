@@ -8,7 +8,7 @@ public class VMWrapper implements VMWrapperinterface{
     HashMap<String,String> localVarToRegister = new HashMap();
     HashMap<String,String> prevState = new HashMap();
     int registersInUse = 0;   //  $t0 -$t07
-    int sRegistersInUse = 0;   //  $s0 -$s07
+    int sRegistersInUse = 1;   //  $s0 -$s07
     //int localArrayInUse = 0;
     boolean rotate = false;
     boolean rotate2 = false;
@@ -16,12 +16,18 @@ public class VMWrapper implements VMWrapperinterface{
     int MAXSREGISTERS = 8;
 
     public void initLocals(String[] vars){
-        int count = 0;
+        if (localCount == 0){
+            return;}
+        int count = 1;
         String r;
         for(String v: vars){
             r = "local[" + count + "]";
             varsToLocals.put(v.toString(),r);
+            //System.out.println(v.toString() + "---boo");
             count++;
+        }
+        if (!isNotMethod){
+            localVarToRegister.put("this","$s0");
         }
         //printMap(varsToLocals);
     }
@@ -106,8 +112,9 @@ public class VMWrapper implements VMWrapperinterface{
     }
 
     public void resetSRegisters(){
-        sRegistersInUse = 0;
+        sRegistersInUse = 1;
         Object[] vars = localVarToRegister.keySet().toArray();  //fix for java's concurrent mod exception
+        //System.out.println(vars + "boo");
         for(int i=0; i < vars.length; i++){
             if (localVarToRegister.get((String)vars[i]).substring(0,2).equals("$s")){
                 localVarToRegister.remove((String)vars[i]);
@@ -181,15 +188,15 @@ public class VMWrapper implements VMWrapperinterface{
     }
 
     private boolean checkIsRegisterName(String id){
-        return (id.substring(0, 1).equals("$"));
-        //return (id.substring(0, 2).equals("$t")) || id.substring(0, 2).equals("$s");
+        //return (id.substring(0, 1).equals("$"));
+        return (id.substring(0, 2).equals("$t")) || id.substring(0, 2).equals("$s");
     }
-
 
     public void backupToLocals(){
         // remove the variables in registers and readd to locals
         // also print that this is being done
         // reset registers afterwards
+        if (localCount == 0){ return;}
         Object[] vars = localVarToRegister.keySet().toArray();
         String register;
         String newLoc;
@@ -235,7 +242,6 @@ public class VMWrapper implements VMWrapperinterface{
         temp[1] = outCount;
         temp[2] = localCount;
         reallocMap.put(id,temp);
-        resetReallocCounts();
     }
 
     public void resetReallocCounts(){

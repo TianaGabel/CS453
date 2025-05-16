@@ -44,27 +44,27 @@ public class V2VM {
           }
         }
         
-
         //stuff for function declaration
         for(VInstr vi: vf.body){
           vi.accept(wrapper, regalloc); //out
         }
         wrapper.incrIn(vf.params.length-4); //in
-        wrapper.incrLocal(vf.vars.length);  //min for backup local
+        //if (vf.vars.length < 14){  wrapper.incrLocal(vf.vars.length-14);}
+        //else {
+          wrapper.incrLocal(vf.vars.length + 1);
+        //}
         wrapper.addFunction(vf.ident);
 
         System.out.println(wrapper.getFunctionDeclartion(vf.ident));
-        wrapper.resetReallocCounts();
-
-        //Locals mapping
-        wrapper.initLocals(vf.vars);
 
         //Stuff for everything else
         int countForlabels = 0;
         
-        if ((vf.params.length > 0) && !vf.params[0].toString().equals("this")){   //missing a this param, so it is mishandled by the visitor
+        if ((vf.params.length == 0)|| ((vf.params.length > 0) && !vf.params[0].toString().equals("this"))){   //missing a this param, so it is mishandled by the visitor
           wrapper.setIsNotMethod();
         }
+        //Locals mapping
+        wrapper.initLocals(vf.vars);
         bv.addParams(vf.params);
         if (labelsByLoc.get(countForlabels) != null){ //labels if the first thing
             System.out.println(labelsByLoc.get(countForlabels));
@@ -80,6 +80,7 @@ public class V2VM {
         }
         //wrapper.printMap();
         wrapper.resetAll();
+        wrapper.resetReallocCounts();
       }
 
 

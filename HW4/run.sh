@@ -13,7 +13,7 @@ javac -cp vapor-parser.jar:. V2VM.java
 # java V2VM < ../Tests/vapor/ShortCircuit.vapor > P.vaporm   #pass
 # java V2VM < ../Tests/vapor/Factorial.vapor > P.vaporm   #pass
 # java V2VM < ../Tests/vapor/LinearSearch.vapor> P.vaporm  #pass
-# java V2VM < ../Tests/vapor/LinkedList.vapor > P.vaporm   #fails near the end after the 2220000 and just before the 3rd 1000000
+ java V2VM < ../Tests/vapor/LinkedList.vapor > P.vaporm   #fails near the end after the 2220000 and just before the 3rd 1000000
 # java V2VM < ../Tests/vapor/MoreThan4.vapor > P.vaporm  #pass
 # java V2VM < ../Tests/vapor/QuickSort.vapor > P.vaporm   #lc pass
 # java V2VM < ../Tests/vapor/operatorExample.vapor > P.vaporm   #pass
