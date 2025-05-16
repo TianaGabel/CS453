@@ -193,6 +193,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
                 print(s);
             }
         } else {
+            print("$s0 = $a0");
             for (int i = 1; i < Math.min(4,refs.length); i++){ //other params
                     s = convertName(refs[i].toString()) +" = $a" + i;
                     print(s);
@@ -207,7 +208,7 @@ public class ToVaporMVisitor<P extends VMWrapperinterface,E extends Throwable> e
 
     private String convertName(String id){
         if (id.equals("this")){
-            return "$a0";
+            return "$s0";
         }
         boolean isValue = id.matches("-?\\d+(\\.\\d+)?");
         boolean isft =  id.substring(0, 1).equals(":");
